@@ -1,0 +1,32 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+
+# Archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build de producción
+dist/
+build/
+
+# Archivos de Sequelize
+.sequelizerc
+migrations/*.js.map
+seeders/*.js.map
+models/*.js.map
+
+# Archivos de la base de datos local
+*.sqlite
+*.sqlite3
+*.db
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
