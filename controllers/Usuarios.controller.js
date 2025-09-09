@@ -279,3 +279,31 @@ exports.updateUser = async (req, res) => {
     res.status(500).json({ error: "Error al actualizar persona" });
   }
 }
+
+
+exports.deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await db.usuario.findOne({
+      where: { usuario_id: id },
+      include: [
+        {
+          model: db.persona,
+          as: 'persona',
+          attributes: ['persona_id', 'nombre', 'apellido', 'email']
+        }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    await user.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error al eliminar usuario:", error);
+    res.status(500).json({ error: "Error al eliminar usuario" });
+  }
+};

@@ -10,7 +10,8 @@ app.use(express.json());
 const personaRouter = require('./routes/Personas.routes.js');
 const rolRouter = require ('./routes/Rol.routes.js');
 const usuarioRouter = require ('./routes/Usuarios.routes.js');
-/*const categoriaProductoRouter = require('./routes/CategoriaProducto.routes.js');
+const categoriaProductoRouter = require('./routes/CategoriasProductos.routes.js');
+/*
 const cuentaRouter = require('./routes/Cuenta.routes.js');  
 const detalleCuentaRouter = require ('./routes/DetalleCuenta.routes.js');
 const imagenProductoRouter = require ('./routes/ImagenProducto.routes.js');   
@@ -21,7 +22,8 @@ const pedidosRouter = require ('./routes/Pedidos.routes.js');
 app.use('/api/personas', personaRouter);
 app.use('/api/rol', rolRouter);
 app.use('/api/usuario', usuarioRouter);
-/*app.use('/api/categoriaProducto', categoriaProductoRouter);
+app.use('/api/categoriaProducto', categoriaProductoRouter);
+/*
 app.use('/api/cuenta', cuentaRouter);
 app.use('/api/detalleCuenta', detalleCuentaRouter);
 app.use('/api/imagenProducto', imagenProductoRouter);
