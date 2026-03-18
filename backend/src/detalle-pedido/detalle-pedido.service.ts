@@ -1,0 +1,121 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateDetallePedidoDto } from './dto/create-detalle-pedido.dto';
+import { UpdateDetallePedidoDto } from './dto/update-detalle-pedido.dto';
+import { DetallePedido } from './entities/detalle-pedido.entity';
+import { Producto } from '../producto/entities/producto.entity';
+import { CuentaService } from '../cuenta/cuenta.service';
+
+@Injectable()
+export class DetallePedidoService {
+  constructor(
+    @InjectRepository(DetallePedido)
+    private detalleRepository: Repository<DetallePedido>,
+    @InjectRepository(Producto)
+    private productoRepository: Repository<Producto>,
+    private cuentaService: CuentaService,
+  ) { }
+
+  async create(createDetallePedidoDto: CreateDetallePedidoDto) {
+    // Obtener el producto para calcular el subtotal
+    const producto = await this.productoRepository.findOne({
+      where: { id: Number(createDetallePedidoDto.id_producto) },
+    });
+    if (!producto) {
+      throw new NotFoundException(`Producto #${createDetallePedidoDto.id_producto} no encontrado`);
+    }
+
+    const cantidad = Number(createDetallePedidoDto.cantidad);
+    const subtotal = Number(producto.precio) * cantidad;
+
+    const detalle = {
+      cantidad,
+      subtotal,
+      comentario: createDetallePedidoDto.comentario || '',
+      cuenta: { id: Number(createDetallePedidoDto.id_cuenta) } as any,
+      producto: { id: producto.id } as any,
+      estado: { id: 1 } as any, // ACTIVO
+    };
+
+    const detalleCreado = await this.detalleRepository.save(detalle);
+
+    // Recalcular total de la cuenta
+    await this.recalcularTotalCuenta(Number(createDetallePedidoDto.id_cuenta));
+
+    return this.findOne(detalleCreado.id);
+  }
+
+  async findByCuenta(idCuenta: number) {
+    return this.detalleRepository.find({
+      where: { cuenta: { id: idCuenta }, D_E_L_E_T_E_D: false },
+      relations: ['producto', 'cuenta', 'estado'],
+      order: { id: 'ASC' },
+    });
+  }
+
+  async findAll() {
+    return this.detalleRepository.find({
+      where: { D_E_L_E_T_E_D: false },
+      relations: ['producto', 'cuenta', 'estado'],
+      order: { id: 'DESC' },
+    });
+  }
+
+  async findOne(id: number) {
+    const detalle = await this.detalleRepository.findOne({
+      where: { id, D_E_L_E_T_E_D: false },
+      relations: ['producto', 'cuenta', 'estado'],
+    });
+    if (!detalle) {
+      throw new NotFoundException(`Detalle #${id} no encontrado`);
+    }
+    return detalle;
+  }
+
+  async update(id: number, updateDetallePedidoDto: UpdateDetallePedidoDto) {
+    const detalle = await this.findOne(id);
+
+    if (updateDetallePedidoDto.cantidad !== undefined) {
+      detalle.cantidad = Number(updateDetallePedidoDto.cantidad);
+      // Recalcular subtotal
+      const producto = await this.productoRepository.findOne({ where: { id: detalle.producto.id } });
+      if (producto) {
+        detalle.subtotal = Number(producto.precio) * detalle.cantidad;
+      }
+    }
+    if (updateDetallePedidoDto.comentario !== undefined) {
+      detalle.comentario = updateDetallePedidoDto.comentario;
+    }
+    if (updateDetallePedidoDto.cantidad_entregada !== undefined) {
+      detalle.cantidad_entregada = Number(updateDetallePedidoDto.cantidad_entregada);
+    }
+
+    await this.detalleRepository.save(detalle);
+
+    // Recalcular total de la cuenta
+    await this.recalcularTotalCuenta(detalle.cuenta.id);
+
+    return this.findOne(id);
+  }
+
+  async remove(id: number) {
+    const detalle = await this.findOne(id);
+    const cuentaId = detalle.cuenta.id;
+    detalle.D_E_L_E_T_E_D = true;
+    await this.detalleRepository.save(detalle);
+
+    // Recalcular total de la cuenta
+    await this.recalcularTotalCuenta(cuentaId);
+
+    return { message: `Detalle #${id} eliminado` };
+  }
+
+  private async recalcularTotalCuenta(idCuenta: number) {
+    const detalles = await this.detalleRepository.find({
+      where: { cuenta: { id: idCuenta }, D_E_L_E_T_E_D: false },
+    });
+    const total = detalles.reduce((sum, d) => sum + Number(d.subtotal), 0);
+    await this.cuentaService.updateTotal(idCuenta, total);
+  }
+}
