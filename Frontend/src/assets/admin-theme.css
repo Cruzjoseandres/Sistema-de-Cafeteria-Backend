@@ -308,3 +308,227 @@ body.admin-body {
     color: var(--neon-primary);
     border: 1px solid rgba(13, 110, 253, 0.2);
 }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE DESIGN — Hamburger & Sidebar Drawer
+   ═══════════════════════════════════════════════ */
+
+/* Botón hamburguesa — oculto en desktop */
+.sidebar-toggle-btn {
+    display: none;
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1100;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid var(--glass-border-light);
+    border-radius: 10px;
+    padding: 0.4rem 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    color: var(--text-main);
+    line-height: 1;
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-toggle-btn .material-symbols-outlined {
+    font-size: 1.4rem;
+    display: block;
+}
+
+/* Botón "X" para cerrar el sidebar — oculto en desktop */
+.sidebar-close-btn {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 0.25rem;
+    line-height: 1;
+}
+
+.sidebar-close-btn .material-symbols-outlined {
+    font-size: 1.5rem;
+}
+
+/* Overlay oscuro cuando el sidebar está abierto en mobile */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1099;
+    backdrop-filter: blur(2px);
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* ═══════════════════════════
+   TABLET  (≤ 1024px)
+   ═══════════════════════════ */
+@media (max-width: 1024px) {
+    .sidebar-toggle-btn {
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar-overlay {
+        display: block;
+    }
+
+    .sidebar-close-btn {
+        display: block;
+    }
+
+    /* Sidebar se convierte en drawer fijo */
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        z-index: 1100;
+        transform: translateX(-110%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 260px;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .admin-sidebar.sidebar-open {
+        transform: translateX(0);
+    }
+
+    /* Empujar el contenido para no quedar debajo del botón */
+    .admin-main-content {
+        padding: 1.5rem 1rem 1.5rem 1rem;
+        padding-top: 4rem; /* espacio para el botón hamburguesa */
+    }
+
+    .admin-top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .admin-search {
+        width: 100%;
+    }
+
+    .admin-top-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    /* Tablas con scroll horizontal */
+    .admin-card .table-responsive,
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-title-lg {
+        font-size: 1.5rem;
+    }
+}
+
+/* ═══════════════════════════
+   MOBILE  (≤ 600px)
+   ═══════════════════════════ */
+@media (max-width: 600px) {
+    .admin-main-content {
+        padding: 1rem 0.75rem;
+        padding-top: 3.75rem;
+    }
+
+    .admin-title-lg {
+        font-size: 1.25rem;
+    }
+
+    .admin-subtitle {
+        font-size: 0.82rem;
+    }
+
+    .admin-card {
+        padding: 1rem;
+        border-radius: 12px;
+    }
+
+    /* Botones de acción en tablas — apilados verticalmente */
+    .d-flex.gap-2.justify-content-end {
+        flex-direction: column;
+        gap: 0.5rem !important;
+        align-items: stretch;
+    }
+
+    .btn-admin-primary,
+    .btn-admin-secondary {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    /* Ocultar columnas menos importantes en tablas */
+    .custom-table th:nth-child(4),
+    .custom-table td:nth-child(4) {
+        display: none;
+    }
+
+    /* Formularios de crear/editar - una columna */
+    .row > [class*="col-md"] {
+        flex: 0 0 100%;
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* KPI cards del Dashboard - 2 por fila */
+    .kpi-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Acciones rápidas - 2 por fila */
+    .acciones-rapidas-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.75rem !important;
+    }
+
+    /* Top bar */
+    .admin-top-bar {
+        margin-bottom: 1rem;
+    }
+
+    .admin-search {
+        display: none; /* Ocultar barra de búsqueda en mobile muy pequeño */
+    }
+
+    .admin-top-actions {
+        gap: 0.75rem;
+    }
+
+    /* Sidebar más ancho en phones para mejor usabilidad */
+    .admin-sidebar {
+        width: 85vw;
+        max-width: 300px;
+    }
+}
+
+/* ═══════════════════════════
+   LARGE DESKTOP  (≥ 1400px)
+   ═══════════════════════════ */
+@media (min-width: 1400px) {
+    .admin-main-content {
+        padding: 2.5rem 3rem;
+    }
+
+    .admin-search {
+        width: 400px;
+    }
+}
