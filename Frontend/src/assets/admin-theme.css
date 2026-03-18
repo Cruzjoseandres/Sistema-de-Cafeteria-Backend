@@ -1,0 +1,310 @@
+/* admin-theme.css - Overrides para Theme Global Glass (Light Version) */
+
+/* Aquí heredamos casi todo de styles.css, adaptando pequeñas cosas del dashboard */
+
+body.admin-body {
+    background-color: #f4f6f9;
+}
+
+/* Layout overrides */
+.admin-layout-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: transparent;
+}
+
+.admin-sidebar {
+    width: 260px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1px solid var(--glass-border-light);
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.02);
+}
+
+.admin-sidebar .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+}
+
+.admin-sidebar .brand-icon {
+    background: linear-gradient(135deg, var(--neon-primary), #0a58ca);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.admin-sidebar .brand-text {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.admin-sidebar .brand-sub {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1rem;
+    border-radius: var(--border-radius-md);
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: var(--transition-fast);
+    border: 1px solid transparent;
+}
+
+.admin-nav-item:hover {
+    background: rgba(0, 0, 0, 0.03);
+    color: var(--text-main);
+    text-decoration: none;
+}
+
+.admin-nav-item.active {
+    background: rgba(13, 110, 253, 0.08);
+    color: var(--neon-primary);
+    border: 1px solid rgba(13, 110, 253, 0.15);
+    box-shadow: inset 0 0 0 transparent;
+    /* Remover brillo agresivo */
+}
+
+.admin-nav-item .material-symbols-outlined {
+    font-size: 1.25rem;
+    transition: var(--transition-fast);
+}
+
+.admin-sidebar-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem 0.5rem 0;
+    border-top: 1px solid var(--glass-border);
+    transition: var(--transition-fast);
+}
+
+.admin-sidebar-footer img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.admin-sidebar-footer .user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar-footer .user-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.admin-sidebar-footer .user-email {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Main Content Area */
+.admin-main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 100vh;
+    padding: 2rem;
+}
+
+.admin-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.admin-search {
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--glass-border-light);
+    border-radius: var(--border-radius-sm);
+    padding: 0.5rem 1rem;
+    color: var(--text-main);
+    width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.admin-search input {
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    outline: none;
+    width: 100%;
+}
+
+.admin-search input::placeholder {
+    color: #adb5bd;
+}
+
+.admin-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: var(--text-muted);
+}
+
+/* Global Generic Components under admin */
+.admin-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--glass-border-light);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    /* Sombra más suave para claro */
+}
+
+.admin-title-lg {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.admin-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn-admin-primary {
+    background: linear-gradient(135deg, var(--neon-primary), #0a58ca);
+    color: #fff;
+    border: none;
+    border-radius: var(--border-radius-sm);
+    padding: 0.6rem 1.2rem;
+    font-weight: 700;
+    transition: var(--transition-fast);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.btn-admin-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 110, 253, 0.4);
+    color: #fff;
+}
+
+.btn-admin-secondary {
+    background-color: #fff;
+    color: var(--text-main);
+    border: 1px solid var(--glass-border-light);
+    border-radius: var(--border-radius-sm);
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    transition: var(--transition-fast);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+}
+
+.btn-admin-secondary:hover {
+    background-color: #f8f9fa;
+    color: var(--text-main);
+}
+
+/* Tablas Administrativas Estilizadas */
+.custom-table {
+    color: var(--text-main);
+}
+
+.custom-table th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid var(--glass-border-light) !important;
+    border-top: none;
+    padding-bottom: 12px;
+    background: transparent !important;
+}
+
+.custom-table td {
+    padding: 16px 8px;
+    border-bottom: 1px solid var(--glass-border) !important;
+    background: transparent !important;
+    vertical-align: middle;
+}
+
+.custom-table tbody tr {
+    transition: var(--transition-fast);
+}
+
+.custom-table tbody tr:hover td {
+    background: rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Badges de Estado */
+.admin-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-badge.success {
+    background: rgba(25, 135, 84, 0.1);
+    color: var(--neon-success);
+    border: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+.admin-badge.warning {
+    background: rgba(255, 193, 7, 0.15);
+    color: #997404;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.admin-badge.danger {
+    background: rgba(220, 53, 69, 0.1);
+    color: var(--neon-danger);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.admin-badge.primary {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--neon-primary);
+    border: 1px solid rgba(13, 110, 253, 0.2);
+}

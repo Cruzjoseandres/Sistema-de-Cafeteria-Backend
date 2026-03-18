@@ -1,0 +1,84 @@
+.mesa-card {
+    transition: all 0.3s ease;
+}
+
+.mesa-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.mesa-icon-sm {
+    font-size: 1.5rem;
+}
+
+.mesa-badge {
+    font-size: 0.85rem;
+    padding: 0.5em 1em;
+}
+
+.mesa-disponible {
+    border-left: 4px solid var(--neon-success);
+}
+
+.mesa-ocupada {
+    border-left: 4px solid var(--neon-danger);
+}
+
+.mesa-reservada {
+    border-left: 4px solid var(--neon-warning);
+}
+
+.mesa-con-pedido {
+    border: 2px solid var(--neon-warning);
+    background: rgba(255, 170, 0, 0.05);
+    /* very faint warning */
+}
+
+.pedido-activo-card {
+    border-left: 4px solid var(--neon-primary);
+    transition: var(--transition-fast);
+}
+
+.pedido-activo-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.total-pedido {
+    background: rgba(25, 135, 84, 0.1);
+    border-radius: var(--border-radius-md);
+    border: 1px solid rgba(25, 135, 84, 0.2);
+}
+
+.total-pedido h4 {
+    color: var(--neon-success);
+    margin: 0;
+}
+
+/* Productos lista en modal */
+.producto-item {
+    border: 1px solid var(--glass-border-light);
+    transition: var(--transition-fast);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--text-main);
+}
+
+.producto-item:hover {
+    background: var(--glass-bg-hover);
+}
+
+.producto-seleccionado {
+    border-color: var(--neon-primary) !important;
+    background: rgba(13, 110, 253, 0.08) !important;
+}
+
+.producto-agotado {
+    opacity: 0.5;
+}
+
+.producto-mini-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+}
