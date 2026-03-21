@@ -375,48 +375,48 @@ const PedidoView = () => {
                         </Badge>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="p-0 bg-light">
-                    <div className="py-3 bg-white border-bottom sticky-top shadow-sm">
-                        <Container fluid>
-                            <Row className="g-2">
-                                <Col md={6}>
-                                    <InputGroup>
-                                        <InputGroup.Text className="bg-white"><span className="material-symbols-outlined fs-5">search</span></InputGroup.Text>
-                                        <Form.Control
-                                            type="text"
-                                            placeholder="Buscar producto por nombre..."
-                                            value={busquedaProducto}
-                                            onChange={(e) => setBusquedaProducto(e.target.value)}
-                                            autoFocus
-                                        />
-                                    </InputGroup>
-                                </Col>
-                                <Col md={3} xs={6}>
-                                    <Form.Select
-                                        value={filtroCategoria}
-                                        onChange={(e) => setFiltroCategoria(e.target.value)}
-                                    >
-                                        <option value="">Todas las categorías</option>
-                                        {categorias.map((cat) => (
-                                            <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                                        ))}
-                                    </Form.Select>
-                                </Col>
-                                <Col md={3} xs={6}>
-                                    <Form.Select
-                                        value={filtroDisponible}
-                                        onChange={(e) => setFiltroDisponible(e.target.value)}
-                                    >
-                                        <option value="disponible">Solo disponibles</option>
-                                        <option value="todos">Todos</option>
-                                        <option value="agotado">Solo agotados</option>
-                                    </Form.Select>
-                                </Col>
-                            </Row>
-                        </Container>
+                <Modal.Body className="p-0 bg-light d-flex flex-column" style={{ overflow: 'hidden' }}>
+                    {/* FIxed Header Area */}
+                    <div className="p-3 bg-white border-bottom flex-shrink-0 shadow-sm">
+                        <Row className="g-2">
+                            <Col md={6}>
+                                <InputGroup>
+                                    <InputGroup.Text className="bg-white"><span className="material-symbols-outlined fs-5">search</span></InputGroup.Text>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Buscar producto por nombre..."
+                                        value={busquedaProducto}
+                                        onChange={(e) => setBusquedaProducto(e.target.value)}
+                                        autoFocus
+                                    />
+                                </InputGroup>
+                            </Col>
+                            <Col md={3} xs={6}>
+                                <Form.Select
+                                    value={filtroCategoria}
+                                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                                >
+                                    <option value="">Todas las categorías</option>
+                                    {categorias.map((cat) => (
+                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
+                                    ))}
+                                </Form.Select>
+                            </Col>
+                            <Col md={3} xs={6}>
+                                <Form.Select
+                                    value={filtroDisponible}
+                                    onChange={(e) => setFiltroDisponible(e.target.value)}
+                                >
+                                    <option value="disponible">Solo disponibles</option>
+                                    <option value="todos">Todos</option>
+                                    <option value="agotado">Solo agotados</option>
+                                </Form.Select>
+                            </Col>
+                        </Row>
                     </div>
 
-                    <div className="productos-lista checklist-container p-3 p-md-4" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+                    {/* Scrollable Content Area */}
+                    <div className="productos-lista checklist-container p-3 p-md-4 overflow-auto flex-grow-1" style={{ maxHeight: '60vh' }}>
                         {productosFiltrados.length === 0 ? (
                             <div className="text-center py-5">
                                 <span className="material-symbols-outlined text-muted" style={{ fontSize: '3rem', opacity: 0.5 }}>search_off</span>
@@ -453,13 +453,13 @@ const PedidoView = () => {
                                                         </div>
                                                     )}
                                                     
-                                                    <div className="flex-grow-1">
-                                                        <h6 className="mb-0 fw-bold">{p.nombre}</h6>
-                                                        <small className="text-muted">{p.categoria?.nombre}</small>
+                                                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                        <h6 className="mb-0 fw-bold text-truncate">{p.nombre}</h6>
+                                                        <small className="text-muted text-truncate d-block">{p.categoria?.nombre}</small>
                                                         {isAgotado && <Badge bg="secondary" className="ms-2">Agotado</Badge>}
                                                     </div>
                                                     
-                                                    <div className="fs-5 fw-bold text-success text-end ms-2">
+                                                    <div className="fs-5 fw-bold text-success text-end ms-2 text-nowrap flex-shrink-0">
                                                         Bs. {parseFloat(p.precio).toFixed(2)}
                                                     </div>
                                                 </div>
