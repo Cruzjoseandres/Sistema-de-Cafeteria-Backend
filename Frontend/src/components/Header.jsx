@@ -15,7 +15,7 @@ const Header = () => {
     return (
         <Navbar bg="white" variant="light" expand="lg" className="sticky-top">
             <Container>
-                <Link className="navbar-brand" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin/usuarios' : '/mesero/mesas') : '/login'}>
+                <Link className="navbar-brand" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'}>
                     <span className="material-symbols-outlined brand-icon">coffee_maker</span>
                     Cafetería
                 </Link>
