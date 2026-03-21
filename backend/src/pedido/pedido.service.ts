@@ -102,7 +102,7 @@ export class PedidoService {
     });
     
     let totalPedido = 0;
-    const itemsTableBody = [
+    const itemsTableBody: any[] = [
       [{ text: 'Cant.', style: 'tableHeader' }, { text: 'Producto', style: 'tableHeader' }, { text: 'Subtotal', style: 'tableHeader' }]
     ];
 
@@ -111,14 +111,32 @@ export class PedidoService {
         where: { cuenta: { id: cuenta.id }, D_E_L_E_T_E_D: false },
         relations: ['producto']
       });
+      
+      if (detalles.length > 0) {
+        itemsTableBody.push([
+          { text: `Cuenta: ${cuenta.nombre_cliente}`, colSpan: 3, style: 'cuentaHeader' }, 
+          {}, 
+          {}
+        ]);
+      }
 
+      let subtotalCuenta = 0;
       for (const det of detalles) {
         itemsTableBody.push([
           { text: det.cantidad.toString(), style: 'tableCell' },
           { text: det.producto?.nombre || 'Producto', style: 'tableCell' },
           { text: `Bs. ${Number(det.subtotal).toFixed(2)}`, style: 'tableCell' }
         ]);
+        subtotalCuenta += Number(det.subtotal);
         totalPedido += Number(det.subtotal);
+      }
+      
+      if (detalles.length > 0) {
+        itemsTableBody.push([
+          { text: `Subtotal ${cuenta.nombre_cliente}`, colSpan: 2, style: 'cuentaSubtotal' },
+          {},
+          { text: `Bs. ${subtotalCuenta.toFixed(2)}`, style: 'cuentaSubtotalValue' }
+        ]);
       }
     }
 
@@ -156,6 +174,9 @@ export class PedidoService {
         subheader: { fontSize: 14, bold: true, alignment: 'center', margin: [0, 0, 0, 10] },
         tableHeader: { bold: true, fontSize: 13, color: 'black' },
         tableCell: { margin: [0, 5, 0, 5] },
+        cuentaHeader: { bold: true, fontSize: 12, margin: [0, 8, 0, 4], color: '#333333', fillColor: '#f2f2f2' },
+        cuentaSubtotal: { bold: true, fontSize: 11, alignment: 'right', margin: [0, 5, 5, 5], color: '#555555' },
+        cuentaSubtotalValue: { bold: true, fontSize: 11, margin: [0, 5, 0, 5], color: '#555555' },
         totalInfo: { fontSize: 16, bold: true, alignment: 'right', margin: [0, 15, 0, 0] }
       }
     };

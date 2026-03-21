@@ -17,7 +17,7 @@ export const useMeseroMesas = () => {
     const [mesaSeleccionada, setMesaSeleccionada] = useState('');
     const [filtroMisPedidos, setFiltroMisPedidos] = useState(() => {
         const saved = localStorage.getItem('filtroMisPedidos');
-        return saved ? JSON.parse(saved) : false;
+        return saved !== null ? JSON.parse(saved) : true;
     });
 
     const { showSuccess, showError } = useNotification();

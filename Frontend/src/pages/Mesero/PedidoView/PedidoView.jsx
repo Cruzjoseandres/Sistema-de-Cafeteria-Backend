@@ -85,12 +85,12 @@ const PedidoView = () => {
                     </div>
                 </div>
                 
-                {isEdit && (
+                {(isEdit || isReadOnly) && (
                     <div className="d-flex gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons flex-wrap justify-content-end">
                         <Button variant="info" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-4 py-2" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
                             <span className="material-symbols-outlined mb-1">share</span> Compartir
                         </Button>
-                        {!isPedidoCompletado && (
+                        {isEdit && !isPedidoCompletado && (
                             <>
                                 {hasUnsavedChanges ? (
                                     <>
@@ -110,7 +110,6 @@ const PedidoView = () => {
                                         <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-4 py-2" onClick={handleCancelarPedido} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
                                             <span className="material-symbols-outlined mb-1">delete_forever</span> Eliminar Pedido
                                         </Button>
-                                        {/* General payment button removed: Payments are now per-cuenta. */}
                                     </>
                                 )}
                             </>
@@ -136,13 +135,21 @@ const PedidoView = () => {
             {/* CUENTAS Y DETALLES */}
             <Card className="glass-card shadow-lg mb-4">
                 <Card.Body>
-                    <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
                         <h4 className="mb-0">Cuentas del Pedido</h4>
-                        {isEdit && !isPedidoCompletado && (
-                            <Button variant="primary" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1">
-                                <span className="material-symbols-outlined animate-spin-hover">person_add</span> Nueva Cuenta
-                            </Button>
-                        )}
+                        <div className="d-flex gap-2 flex-wrap">
+                            {isEdit && !isPedidoCompletado && cuentas.filter(c => !c.estado || c.estado.id !== 3).length > 1 && (
+                                <Button variant="success" className="d-flex align-items-center gap-1 fw-bold shadow-sm text-white" onClick={() => handleOpenPaymentModal('ALL')}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
+                                    Cobrar Todo (Bs. {cuentas.filter(c => !c.estado || c.estado.id !== 3).reduce((sum, c) => sum + Number(c.total||0), 0).toFixed(2)})
+                                </Button>
+                            )}
+                            {isEdit && !isPedidoCompletado && (
+                                <Button variant="primary" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1">
+                                    <span className="material-symbols-outlined animate-spin-hover">person_add</span> Nueva Cuenta
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
                     {cuentas.length === 0 ? (
@@ -520,7 +527,7 @@ const PedidoView = () => {
                 <Modal.Header closeButton className="bg-success text-white border-bottom-0 pb-4">
                     <Modal.Title className="d-flex align-items-center gap-2 m-0 fs-4 fw-bold">
                         <span className="material-symbols-outlined">point_of_sale</span>
-                        Procesar Pago
+                        {paymentData?.cuentaId === 'ALL' ? 'Procesar Pago Completo' : 'Procesar Pago'}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="px-4 py-4 pt-1 position-relative">
@@ -550,6 +557,13 @@ const PedidoView = () => {
                                 >
                                     <span className={`material-symbols-outlined fs-2 mb-2 ${paymentData.tipo_pago === 'QR' ? 'text-success' : 'text-muted'}`}>qr_code_2</span>
                                     <p className={`m-0 fw-bold ${paymentData.tipo_pago === 'QR' ? 'text-success' : 'text-muted'}`}>Pago QR</p>
+                                </div>
+                                <div 
+                                    className={`payment-method-card flex-grow-1 p-3 border rounded text-center cursor-pointer transition-all ${paymentData.tipo_pago === 'Mixto' ? 'border-success bg-success bg-opacity-10' : 'bg-light'}`}
+                                    onClick={() => handlePaymentDataChange('tipo_pago', 'Mixto')}
+                                >
+                                    <span className={`material-symbols-outlined fs-2 mb-2 ${paymentData.tipo_pago === 'Mixto' ? 'text-success' : 'text-muted'}`}>compare_arrows</span>
+                                    <p className={`m-0 fw-bold ${paymentData.tipo_pago === 'Mixto' ? 'text-success' : 'text-muted'}`}>Mixto</p>
                                 </div>
                             </div>
                         </Form.Group>
@@ -604,14 +618,55 @@ const PedidoView = () => {
                                             multiple 
                                             accept="image/*"
                                             onChange={(e) => {
-                                                // TODO: Implementation for real image upload. 
-                                                // For now, we simulate saving dummy filenames or we can leave empty.
                                                 const files = Array.from(e.target.files).map(f => f.name);
                                                 handlePaymentDataChange('comprobantes', files);
                                             }}
                                         />
                                     </div>
                                     <small className="text-muted mt-1 d-block">Sube capturas de pantalla de la transferencia.</small>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* CONTROLES PARA MIXTO */}
+                        {paymentData.tipo_pago === 'Mixto' && (
+                            <div className="payment-details fade-in">
+                                <div className="alert alert-info py-2 px-3 mb-3 d-flex align-items-center gap-2">
+                                    <span className="material-symbols-outlined">info</span>
+                                    <small>El cliente pagará <strong>parte en efectivo</strong> y <strong>parte por QR</strong>. Ingresa cada monto por separado.</small>
+                                </div>
+                                <Form.Group className="mb-3">
+                                    <Form.Label className="fw-bold text-secondary">Monto Transferido por QR</Form.Label>
+                                    <InputGroup size="lg">
+                                        <InputGroup.Text className="bg-light fw-bold text-muted">Bs.</InputGroup.Text>
+                                        <Form.Control 
+                                            type="number" 
+                                            placeholder="0.00"
+                                            className="fw-bold"
+                                            value={paymentData.monto_qr_transferido}
+                                            onChange={(e) => handlePaymentDataChange('monto_qr_transferido', e.target.value)}
+                                            autoFocus
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Label className="fw-bold text-secondary">Monto Recibido en Efectivo</Form.Label>
+                                    <InputGroup size="lg">
+                                        <InputGroup.Text className="bg-light fw-bold text-muted">Bs.</InputGroup.Text>
+                                        <Form.Control 
+                                            type="number" 
+                                            placeholder="0.00"
+                                            className="fw-bold"
+                                            value={paymentData.monto_efectivo_recibido}
+                                            onChange={(e) => handlePaymentDataChange('monto_efectivo_recibido', e.target.value)}
+                                        />
+                                    </InputGroup>
+                                </Form.Group>
+                                <div className="d-flex justify-content-between align-items-center p-3 rounded bg-light border">
+                                    <span className="fw-bold text-muted">Cambio a devolver:</span>
+                                    <span className={`fs-4 fw-bold ${paymentData.monto_cambio > 0 ? 'text-primary' : 'text-muted'}`}>
+                                        Bs. {Number(paymentData.monto_cambio || 0).toFixed(2)}
+                                    </span>
                                 </div>
                             </div>
                         )}

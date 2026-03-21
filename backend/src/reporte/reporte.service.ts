@@ -163,11 +163,13 @@ export class ReporteService {
 
         const total_sales_today = parseFloat(ventasHoy?.total_ventas) || 0;
 
-        // 1b. Sales Breakdown by Payment Type (Efectivo vs QR)
+        // 1b. Sales Breakdown by Payment Type (Efectivo vs QR) — also includes Mixto via monto_efectivo/monto_qr
         const ventasBreakdown = await this.cuentaRepository
             .createQueryBuilder('cuenta')
             .select('cuenta.tipo_pago', 'tipo_pago')
             .addSelect('SUM(cuenta.total)', 'total')
+            .addSelect('COALESCE(SUM(cuenta.monto_efectivo), 0)', 'sum_efectivo')
+            .addSelect('COALESCE(SUM(cuenta.monto_qr), 0)', 'sum_qr')
             .where('cuenta.D_E_L_E_T_E_D = false')
             .andWhere('cuenta.id_estado = 3')
             .andWhere('cuenta.updated_at >= :startOfDay AND cuenta.updated_at <= :endOfDay', { startOfDay: startOfDayUTC, endOfDay: endOfDayUTC })
@@ -179,7 +181,12 @@ export class ReporteService {
 
         ventasBreakdown.forEach(item => {
             if (item.tipo_pago === 'Efectivo') ventas_efectivo += parseFloat(item.total);
-            if (item.tipo_pago === 'QR') ventas_qr += parseFloat(item.total);
+            else if (item.tipo_pago === 'QR') ventas_qr += parseFloat(item.total);
+            else if (item.tipo_pago === 'Mixto') {
+                // For mixed payments, use the exact breakdown columns
+                ventas_efectivo += parseFloat(item.sum_efectivo) || 0;
+                ventas_qr += parseFloat(item.sum_qr) || 0;
+            }
         });
 
         // 2. Orders Processed Today

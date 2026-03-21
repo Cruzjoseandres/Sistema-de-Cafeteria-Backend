@@ -25,6 +25,12 @@ export class Cuenta {
     @Column({ type: 'json', nullable: true })
     comprobantes: string[]; // Rutas a las imágenes de los pagos QR
 
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    monto_efectivo: number; // Fracción pagada en efectivo (para pagos mixtos)
+
+    @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+    monto_qr: number; // Fracción pagada por QR (para pagos mixtos)
+
     @ManyToOne(() => Pedido)
     @JoinColumn({ name: 'id_pedido' })
     pedido: Pedido;
