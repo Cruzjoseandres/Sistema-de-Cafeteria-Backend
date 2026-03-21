@@ -156,7 +156,7 @@ const MenuPublico = () => {
                                     <p className="menu-producto-desc">{producto.descripcion}</p>
                                 )}
                                 <div className="menu-producto-precio">
-                                    ${parseFloat(producto.precio).toFixed(2)}
+                                    Bs. {parseFloat(producto.precio).toFixed(2)}
                                 </div>
                             </Card.Body>
                         </Card>
@@ -214,7 +214,7 @@ const MenuPublico = () => {
                                         <h3 className="mb-1">{selectedProduct.nombre}</h3>
                                     </div>
                                     <div className="menu-detail-precio">
-                                        ${parseFloat(selectedProduct.precio).toFixed(2)}
+                                        Bs. {parseFloat(selectedProduct.precio).toFixed(2)}
                                     </div>
                                 </div>
 

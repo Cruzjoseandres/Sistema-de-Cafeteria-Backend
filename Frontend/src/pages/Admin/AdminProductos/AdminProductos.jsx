@@ -84,7 +84,7 @@ const AdminProductos = () => {
                                 <Row>
                                     <Col md={6}>
                                         <Form.Group className="admin-form-group">
-                                            <Form.Label className="admin-form-label">Precio ($)</Form.Label>
+                                            <Form.Label className="admin-form-label">Precio (Bs.)</Form.Label>
                                             <Form.Control
                                                 type="number"
                                                 step="0.01"
@@ -260,7 +260,7 @@ const AdminProductos = () => {
                                     )}
                                 </td>
                                 <td style={{ verticalAlign: 'middle', fontWeight: 600, color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
-                                <td style={{ verticalAlign: 'middle' }}>${parseFloat(producto.precio).toFixed(2)}</td>
+                                <td style={{ verticalAlign: 'middle' }}>Bs. {parseFloat(producto.precio).toFixed(2)}</td>
                                 <td style={{ verticalAlign: 'middle' }}>{producto.categoria?.nombre || '-'}</td>
                                 <td style={{ verticalAlign: 'middle' }}>
                                     {producto.disponible ? (

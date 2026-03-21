@@ -77,7 +77,7 @@ const MeseroProductos = () => {
                                     <p className="producto-desc">{producto.descripcion}</p>
                                 )}
                                 <div className="producto-precio">
-                                    ${parseFloat(producto.precio).toFixed(2)}
+                                    Bs. {parseFloat(producto.precio).toFixed(2)}
                                 </div>
                             </Card.Body>
                         </Card>

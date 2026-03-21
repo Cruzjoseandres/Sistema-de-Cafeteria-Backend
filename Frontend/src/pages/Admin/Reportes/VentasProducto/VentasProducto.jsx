@@ -39,7 +39,7 @@ const VentasProducto = () => {
                                         <td>
                                             <Badge bg="info">{item.cantidad_vendida} ud.</Badge>
                                         </td>
-                                        <td className="text-end font-weight-bold text-success">${item.ingreso_generado.toFixed(2)}</td>
+                                        <td className="text-end font-weight-bold text-success">Bs. {item.ingreso_generado.toFixed(2)}</td>
                                     </tr>
                                 ))
                             ) : (

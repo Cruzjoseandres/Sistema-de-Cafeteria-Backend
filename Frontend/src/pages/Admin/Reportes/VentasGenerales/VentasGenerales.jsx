@@ -26,7 +26,7 @@ const VentasGenerales = () => {
                     <Card className="admin-card text-center py-4">
                         <Card.Body>
                             <h5 className="text-muted">Total Acumulado</h5>
-                            <h2 className="text-success">${totalIngresos.toFixed(2)}</h2>
+                            <h2 className="text-success">Bs. {totalIngresos.toFixed(2)}</h2>
                         </Card.Body>
                     </Card>
                 </Col>
@@ -46,7 +46,7 @@ const VentasGenerales = () => {
                                 data.map((item, index) => (
                                     <tr key={index}>
                                         <td>{item.fecha}</td>
-                                        <td className="text-end font-weight-bold">${item.total_ventas.toFixed(2)}</td>
+                                        <td className="text-end font-weight-bold">Bs. {item.total_ventas.toFixed(2)}</td>
                                     </tr>
                                 ))
                             ) : (
