@@ -57,6 +57,32 @@ export class CloudinaryService {
   }
 
   /**
+   * Obtiene la última imagen subida a una carpeta específica.
+   */
+  async getLatestQRUrl(): Promise<string | null> {
+    try {
+      const result = await cloudinary.search
+        .expression(`folder:cafeteria_qr`)
+        .sort_by('created_at', 'desc')
+        .max_results(1)
+        .execute();
+
+      if (result && result.resources && result.resources.length > 0) {
+        // Devolver la URL segura optimizada igual que al subir
+        return cloudinary.url(result.resources[0].public_id, {
+            fetch_format: 'auto',
+            quality: 'auto',
+            secure: true,
+        });
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching latest QR from Cloudinary:', error);
+      return null;
+    }
+  }
+
+  /**
    * Extrae el public_id de una URL de Cloudinary.
    * Ejemplo: https://res.cloudinary.com/demo/image/upload/v123/cafeteria_menu/abc123.jpg
    * Retorna: cafeteria_menu/abc123

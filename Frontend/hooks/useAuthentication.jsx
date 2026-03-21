@@ -60,7 +60,7 @@ const useAuthentication = () => {
       // Redirigir según el rol
       switch (userObj.rol) {
         case 'ADMINISTRADOR':
-          navigate("/admin/usuarios");
+          navigate("/admin");
           break;
         case 'MESERO':
           navigate("/mesero/mesas");

@@ -47,9 +47,13 @@ const getRendimientoPersonal = async (startDate, endDate) => {
     }
 }
 
-const getDashboardKpis = async () => {
+const getDashboardKpis = async (startDate, endDate) => {
     try {
-        const response = await apiClient.get(`/reporte/dashboard-kpis`);
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        
+        const response = await apiClient.get(`/reporte/dashboard-kpis`, { params });
         return response.data;
     } catch (error) {
         console.error(error);
@@ -86,5 +90,15 @@ const getPedidosMeseroRendimiento = async (usuarioId, startDate = null, endDate 
     }
 };
 
-export { getVentasGenerales, getVentasProducto, getRendimientoPersonal, getDashboardKpis, getPedidosEliminados, getPedidosMeseroRendimiento };
-export default { getVentasGenerales, getVentasProducto, getRendimientoPersonal, getDashboardKpis, getPedidosEliminados, getPedidosMeseroRendimiento };
+const getActividadReciente = async () => {
+    try {
+        const response = await apiClient.get(`/reporte/actividad-reciente`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export { getVentasGenerales, getVentasProducto, getRendimientoPersonal, getDashboardKpis, getPedidosEliminados, getPedidosMeseroRendimiento, getActividadReciente };
+export default { getVentasGenerales, getVentasProducto, getRendimientoPersonal, getDashboardKpis, getPedidosEliminados, getPedidosMeseroRendimiento, getActividadReciente };

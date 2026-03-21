@@ -49,8 +49,8 @@ export class CuentaController {
 
   @Public()
   @Get('qr')
-  getQR(@Res() res: Response) {
-    this.cuentaService.sendQRResponse(res);
+  async getQR(@Res() res: Response) {
+    await this.cuentaService.sendQRResponse(res);
   }
 
   // ----------------------------------------------

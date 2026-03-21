@@ -118,7 +118,14 @@ export class CuentaService {
     return { message: 'QR actualizado con éxito', url };
   }
 
-  sendQRResponse(res: Response): void {
+  async sendQRResponse(res: Response): Promise<void> {
+    if (!currentQrUrl) {
+      currentQrUrl = await this.cloudinaryService.getLatestQRUrl();
+      if (currentQrUrl) {
+        currentQrPublicId = this.cloudinaryService.extractPublicId(currentQrUrl);
+      }
+    }
+
     if (currentQrUrl) {
       // Redirigir al cliente a la URL de Cloudinary
       res.redirect(currentQrUrl);

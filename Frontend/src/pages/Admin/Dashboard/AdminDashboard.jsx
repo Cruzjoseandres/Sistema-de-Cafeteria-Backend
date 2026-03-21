@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Spinner, Table } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Container, Row, Col, Spinner, Table, Form } from 'react-bootstrap';
+import { useNavigate, Link } from 'react-router-dom';
 import ReporteService from '../../../../services/ReporteService';
 import { getQRUrl, uploadQR } from '../../../../services/CuentaService';
 import { useNotification } from '../../../../hooks/useNotification';
@@ -14,20 +14,24 @@ const AdminDashboard = () => {
     const [qrUrl, setQrUrl] = useState(getQRUrl());
     const [uploadingQr, setUploadingQr] = useState(false);
 
-    useEffect(() => {
-        const fetchKpis = async () => {
-            try {
-                const data = await ReporteService.getDashboardKpis();
-                setKpis(data);
-            } catch (error) {
-                console.error("Error fetching dashboard KPIs:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
+    const fetchKpis = async () => {
+        setLoading(true);
+        try {
+            const data = await ReporteService.getDashboardKpis(startDate, endDate);
+            setKpis(data);
+        } catch (error) {
+            console.error("Error fetching dashboard KPIs:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchKpis();
-    }, []);
+    }, [startDate, endDate]);
 
     const handleQrUpload = async (e) => {
         const file = e.target.files[0];
@@ -87,13 +91,33 @@ const AdminDashboard = () => {
                         <h2 className="dashboard-title m-0">¡Buenos días, Admin!</h2>
                         <p className="dashboard-subtitle m-0 mt-2">Aquí está lo que sucede en tu cafetería hoy.</p>
                     </Col>
-                    <Col xs={12} md={4} className="d-flex justify-content-md-end gap-2">
-                        <button className="btn-secondary-custom d-flex align-items-center gap-2">
-                            <span className="material-symbols-outlined fs-5">calendar_today</span> Hoy
-                        </button>
-                        <button className="btn-primary-custom d-flex align-items-center gap-2">
-                            <span className="material-symbols-outlined fs-5">download</span> Exportar
-                        </button>
+                    <Col xs={12} md={5} className="d-flex justify-content-md-end gap-2 align-items-center">
+                        <Form.Control 
+                            type="date" 
+                            name="startDate" 
+                            value={startDate} 
+                            onChange={(e) => setStartDate(e.target.value)} 
+                            className="bg-light border-0 shadow-sm"
+                            style={{ maxWidth: '160px' }}
+                        />
+                        <span className="text-muted fw-bold">-</span>
+                        <Form.Control 
+                            type="date" 
+                            name="endDate" 
+                            value={endDate} 
+                            onChange={(e) => setEndDate(e.target.value)} 
+                            className="bg-light border-0 shadow-sm"
+                            style={{ maxWidth: '160px' }}
+                        />
+                        {(startDate || endDate) && (
+                            <button 
+                                className="btn btn-light shadow-sm text-danger d-flex align-items-center p-2" 
+                                onClick={() => { setStartDate(''); setEndDate(''); }}
+                                title="Limpiar fechas"
+                            >
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        )}
                     </Col>
                 </Row>
 
@@ -233,7 +257,7 @@ const AdminDashboard = () => {
                         <div className="content-card h-100">
                             <div className="d-flex justify-content-between align-items-center mb-4">
                                 <h3 className="section-title m-0">Actividad Reciente</h3>
-                                <a href="#view-all" className="link-primary fw-bold text-decoration-none">Ver Todo</a>
+                                <Link to="/admin/actividad-reciente" className="link-primary fw-bold text-decoration-none">Ver Todo</Link>
                             </div>
                             <div className="table-responsive">
                                 <Table hover className="custom-table mb-0 align-middle">

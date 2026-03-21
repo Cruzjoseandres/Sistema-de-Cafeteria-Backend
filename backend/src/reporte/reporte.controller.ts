@@ -32,14 +32,23 @@ export class ReporteController {
 
     @Get('dashboard-kpis')
     @Roles('ADMINISTRADOR')
-    async getDashboardKpis() {
-        return await this.reporteService.getDashboardKpis();
+    async getDashboardKpis(
+        @Query('startDate') startDate?: string,
+        @Query('endDate') endDate?: string,
+    ) {
+        return await this.reporteService.getDashboardKpis(startDate, endDate);
     }
 
     @Get('pedidos-eliminados')
     @Roles('ADMINISTRADOR')
     async getPedidosEliminados() {
         return await this.reporteService.getPedidosEliminados();
+    }
+
+    @Get('actividad-reciente')
+    @Roles('ADMINISTRADOR')
+    async getActividadReciente() {
+        return await this.reporteService.getActividadReciente();
     }
 
     @Get('rendimiento-personal/:usuarioId/pedidos')

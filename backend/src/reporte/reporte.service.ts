@@ -129,24 +129,27 @@ export class ReporteService {
         });
     }
 
-    async getDashboardKpis() {
-        // Obtenemos la fecha local (UTC-4 para Bolivia)
-        const localNow = new Date(new Date().getTime() - (4 * 60 * 60 * 1000));
-        
-        // Creamos límites de inicio y fin del día actual con respecto al servidor (asumiendo que guarda en UTC o similar)
-        // La mejor manera de no depender de TO_CHAR que puede fallar con zonas horarias de la base de datos es pasar rangos.
-        // Pero intentaremos primero simplemente construyendo las fechas de inicio y fin del día actual en "localNow" ajustado
-        
-        const todayStr = localNow.toISOString().split('T')[0];
-        
-        // Vamos a construir un start of day y end of day en UTC que correspondan al start y end of day in UTC-4
-        // Example: Si en Bolivia es 00:00:00, en UTC son las 04:00:00.
-        // Construimos la cadena local y la parseamos como UTC y luego le restamos el offset.
-        const startOfDayUTC = new Date(`${todayStr}T00:00:00.000Z`);
-        startOfDayUTC.setUTCHours(startOfDayUTC.getUTCHours() + 4); // Offset inverso para que en BD funcione (04:00Z)
-        
-        const endOfDayUTC = new Date(`${todayStr}T23:59:59.999Z`);
-        endOfDayUTC.setUTCHours(endOfDayUTC.getUTCHours() + 4); 
+    async getDashboardKpis(startDate?: string, endDate?: string) {
+        let startOfDayUTC: Date;
+        let endOfDayUTC: Date;
+
+        if (startDate && endDate) {
+            startOfDayUTC = new Date(`${startDate}T00:00:00.000Z`);
+            startOfDayUTC.setUTCHours(startOfDayUTC.getUTCHours() + 4);
+            endOfDayUTC = new Date(`${endDate}T23:59:59.999Z`);
+            endOfDayUTC.setUTCHours(endOfDayUTC.getUTCHours() + 4);
+        } else {
+            // Obtenemos la fecha local (UTC-4 para Bolivia)
+            const localNow = new Date(new Date().getTime() - (4 * 60 * 60 * 1000));
+            const todayStr = localNow.toISOString().split('T')[0];
+            
+            // Vamos a construir un start of day y end of day en UTC que correspondan al start y end of day in UTC-4
+            startOfDayUTC = new Date(`${todayStr}T00:00:00.000Z`);
+            startOfDayUTC.setUTCHours(startOfDayUTC.getUTCHours() + 4); // Offset inverso para que en BD funcione (04:00Z)
+            
+            endOfDayUTC = new Date(`${todayStr}T23:59:59.999Z`);
+            endOfDayUTC.setUTCHours(endOfDayUTC.getUTCHours() + 4);
+        }
 
         // 1. Total Sales Today (Only Completed/Paid Cuentas)
         const ventasHoy = await this.cuentaRepository
@@ -332,5 +335,111 @@ export class ReporteService {
             responsable: pedido.usuario?.persona ? `${pedido.usuario.persona.nombre} ${pedido.usuario.persona.apellido}` : 'Usuario Desconocido',
             justificativo: pedido.justificativo_eliminacion || 'Sin justificativo registrado'
         }));
+    }
+
+    async getActividadReciente() {
+        // Fetch a larger set of recent activity specifically for the new view
+
+        // Closed Cuentas
+        const recentAccountsWithDetails = await this.cuentaRepository
+            .createQueryBuilder('cuenta')
+            .where('cuenta.D_E_L_E_T_E_D = false')
+            .orderBy('cuenta.created_at', 'DESC')
+            .take(20)
+            .getMany();
+
+        const mappedRecentOrders: any[] = [];
+        for (const cuenta of recentAccountsWithDetails) {
+            const detalles = await this.detallePedidoRepository
+                .createQueryBuilder('dp')
+                .leftJoinAndSelect('dp.producto', 'producto')
+                .where('dp.cuenta = :cuentaId', { cuentaId: cuenta.id })
+                .getMany();
+
+            const items = detalles.length > 0
+                ? detalles.map(d => `${d.cantidad}x ${d.producto?.nombre || 'Producto'}`).join(', ')
+                : 'Sin items detallados';
+
+            mappedRecentOrders.push({
+                id: `#C${cuenta.id.toString().padStart(4, '0')}`,
+                items: items,
+                amount: cuenta.total,
+                status: 'Completado',
+                date: cuenta.created_at
+            });
+        }
+
+        // Pending Orders
+        const pendingOrders = await this.pedidoRepository
+            .createQueryBuilder('pedido')
+            .leftJoinAndSelect('pedido.estado', 'estado')
+            .where('pedido.D_E_L_E_T_E_D = false')
+            .andWhere('estado.nombre IN (:...estados)', { estados: ['PENDIENTE', 'EN_PREPARACION', 'LISTO'] })
+            .orderBy('pedido.created_at', 'DESC')
+            .take(20)
+            .getMany();
+
+        const mappedPendingOrders: any[] = [];
+        for (const pedido of pendingOrders) {
+            const cuentaPendiente = await this.cuentaRepository.findOneBy({ pedido: { id: pedido.id } });
+            let itemsText = 'Sin items';
+            let amountVal = 0;
+            if (cuentaPendiente) {
+                const detalles = await this.detallePedidoRepository
+                    .createQueryBuilder('dp')
+                    .leftJoinAndSelect('dp.producto', 'producto')
+                    .where('dp.cuenta = :cuentaId', { cuentaId: cuentaPendiente.id })
+                    .getMany();
+                itemsText = detalles.map(d => `${d.cantidad}x ${d.producto?.nombre}`).join(', ') || 'Sin items';
+                amountVal = cuentaPendiente.total;
+            }
+
+            mappedPendingOrders.push({
+                id: `#P${pedido.id.toString().padStart(4, '0')}`,
+                items: itemsText,
+                amount: amountVal,
+                status: pedido.estado?.nombre || 'Abierto',
+                date: pedido.created_at
+            });
+        }
+
+        // Deleted Orders
+        const deletedOrders = await this.pedidoRepository
+            .createQueryBuilder('pedido')
+            .leftJoinAndSelect('pedido.estado', 'estado')
+            .where('pedido.D_E_L_E_T_E_D = true')
+            .orderBy('pedido.updated_at', 'DESC')
+            .take(15)
+            .getMany();
+
+        const mappedDeletedOrders: any[] = [];
+        for (const pedido of deletedOrders) {
+            const cuenta = await this.cuentaRepository.findOneBy({ pedido: { id: pedido.id } });
+            let itemsText = 'Sin items';
+            let amountVal = 0;
+            if (cuenta) {
+                const detalles = await this.detallePedidoRepository
+                    .createQueryBuilder('dp')
+                    .leftJoinAndSelect('dp.producto', 'producto')
+                    .where('dp.cuenta = :cuentaId', { cuentaId: cuenta.id })
+                    .getMany();
+                itemsText = detalles.map(d => `${d.cantidad}x ${d.producto?.nombre}`).join(', ') || 'Sin items';
+                amountVal = cuenta.total;
+            }
+
+            mappedDeletedOrders.push({
+                id: `#P${pedido.id.toString().padStart(4, '0')}`,
+                items: `[ELIMINADO] ${itemsText}`,
+                amount: amountVal,
+                status: 'ELIMINADO',
+                justificativo: pedido.justificativo_eliminacion,
+                date: pedido.updated_at
+            });
+        }
+
+        const combined = [...mappedDeletedOrders, ...mappedPendingOrders, ...mappedRecentOrders];
+        combined.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        return combined.slice(0, 50);
     }
 }
