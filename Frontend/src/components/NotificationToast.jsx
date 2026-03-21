@@ -9,20 +9,27 @@ const NotificationToast = ({ show, message, variant, onClose }) => {
     };
 
     return (
-        <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+        <ToastContainer position="top-end" className="p-3 position-fixed" style={{ zIndex: 999999, top: '10px', right: '10px' }}>
             <Toast
                 show={show}
                 onClose={onClose}
-                delay={3500}
+                delay={4000}
                 autohide
-                bg={variant}
+                className="shadow-lg border-0"
             >
                 <Toast.Header closeButton>
-                    <strong className="me-auto">
+                    <strong className="me-auto text-dark" style={{ fontSize: '1.1rem' }}>
                         {icons[variant] || '📢'} {variant === 'success' ? 'Éxito' : variant === 'danger' ? 'Error' : 'Aviso'}
                     </strong>
                 </Toast.Header>
-                <Toast.Body className={variant === 'success' || variant === 'danger' ? 'text-white' : ''}>
+                <Toast.Body 
+                    className="fw-bold" 
+                    style={{ 
+                        fontSize: '1.1rem',
+                        color: variant === 'success' || variant === 'danger' ? '#ffffff' : '#000000',
+                        backgroundColor: variant === 'success' ? '#198754' : variant === 'danger' ? '#dc3545' : '#f8f9fa'
+                    }}
+                >
                     {message}
                 </Toast.Body>
             </Toast>
