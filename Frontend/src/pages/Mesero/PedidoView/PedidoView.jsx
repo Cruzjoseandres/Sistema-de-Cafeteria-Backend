@@ -366,20 +366,20 @@ const PedidoView = () => {
 
             {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST) ========== */}
             <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" centered>
-                <Modal.Header closeButton className="border-bottom-0 pb-2">
-                    <Modal.Title className="d-flex align-items-center gap-2 w-100">
-                        <span className="material-symbols-outlined text-warning">fastfood</span>
-                        <span>Seleccionar Productos</span>
-                        <Badge bg="primary" className="ms-auto" style={{ fontSize: '1rem' }}>
-                            {Object.keys(productosSeleccionados).length} seleccionados
+                <Modal.Header closeButton className="border-bottom-0 pb-2 px-3 px-md-4">
+                    <Modal.Title className="d-flex align-items-center gap-1 gap-md-2 w-100 fs-5 fs-md-4 pe-2">
+                        <span className="material-symbols-outlined text-warning fs-4 fs-md-3">fastfood</span>
+                        <span className="fw-bold fs-5 fs-md-4">Menú</span>
+                        <Badge bg="primary" className="ms-auto fs-6" style={{ letterSpacing: '0.5px' }}>
+                            {Object.keys(productosSeleccionados).length} sel.
                         </Badge>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-0 bg-light d-flex flex-column" style={{ overflow: 'hidden' }}>
                     {/* FIxed Header Area */}
-                    <div className="p-3 bg-white border-bottom flex-shrink-0 shadow-sm">
+                    <div className="p-2 p-md-3 bg-white border-bottom flex-shrink-0 shadow-sm">
                         <Row className="g-2">
-                            <Col md={6}>
+                            <Col xs={12} md={6}>
                                 <InputGroup>
                                     <InputGroup.Text className="bg-white"><span className="material-symbols-outlined fs-5">search</span></InputGroup.Text>
                                     <Form.Control
@@ -416,26 +416,26 @@ const PedidoView = () => {
                     </div>
 
                     {/* Scrollable Content Area */}
-                    <div className="productos-lista checklist-container p-3 p-md-4 overflow-auto flex-grow-1" style={{ maxHeight: '60vh' }}>
+                    <div className="productos-lista checklist-container p-2 p-md-4 overflow-auto flex-grow-1" style={{ maxHeight: '65vh' }}>
                         {productosFiltrados.length === 0 ? (
                             <div className="text-center py-5">
                                 <span className="material-symbols-outlined text-muted" style={{ fontSize: '3rem', opacity: 0.5 }}>search_off</span>
                                 <h5 className="text-muted mt-3">No se encontraron productos</h5>
                             </div>
                         ) : (
-                            <Row className="g-3">
+                            <Row className="g-2 g-md-3">
                                 {productosFiltrados.map((p) => {
                                     const seleccionado = productosSeleccionados[p.id];
                                     const isAgotado = !p.disponible;
                                     
                                     return (
-                                        <Col lg={6} xl={4} key={p.id}>
-                                            <div className={`p-3 border rounded shadow-sm d-flex flex-column h-100 transition-all ${seleccionado ? 'border-primary bg-primary bg-opacity-10' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
+                                        <Col xs={12} lg={6} xl={4} key={p.id}>
+                                            <div className={`p-2 p-md-3 border rounded shadow-sm d-flex flex-column h-100 transition-all ${seleccionado ? 'border-primary bg-primary bg-opacity-10' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
                                                 
-                                                <div className="d-flex align-items-center mb-3 cursor-pointer" 
+                                                <div className="d-flex align-items-center mb-2 mb-md-3 cursor-pointer" 
                                                      onClick={() => !isAgotado && toggleProductoChecklist(p.id)}
                                                 >
-                                                    <div className="me-3">
+                                                    <div className="me-2 me-md-3">
                                                         <Form.Check 
                                                             type="checkbox"
                                                             checked={!!seleccionado}
@@ -446,20 +446,20 @@ const PedidoView = () => {
                                                     </div>
                                                     
                                                     {p.imagePaths && p.imagePaths.length > 0 ? (
-                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 shadow-sm" style={{ width: '60px', height: '60px' }} />
+                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-2 me-md-3 shadow-sm" style={{ width: '50px', height: '50px', minWidth: '50px' }} />
                                                     ) : (
-                                                        <div className="bg-light rounded d-flex align-items-center justify-content-center me-3" style={{ width: '60px', height: '60px' }}>
+                                                        <div className="bg-light rounded d-flex align-items-center justify-content-center me-2 me-md-3" style={{ width: '50px', height: '50px', minWidth: '50px' }}>
                                                             <span className="material-symbols-outlined text-muted">image</span>
                                                         </div>
                                                     )}
                                                     
                                                     <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                        <h6 className="mb-0 fw-bold text-truncate">{p.nombre}</h6>
-                                                        <small className="text-muted text-truncate d-block">{p.categoria?.nombre}</small>
-                                                        {isAgotado && <Badge bg="secondary" className="ms-2">Agotado</Badge>}
+                                                        <h6 className="mb-0 fw-bold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
+                                                        <small className="text-muted text-truncate d-block" style={{ fontSize: '0.8rem' }}>{p.categoria?.nombre}</small>
+                                                        {isAgotado && <Badge bg="secondary" className="mt-1" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
                                                     </div>
                                                     
-                                                    <div className="fs-5 fw-bold text-success text-end ms-2 text-nowrap flex-shrink-0">
+                                                    <div className="fw-bold text-success text-end ms-1 ms-md-2 text-nowrap flex-shrink-0 fs-6 fs-md-5">
                                                         Bs. {parseFloat(p.precio).toFixed(2)}
                                                     </div>
                                                 </div>
@@ -506,11 +506,11 @@ const PedidoView = () => {
                         )}
                     </div>
                 </Modal.Body>
-                <Modal.Footer className="border-top-0 pt-0 mt-3 px-4">
-                    <Button variant="light" onClick={() => setShowAddItemModal(false)} className="px-4">Cancelar</Button>
-                    <Button variant="primary" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
+                <Modal.Footer className="border-top-0 pt-0 mt-2 px-3 px-md-4">
+                    <Button variant="light" onClick={() => setShowAddItemModal(false)} className="px-3 px-md-4 py-2">Cancelar</Button>
+                    <Button variant="primary" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-3 px-md-4 py-2 d-flex align-items-center gap-1 gap-md-2 shadow-sm">
                         <span className="material-symbols-outlined">add_task</span>
-                        Agregar {Object.keys(productosSeleccionados).length > 0 ? Object.keys(productosSeleccionados).length : ''} al Pedido
+                        Agregar {Object.keys(productosSeleccionados).length > 0 ? `(${Object.keys(productosSeleccionados).length})` : ''}
                     </Button>
                 </Modal.Footer>
             </Modal>
