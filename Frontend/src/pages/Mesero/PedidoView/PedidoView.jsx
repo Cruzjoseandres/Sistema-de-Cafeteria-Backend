@@ -337,7 +337,7 @@ const PedidoView = () => {
             </Card>
 
             {/* ========== MODAL AGREGAR CUENTA ========== */}
-            <Modal show={showAddCuentaModal} onHide={() => setShowAddCuentaModal(false)} centered>
+            <Modal show={showAddCuentaModal} onHide={() => setShowAddCuentaModal(false)}>
                 <Modal.Header closeButton className="border-0 pb-0">
                     <Modal.Title className="d-flex align-items-center gap-2">
                         <span className="material-symbols-outlined text-primary">person</span> Nueva Cuenta
@@ -365,7 +365,7 @@ const PedidoView = () => {
             </Modal>
 
             {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST) ========== */}
-            <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" centered>
+            <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl">
                 <Modal.Header closeButton className="border-bottom-0 pb-2 px-3 px-md-4">
                     <Modal.Title className="d-flex align-items-center gap-1 gap-md-2 w-100 fs-5 fs-md-4 pe-2">
                         <span className="material-symbols-outlined text-warning fs-4 fs-md-3">fastfood</span>
@@ -516,7 +516,7 @@ const PedidoView = () => {
             </Modal>
 
             {/* MODAL PAGO DE CUENTA */}
-            <Modal show={showPaymentModal} onHide={handleClosePaymentModal} centered backdrop="static" size="md">
+            <Modal show={showPaymentModal} onHide={handleClosePaymentModal} backdrop="static" size="md">
                 <Modal.Header closeButton className="bg-success text-white border-bottom-0 pb-4">
                     <Modal.Title className="d-flex align-items-center gap-2 m-0 fs-4 fw-bold">
                         <span className="material-symbols-outlined">point_of_sale</span>
@@ -632,7 +632,7 @@ const PedidoView = () => {
             </Modal>
 
             {/* MODAL COMPARTIR WHATSAPP */}
-            <Modal show={showWhatsappModal} onHide={handleCloseWhatsappModal} centered>
+            <Modal show={showWhatsappModal} onHide={handleCloseWhatsappModal}>
                 <Modal.Header closeButton className="bg-info text-white border-bottom-0 pb-4">
                     <Modal.Title className="d-flex align-items-center gap-2 m-0 fs-4 fw-bold">
                         <span className="material-symbols-outlined">share</span>
@@ -675,7 +675,7 @@ const PedidoView = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <Modal show={showJustificativoModal} onHide={() => !saving && setShowJustificativoModal(false)} centered>
+            <Modal show={showJustificativoModal} onHide={() => !saving && setShowJustificativoModal(false)}>
                 <Modal.Header closeButton={!saving}>
                     <Modal.Title className="d-flex align-items-center gap-2 text-danger">
                         <span className="material-symbols-outlined fs-3">warning</span>
