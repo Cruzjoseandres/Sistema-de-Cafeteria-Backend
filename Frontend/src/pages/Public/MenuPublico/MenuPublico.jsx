@@ -138,38 +138,49 @@ const MenuPublico = () => {
                 </div>
             </div>
 
-            <Row>
-                {filteredProductos.map((producto) => (
-                    <Col key={producto.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-                        <Card
-                            className="menu-producto-card h-100"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => setSelectedProduct(producto)}
-                        >
-                            <ImageGallery imagePaths={producto.imagePaths} nombre={producto.nombre} />
-                            <Card.Body className="d-flex flex-column">
-                                <span className="menu-producto-categoria mb-2">
-                                    {producto.categoria?.nombre || 'Sin categoría'}
-                                </span>
-                                <h5 className="mb-1">{producto.nombre}</h5>
-                                {producto.descripcion && (
-                                    <p className="menu-producto-desc">{producto.descripcion}</p>
-                                )}
-                                <div className="menu-producto-precio">
-                                    Bs. {parseFloat(producto.precio).toFixed(2)}
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-
-            {filteredProductos.length === 0 && (
+            {filteredProductos.length === 0 ? (
                 <Alert variant="warning" className="text-center fade-in d-flex flex-column align-items-center py-5">
                     <span className="material-symbols-outlined mb-2" style={{ fontSize: '3rem', color: 'var(--warning-color)' }}>search_off</span>
                     <h5>No hay productos disponibles</h5>
                     <p className="mb-0 text-muted-custom">Prueba seleccionando otra categoría</p>
                 </Alert>
+            ) : (
+                Object.entries(
+                    filteredProductos.reduce((acc, producto) => {
+                        const catName = producto.categoria?.nombre || 'Sin categoría';
+                        if (!acc[catName]) acc[catName] = [];
+                        acc[catName].push(producto);
+                        return acc;
+                    }, {})
+                ).map(([categoria, prods]) => (
+                    <div key={categoria} className="mb-5 fade-in">
+                        <h2 className="mb-4 text-primary border-bottom pb-2 fw-bold text-uppercase" style={{ letterSpacing: '1px', fontSize: '1.5rem' }}>
+                            {categoria}
+                        </h2>
+                        <Row>
+                            {prods.map((producto) => (
+                                <Col key={producto.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                                    <Card
+                                        className="menu-producto-card h-100"
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={() => setSelectedProduct(producto)}
+                                    >
+                                        <ImageGallery imagePaths={producto.imagePaths} nombre={producto.nombre} />
+                                        <Card.Body className="d-flex flex-column">
+                                            <h5 className="mb-2 mt-2">{producto.nombre}</h5>
+                                            {producto.descripcion && (
+                                                <p className="menu-producto-desc">{producto.descripcion}</p>
+                                            )}
+                                            <div className="menu-producto-precio mt-auto">
+                                                Bs. {parseFloat(producto.precio).toFixed(2)}
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
+                                </Col>
+                            ))}
+                        </Row>
+                    </div>
+                ))
             )}
 
             {/* ========== MODAL DETALLE DEL PRODUCTO ========== */}
