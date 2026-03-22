@@ -21,6 +21,8 @@ export const useVentasGenerales = () => {
     }, []);
 
     const totalIngresos = data.reduce((sum, item) => sum + item.total_ventas, 0);
+    const totalEfectivo = data.reduce((sum, item) => sum + (item.total_efectivo || 0), 0);
+    const totalQr = data.reduce((sum, item) => sum + (item.total_qr || 0), 0);
 
-    return { data, loading, error, totalIngresos };
+    return { data, loading, error, totalIngresos, totalEfectivo, totalQr };
 };

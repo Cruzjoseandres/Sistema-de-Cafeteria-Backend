@@ -17,12 +17,24 @@ export class ReporteService {
     ) { }
 
     async getVentasGenerales() {
-        // Usamos QueryBuilder para agrupar por fecha
-        // Convertimos la fecha a string para la agrupación
         const result = await this.cuentaRepository
             .createQueryBuilder('cuenta')
             .select("TO_CHAR(cuenta.updated_at AT TIME ZONE 'UTC' AT TIME ZONE 'America/La_Paz', 'YYYY-MM-DD')", 'fecha')
             .addSelect('SUM(cuenta.total)', 'total_ventas')
+            .addSelect(
+                `SUM(CASE 
+                    WHEN cuenta.tipo_pago = 'Efectivo' THEN cuenta.total 
+                    WHEN cuenta.tipo_pago = 'Mixto' THEN COALESCE(cuenta.monto_efectivo, 0) 
+                    ELSE 0 END)`,
+                'total_efectivo'
+            )
+            .addSelect(
+                `SUM(CASE 
+                    WHEN cuenta.tipo_pago = 'QR' THEN cuenta.total 
+                    WHEN cuenta.tipo_pago = 'Mixto' THEN COALESCE(cuenta.monto_qr, 0) 
+                    ELSE 0 END)`,
+                'total_qr'
+            )
             .where('cuenta.D_E_L_E_T_E_D = false')
             .andWhere('cuenta.id_estado = 3') // SOLO CUENTAS PAGADAS
             .groupBy("TO_CHAR(cuenta.updated_at AT TIME ZONE 'UTC' AT TIME ZONE 'America/La_Paz', 'YYYY-MM-DD')")
@@ -32,6 +44,8 @@ export class ReporteService {
         return result.map((item) => ({
             fecha: item.fecha,
             total_ventas: parseFloat(item.total_ventas) || 0,
+            total_efectivo: parseFloat(item.total_efectivo) || 0,
+            total_qr: parseFloat(item.total_qr) || 0,
         }));
     }
 
