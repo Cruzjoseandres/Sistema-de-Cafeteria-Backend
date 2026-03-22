@@ -1,53 +1,57 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Container, Card, Badge, Spinner, Alert, Row, Col, Form, Button, Modal, Carousel } from 'react-bootstrap';
+import { Container, Card, Spinner, Alert, Row, Col, Modal, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { getMenuPublico, getCategoriasPublicas } from '../../../../services/PublicService';
 import { getAccessToken } from '../../../../utils/TokenUtilities';
 import './MenuPublico.css';
 
+/* ---------- Image Gallery in card ---------- */
 const ImageGallery = ({ imagePaths, nombre }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     if (!imagePaths || imagePaths.length === 0) {
         return (
-            <div className="menu-producto-imagenes d-flex align-items-center justify-content-center bg-light">
-                <span className="text-muted">Sin imagen</span>
+            <div className="menu-producto-imagenes">
+                <div className="menu-sin-imagen">
+                    <span className="material-symbols-outlined" style={{ fontSize: '2rem', color: '#ccc' }}>image_not_supported</span>
+                    Sin imagen
+                </div>
             </div>
         );
     }
 
-    if (imagePaths.length === 1) {
-        return (
-            <div className="menu-producto-imagenes">
-                <img src={imagePaths[0]} alt={nombre} />
-            </div>
-        );
-    }
+    const prev = (e) => {
+        e.stopPropagation();
+        setCurrentIndex(i => (i === 0 ? imagePaths.length - 1 : i - 1));
+    };
+    const next = (e) => {
+        e.stopPropagation();
+        setCurrentIndex(i => (i === imagePaths.length - 1 ? 0 : i + 1));
+    };
 
     return (
         <div className="menu-producto-imagenes">
-            <img src={imagePaths[currentIndex]} alt={`${nombre} ${currentIndex + 1}`} />
-            <button
-                className="menu-img-nav prev"
-                onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev === 0 ? imagePaths.length - 1 : prev - 1)); }}
-            >‹</button>
-            <button
-                className="menu-img-nav next"
-                onClick={(e) => { e.stopPropagation(); setCurrentIndex((prev) => (prev === imagePaths.length - 1 ? 0 : prev + 1)); }}
-            >›</button>
-            <div className="menu-img-indicators">
-                {imagePaths.map((_, idx) => (
-                    <span
-                        key={idx}
-                        className={`menu-img-dot ${idx === currentIndex ? 'active' : ''}`}
-                        onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
-                    />
-                ))}
-            </div>
+            <img src={imagePaths[currentIndex]} alt={`${nombre} ${currentIndex + 1}`} loading="lazy" />
+            {imagePaths.length > 1 && (
+                <>
+                    <button className="menu-img-nav prev" onClick={prev} aria-label="Anterior">‹</button>
+                    <button className="menu-img-nav next" onClick={next} aria-label="Siguiente">›</button>
+                    <div className="menu-img-indicators">
+                        {imagePaths.map((_, idx) => (
+                            <span
+                                key={idx}
+                                className={`menu-img-dot ${idx === currentIndex ? 'active' : ''}`}
+                                onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
+                            />
+                        ))}
+                    </div>
+                </>
+            )}
         </div>
     );
 };
 
+/* ---------- Main Component ---------- */
 const MenuPublico = () => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
@@ -76,20 +80,27 @@ const MenuPublico = () => {
         }
     }, []);
 
-    useEffect(() => {
-        loadData();
-    }, [loadData]);
+    useEffect(() => { loadData(); }, [loadData]);
 
     const filteredProductos = categoriaFilter
         ? productos.filter(p => p.categoria?.id === parseInt(categoriaFilter))
         : productos;
 
+    // Group by category
+    const grouped = filteredProductos.reduce((acc, p) => {
+        const key = p.categoria?.nombre || 'Sin categoría';
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(p);
+        return acc;
+    }, {});
+
     if (loading) {
         return (
             <Container className="mt-5 text-center">
-                <Spinner animation="border" role="status">
+                <Spinner animation="border" style={{ color: 'var(--neon-primary)' }}>
                     <span className="visually-hidden">Cargando...</span>
                 </Spinner>
+                <p className="mt-3 text-muted">Cargando menú...</p>
             </Container>
         );
     }
@@ -103,71 +114,72 @@ const MenuPublico = () => {
     }
 
     return (
-        <Container className="mt-4">
+        <Container className="mt-3 pb-5" style={{ maxWidth: '1400px' }}>
+
+            {/* Header */}
             <div className="menu-publico-header fade-in">
                 <h1 className="d-flex justify-content-center align-items-center gap-2">
-                    <span className="material-symbols-outlined text-primary" style={{ fontSize: '2.5rem' }}>coffee</span>
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: '2rem' }}>coffee</span>
                     Nuestro Menú
                 </h1>
                 <p>Descubre lo que tenemos preparado para ti hoy</p>
             </div>
 
+            {/* Login Banner */}
             {!token && (
-                <div className="menu-login-banner">
-                    <p>¿Deseas realizar un pedido? Inicia sesión para acceder a todas las funciones.</p>
+                <div className="menu-login-banner fade-in">
+                    <p className="mb-0">
+                        <span className="material-symbols-outlined align-middle me-1" style={{ fontSize: '1.1rem' }}>login</span>
+                        Inicia sesión para hacer un pedido
+                    </p>
                     <Link to="/login">
-                        <Button variant="primary" size="sm">Iniciar Sesión</Button>
+                        <button className="btn btn-primary btn-sm px-3" style={{ borderRadius: '8px' }}>
+                            Iniciar Sesión
+                        </button>
                     </Link>
                 </div>
             )}
 
-            <div className="d-flex justify-content-end mb-4 fade-in">
-                <div className="d-flex align-items-center bg-white border rounded-3 px-3 py-1 shadow-sm">
-                    <span className="material-symbols-outlined text-muted-custom me-2">filter_list</span>
-                    <Form.Select
-                        className="border-0 shadow-none bg-transparent"
-                        style={{ width: '250px' }}
-                        value={categoriaFilter}
-                        onChange={(e) => setCategoriaFilter(e.target.value)}
+            {/* Category Chips */}
+            <div className="menu-category-chips fade-in">
+                <button
+                    className={`menu-chip ${categoriaFilter === '' ? 'active' : ''}`}
+                    onClick={() => setCategoriaFilter('')}
+                >
+                    Todos
+                </button>
+                {categorias.map(cat => (
+                    <button
+                        key={cat.id}
+                        className={`menu-chip ${categoriaFilter === String(cat.id) ? 'active' : ''}`}
+                        onClick={() => setCategoriaFilter(String(cat.id))}
                     >
-                        <option value="">Todas las categorías</option>
-                        {categorias.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                        ))}
-                    </Form.Select>
-                </div>
+                        {cat.nombre}
+                    </button>
+                ))}
             </div>
 
-            {filteredProductos.length === 0 ? (
-                <Alert variant="warning" className="text-center fade-in d-flex flex-column align-items-center py-5">
-                    <span className="material-symbols-outlined mb-2" style={{ fontSize: '3rem', color: 'var(--warning-color)' }}>search_off</span>
+            {/* Products */}
+            {Object.keys(grouped).length === 0 ? (
+                <Alert variant="warning" className="text-center py-5 fade-in">
+                    <span className="material-symbols-outlined d-block mb-2" style={{ fontSize: '3rem' }}>search_off</span>
                     <h5>No hay productos disponibles</h5>
-                    <p className="mb-0 text-muted-custom">Prueba seleccionando otra categoría</p>
+                    <p className="mb-0 text-muted">Prueba seleccionando otra categoría</p>
                 </Alert>
             ) : (
-                Object.entries(
-                    filteredProductos.reduce((acc, producto) => {
-                        const catName = producto.categoria?.nombre || 'Sin categoría';
-                        if (!acc[catName]) acc[catName] = [];
-                        acc[catName].push(producto);
-                        return acc;
-                    }, {})
-                ).map(([categoria, prods]) => (
+                Object.entries(grouped).map(([categoria, prods]) => (
                     <div key={categoria} className="mb-5 fade-in">
-                        <h2 className="mb-4 text-primary border-bottom pb-2 fw-bold text-uppercase" style={{ letterSpacing: '1px', fontSize: '1.5rem' }}>
-                            {categoria}
-                        </h2>
-                        <Row>
+                        <h2 className="menu-categoria-titulo">{categoria}</h2>
+                        <Row className="g-3">
                             {prods.map((producto) => (
-                                <Col key={producto.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                                <Col key={producto.id} xs={6} sm={6} md={4} lg={3}>
                                     <Card
-                                        className="menu-producto-card h-100"
-                                        style={{ cursor: 'pointer' }}
+                                        className="menu-producto-card"
                                         onClick={() => setSelectedProduct(producto)}
                                     >
                                         <ImageGallery imagePaths={producto.imagePaths} nombre={producto.nombre} />
-                                        <Card.Body className="d-flex flex-column">
-                                            <h5 className="mb-2 mt-2">{producto.nombre}</h5>
+                                        <Card.Body className="d-flex flex-column p-2 p-sm-3">
+                                            <h5 className="menu-producto-nombre">{producto.nombre}</h5>
                                             {producto.descripcion && (
                                                 <p className="menu-producto-desc">{producto.descripcion}</p>
                                             )}
@@ -183,7 +195,7 @@ const MenuPublico = () => {
                 ))
             )}
 
-            {/* ========== MODAL DETALLE DEL PRODUCTO ========== */}
+            {/* Product Detail Modal */}
             <Modal
                 show={!!selectedProduct}
                 onHide={() => setSelectedProduct(null)}
@@ -193,12 +205,14 @@ const MenuPublico = () => {
                 {selectedProduct && (
                     <>
                         <Modal.Header closeButton>
-                            <Modal.Title>{selectedProduct.nombre}</Modal.Title>
+                            <Modal.Title style={{ fontSize: '1.2rem', fontWeight: 700 }}>
+                                {selectedProduct.nombre}
+                            </Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            {/* Carousel de imágenes */}
+                            {/* Image carousel */}
                             {selectedProduct.imagePaths && selectedProduct.imagePaths.length > 0 ? (
-                                <Carousel className="menu-detail-carousel mb-4" interval={3000}>
+                                <Carousel className="menu-detail-carousel mb-3" interval={3000} indicators={selectedProduct.imagePaths.length > 1}>
                                     {selectedProduct.imagePaths.map((src, idx) => (
                                         <Carousel.Item key={idx}>
                                             <img
@@ -210,59 +224,53 @@ const MenuPublico = () => {
                                     ))}
                                 </Carousel>
                             ) : (
-                                <div className="text-center p-5 bg-light rounded mb-4">
-                                    <span className="text-muted" style={{ fontSize: '1.2rem' }}>Sin imágenes disponibles</span>
+                                <div className="text-center p-5 bg-light rounded mb-3">
+                                    <span className="material-symbols-outlined d-block mb-2" style={{ fontSize: '3rem', color: '#ccc' }}>image_not_supported</span>
+                                    <span className="text-muted">Sin imágenes disponibles</span>
                                 </div>
                             )}
 
-                            {/* Detalles del producto */}
+                            {/* Product detail */}
                             <div className="menu-detail-info">
-                                <div className="d-flex justify-content-between align-items-start mb-3">
+                                <div className="d-flex justify-content-between align-items-start mb-3 gap-2">
                                     <div>
-                                        <Badge bg="primary" className="mb-2">
+                                        <span className="badge bg-primary mb-2" style={{ borderRadius: '8px', fontSize: '0.78rem' }}>
                                             {selectedProduct.categoria?.nombre || 'Sin categoría'}
-                                        </Badge>
-                                        <h3 className="mb-1">{selectedProduct.nombre}</h3>
+                                        </span>
+                                        <h4 className="mb-0" style={{ fontWeight: 700 }}>{selectedProduct.nombre}</h4>
                                     </div>
-                                    <div className="menu-detail-precio">
+                                    <div className="menu-detail-precio flex-shrink-0">
                                         Bs. {parseFloat(selectedProduct.precio).toFixed(2)}
                                     </div>
                                 </div>
 
                                 {selectedProduct.descripcion ? (
                                     <div className="menu-detail-descripcion">
-                                        <h6 className="text-muted mb-2">📝 Descripción</h6>
+                                        <h6 className="text-muted mb-2" style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Descripción</h6>
                                         <p>{selectedProduct.descripcion}</p>
                                     </div>
                                 ) : (
                                     <p className="text-muted fst-italic">Sin descripción disponible</p>
                                 )}
 
-                                <div className="d-flex align-items-center mt-4 pt-3 border-top">
-                                    <Badge bg="success" className="me-3 d-flex align-items-center gap-1 py-2 px-3">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>check_circle</span>
+                                <div className="d-flex align-items-center mt-3 pt-3 border-top gap-3">
+                                    <span className="badge bg-success d-flex align-items-center gap-1 py-2 px-3" style={{ borderRadius: '8px' }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>check_circle</span>
                                         Disponible
-                                    </Badge>
-                                    {selectedProduct.imagePaths && selectedProduct.imagePaths.length > 1 && (
-                                        <small className="text-muted-custom d-flex align-items-center gap-1 font-weight-bold">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>photo_library</span>
-                                            {selectedProduct.imagePaths.length} imágenes
-                                        </small>
+                                    </span>
+                                    {!token && (
+                                        <Link to="/login">
+                                            <button className="btn btn-primary btn-sm px-3" style={{ borderRadius: '8px' }}>
+                                                <span className="material-symbols-outlined align-middle me-1" style={{ fontSize: '1rem' }}>login</span>
+                                                Iniciar sesión para pedir
+                                            </button>
+                                        </Link>
                                     )}
                                 </div>
                             </div>
                         </Modal.Body>
                         <Modal.Footer>
-                            {!token && (
-                                <Link to="/login">
-                                    <Button variant="primary" size="sm">
-                                        Iniciar sesión para pedir
-                                    </Button>
-                                </Link>
-                            )}
-                            <Button variant="secondary" onClick={() => setSelectedProduct(null)}>
-                                Cerrar
-                            </Button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => setSelectedProduct(null)}>Cerrar</button>
                         </Modal.Footer>
                     </>
                 )}
