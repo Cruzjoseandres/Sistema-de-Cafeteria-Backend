@@ -75,6 +75,12 @@ export class CuentaService {
     if (updateCuentaDto.monto_cambio !== undefined) {
       cuenta.monto_cambio = Number(updateCuentaDto.monto_cambio);
     }
+    if (updateCuentaDto.monto_efectivo !== undefined) {
+      cuenta.monto_efectivo = Number(updateCuentaDto.monto_efectivo);
+    }
+    if (updateCuentaDto.monto_qr !== undefined) {
+      cuenta.monto_qr = Number(updateCuentaDto.monto_qr);
+    }
     if (updateCuentaDto.comprobantes !== undefined) {
       cuenta.comprobantes = updateCuentaDto.comprobantes;
     }
