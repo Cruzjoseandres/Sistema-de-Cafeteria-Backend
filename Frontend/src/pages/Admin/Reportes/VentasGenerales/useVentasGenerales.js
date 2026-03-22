@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getVentasGenerales } from '../../../../../services/ReporteService';
-import { usePagination } from '../../../../../hooks/usePagination';
+import { usePagination } from '../../../../hooks/usePagination';
 
 export const useVentasGenerales = () => {
     const [data, setData] = useState([]);

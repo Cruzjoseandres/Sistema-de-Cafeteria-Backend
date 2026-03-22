@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getAllUsuarios, createUsuario, updateUsuario, deleteUsuario } from '../../../../services/UsuarioService';
 import { getAllRoles } from '../../../../services/RolService';
 import { useNotification } from '../../../../hooks/useNotification';
-import { usePagination } from '../../../../hooks/usePagination';
+import { usePagination } from '../../../hooks/usePagination';
 
 export const useAdminUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);

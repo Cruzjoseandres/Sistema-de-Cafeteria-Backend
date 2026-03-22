@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllMesas, createMesa, updateMesa, deleteMesa } from '../../../../services/MesaService';
 import { useNotification } from '../../../../hooks/useNotification';
-import { usePagination } from '../../../../hooks/usePagination';
+import { usePagination } from '../../../hooks/usePagination';
 
 export const useAdminMesas = () => {
     const [mesas, setMesas] = useState([]);

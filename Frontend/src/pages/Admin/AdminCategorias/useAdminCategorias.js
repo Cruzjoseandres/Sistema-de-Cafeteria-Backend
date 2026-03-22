@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllCategorias, createCategoria, updateCategoria, deleteCategoria } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
-import { usePagination } from '../../../../hooks/usePagination';
+import { usePagination } from '../../../hooks/usePagination';
 
 export const useAdminCategorias = () => {
     const [categorias, setCategorias] = useState([]);

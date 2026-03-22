@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getMisPedidos } from '../../../../services/PedidoService';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '../../../../hooks/usePagination';
+import { usePagination } from '../../../hooks/usePagination';
 
 export const useMeseroMisPedidos = () => {
     const [pedidos, setPedidos] = useState([]);

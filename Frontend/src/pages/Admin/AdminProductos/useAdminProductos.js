@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAllProductos, createProducto, updateProducto, deleteProducto } from '../../../../services/ProductoService';
 import { getAllCategorias } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
-import { usePagination } from '../../../../hooks/usePagination';
+import { usePagination } from '../../../hooks/usePagination';
 
 export const useAdminProductos = () => {
     const [productos, setProductos] = useState([]);
