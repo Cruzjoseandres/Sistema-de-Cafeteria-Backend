@@ -1,10 +1,11 @@
 import React from 'react';
 import { Row, Col, Card, Table, Spinner, Alert } from 'react-bootstrap';
 import { useVentasGenerales } from './useVentasGenerales';
+import PaginationBar from '../../../../components/PaginationBar';
 import './VentasGenerales.css';
 
 const VentasGenerales = () => {
-    const { data, loading, error, totalIngresos, totalEfectivo, totalQr } = useVentasGenerales();
+    const { data, loading, error, totalIngresos, totalEfectivo, totalQr, pagination } = useVentasGenerales();
 
     if (loading) {
         return (
@@ -69,16 +70,15 @@ const VentasGenerales = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.length > 0 ? (
-                                data.map((item, index) => (
-                                    <tr key={index}>
-                                        <td>{item.fecha}</td>
-                                        <td className="text-end text-success">Bs. {(item.total_efectivo || 0).toFixed(2)}</td>
-                                        <td className="text-end text-primary">Bs. {(item.total_qr || 0).toFixed(2)}</td>
-                                        <td className="text-end fw-bold">Bs. {item.total_ventas.toFixed(2)}</td>
-                                    </tr>
-                                ))
-                            ) : (
+                            {pagination.paginatedData.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.fecha}</td>
+                                    <td className="text-end text-success">Bs. {(item.total_efectivo || 0).toFixed(2)}</td>
+                                    <td className="text-end text-primary">Bs. {(item.total_qr || 0).toFixed(2)}</td>
+                                    <td className="text-end fw-bold">Bs. {item.total_ventas.toFixed(2)}</td>
+                                </tr>
+                            ))}
+                            {pagination.totalItems === 0 && (
                                 <tr>
                                     <td colSpan="4" className="text-center text-muted">No hay datos de ventas disponibles</td>
                                 </tr>
@@ -87,6 +87,7 @@ const VentasGenerales = () => {
                     </Table>
                 </Card.Body>
             </Card>
+            <PaginationBar {...pagination} />
         </div>
     );
 };

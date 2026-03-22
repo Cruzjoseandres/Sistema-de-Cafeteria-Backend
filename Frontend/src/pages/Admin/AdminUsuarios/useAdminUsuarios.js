@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { getAllUsuarios, createUsuario, updateUsuario, deleteUsuario } from '../../../../services/UsuarioService';
 import { getAllRoles } from '../../../../services/RolService';
 import { useNotification } from '../../../../hooks/useNotification';
+import { usePagination } from '../../../../hooks/usePagination';
 
 export const useAdminUsuarios = () => {
     const [usuarios, setUsuarios] = useState([]);
@@ -51,6 +52,8 @@ export const useAdminUsuarios = () => {
         loadUsuarios();
         loadRoles();
     }, [loadUsuarios, loadRoles]);
+
+    const pagination = usePagination(usuarios, 10);
 
     const handleOpenModal = (type, user = null) => {
         setModalType(type);
@@ -170,6 +173,6 @@ export const useAdminUsuarios = () => {
     return {
         usuarios, roles, loading, error, showModal, modalType, formData, selectedUser, validated,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete, getRoleBadge,
-        toast, confirm, hideToast
+        toast, confirm, hideToast, pagination
     };
 };

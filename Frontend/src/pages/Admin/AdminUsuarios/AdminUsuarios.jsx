@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, Spinner, Alert, Badge, Table, Modal, Button 
 import { useAdminUsuarios } from './useAdminUsuarios';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
+import PaginationBar from '../../../components/PaginationBar';
 import './AdminUsuarios.css';
 
 const AdminUsuarios = () => {
@@ -26,7 +27,8 @@ const AdminUsuarios = () => {
         toast,
         confirm,
         hideToast,
-        validated
+        validated,
+        pagination
     } = useAdminUsuarios();
 
     if (loading) {
@@ -66,7 +68,7 @@ const AdminUsuarios = () => {
                     </div>
 
                     <div className="flex-grow-1 p-2">
-                        {usuarios.map((usuario) => (
+                        {pagination.paginatedData.map((usuario) => (
                             <div key={usuario.id} className="d-flex align-items-center justify-content-between p-3 rounded mb-1" style={{ cursor: 'pointer', transition: 'background-color 0.2s', backgroundColor: formData?.id === usuario.id || selectedUser?.id === usuario.id ? 'var(--admin-panel-hover)' : 'transparent' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--admin-panel-hover)'} onMouseLeave={(e) => { if (formData?.id !== usuario.id) { e.currentTarget.style.backgroundColor = 'transparent' } }} onClick={() => handleOpenModal('editar', usuario)}>
                                 <div className="d-flex align-items-center gap-3">
                                     <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--admin-panel-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', color: 'var(--admin-accent)' }}>
@@ -83,6 +85,7 @@ const AdminUsuarios = () => {
                                 <div style={{ color: 'var(--admin-text-muted)' }}>›</div>
                             </div>
                         ))}
+                        <PaginationBar {...pagination} />
                     </div>
 
                 </Col>

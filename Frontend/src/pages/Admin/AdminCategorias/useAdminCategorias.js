@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllCategorias, createCategoria, updateCategoria, deleteCategoria } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
+import { usePagination } from '../../../../hooks/usePagination';
 
 export const useAdminCategorias = () => {
     const [categorias, setCategorias] = useState([]);
@@ -31,6 +32,8 @@ export const useAdminCategorias = () => {
     useEffect(() => {
         loadCategorias();
     }, [loadCategorias]);
+
+    const pagination = usePagination(categorias, 10);
 
     const handleOpenModal = (type, item = null) => {
         setModalType(type);
@@ -102,6 +105,6 @@ export const useAdminCategorias = () => {
     return {
         categorias, loading, error, showModal, modalType, formData, validated,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
-        toast, confirm, hideToast
+        toast, confirm, hideToast, pagination
     };
 };

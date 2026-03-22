@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Row, Col, Card, Spinner, Alert, Badge } from 'react-bootstrap';
 import { useMeseroMisPedidos } from './useMeseroMisPedidos';
+import PaginationBar from '../../../components/PaginationBar';
 import './MeseroMisPedidos.css';
 
 const MeseroMisPedidos = () => {
@@ -12,7 +13,8 @@ const MeseroMisPedidos = () => {
         setFilterStatus, 
         searchTerm, 
         setSearchTerm, 
-        handleViewPedido 
+        handleViewPedido,
+        pagination
     } = useMeseroMisPedidos();
 
     if (loading) {
@@ -78,48 +80,51 @@ const MeseroMisPedidos = () => {
                     <p className="text-muted">Abre una mesa para crear un nuevo pedido.</p>
                 </div>
             ) : (
-                <Row className="g-4">
-                    {pedidos.map((pedido) => (
-                        <Col md={6} lg={4} key={pedido.id}>
-                            <Card className="history-card h-100 border-0" onClick={() => handleViewPedido(pedido.id)}>
-                                <Card.Body className="d-flex flex-column">
-                                    <div className="d-flex justify-content-between align-items-center mb-3">
-                                        <Badge bg="info" className="fs-6 py-2 px-3 fw-bold shadow-sm d-flex align-items-center gap-1">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>table_restaurant</span>
-                                            Mesa {pedido.mesa?.numero}
-                                        </Badge>
-                                        {(() => {
-                                            const isCompletado = pedido.estado?.id === 3 || pedido.estado?.nombre === 'INACTIVO' || pedido.estado?.nombre === 'COMPLETADO' || pedido.estado?.nombre === 'PAGADO';
-                                            const badgeClass = isCompletado ? 'status-inactivo bg-success text-white' : 'status-activo bg-primary text-white';
-                                            const badgeText = isCompletado ? 'Cobrado' : 'Pendiente';
-                                            const badgeIcon = isCompletado ? 'check_circle' : 'pending';
-                                            
-                                            return (
-                                                <span className={`status-badge-custom px-3 py-1 rounded-pill fw-bold shadow-sm d-inline-flex align-items-center gap-1 ${badgeClass}`}>
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>{badgeIcon}</span> {badgeText}
-                                                </span>
-                                            );
-                                        })()}
-                                    </div>
+                <>
+                    <Row className="g-4">
+                        {pagination.paginatedData.map((pedido) => (
+                            <Col md={6} lg={4} key={pedido.id}>
+                                <Card className="history-card h-100 border-0" onClick={() => handleViewPedido(pedido.id)}>
+                                    <Card.Body className="d-flex flex-column">
+                                        <div className="d-flex justify-content-between align-items-center mb-3">
+                                            <Badge bg="info" className="fs-6 py-2 px-3 fw-bold shadow-sm d-flex align-items-center gap-1">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>table_restaurant</span>
+                                                Mesa {pedido.mesa?.numero}
+                                            </Badge>
+                                            {(() => {
+                                                const isCompletado = pedido.estado?.id === 3 || pedido.estado?.nombre === 'INACTIVO' || pedido.estado?.nombre === 'COMPLETADO' || pedido.estado?.nombre === 'PAGADO';
+                                                const badgeClass = isCompletado ? 'status-inactivo bg-success text-white' : 'status-activo bg-primary text-white';
+                                                const badgeText = isCompletado ? 'Cobrado' : 'Pendiente';
+                                                const badgeIcon = isCompletado ? 'check_circle' : 'pending';
+                                                
+                                                return (
+                                                    <span className={`status-badge-custom px-3 py-1 rounded-pill fw-bold shadow-sm d-inline-flex align-items-center gap-1 ${badgeClass}`}>
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>{badgeIcon}</span> {badgeText}
+                                                    </span>
+                                                );
+                                            })()}
+                                        </div>
 
-                                    <div className="mb-3 flex-grow-1">
-                                        <h5 className="fw-bold fs-4 mb-1">Pedido #{pedido.id}</h5>
-                                        <p className="text-muted small mb-0 d-flex align-items-center gap-1">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>schedule</span>
-                                            {new Date(pedido.created_at).toLocaleString()}
-                                        </p>
-                                    </div>
+                                        <div className="mb-3 flex-grow-1">
+                                            <h5 className="fw-bold fs-4 mb-1">Pedido #{pedido.id}</h5>
+                                            <p className="text-muted small mb-0 d-flex align-items-center gap-1">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>schedule</span>
+                                                {new Date(pedido.created_at).toLocaleString()}
+                                            </p>
+                                        </div>
 
-                                    <div className="d-flex justify-content-end border-top pt-3 mt-auto">
-                                        <span className="text-primary fw-medium d-flex align-items-center gap-1">
-                                            Ver Detalles <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>chevron_right</span>
-                                        </span>
-                                    </div>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
+                                        <div className="d-flex justify-content-end border-top pt-3 mt-auto">
+                                            <span className="text-primary fw-medium d-flex align-items-center gap-1">
+                                                Ver Detalles <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>chevron_right</span>
+                                            </span>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))}
+                    </Row>
+                    <PaginationBar {...pagination} />
+                </>
             )}
         </Container>
     );

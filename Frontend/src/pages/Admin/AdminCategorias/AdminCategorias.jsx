@@ -3,12 +3,13 @@ import { Container, Table, Button, Modal, Form, Spinner, Alert, Row, Col } from 
 import { useAdminCategorias } from './useAdminCategorias';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
+import PaginationBar from '../../../components/PaginationBar';
 
 const AdminCategorias = () => {
     const {
         categorias, loading, error, showModal, modalType, formData, validated,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
-        toast, confirm, hideToast
+        toast, confirm, hideToast, pagination
     } = useAdminCategorias();
 
     if (loading) {
@@ -146,7 +147,7 @@ const AdminCategorias = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {categorias.map((cat) => (
+                                {pagination.paginatedData.map((cat) => (
                                     <tr key={cat.id}>
                                         <td style={{ verticalAlign: 'middle', fontWeight: 600, color: 'var(--admin-text-main)' }}>
                                             <span className="material-symbols-outlined align-middle" style={{ marginRight: '8px', color: 'var(--admin-accent)', fontSize: '1.2rem' }}>local_cafe</span>
@@ -165,7 +166,7 @@ const AdminCategorias = () => {
                                         </td>
                                     </tr>
                                 ))}
-                                {categorias.length === 0 && (
+                                {pagination.totalItems === 0 && (
                                     <tr>
                                         <td colSpan="3" className="text-center py-4 text-muted">No hay categorías registradas.</td>
                                     </tr>
@@ -173,6 +174,7 @@ const AdminCategorias = () => {
                             </tbody>
                         </Table>
                     </div>
+                    <PaginationBar {...pagination} />
                 </Col>
             </Row>
 

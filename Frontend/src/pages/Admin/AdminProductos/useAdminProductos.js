@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAllProductos, createProducto, updateProducto, deleteProducto } from '../../../../services/ProductoService';
 import { getAllCategorias } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
+import { usePagination } from '../../../../hooks/usePagination';
 
 export const useAdminProductos = () => {
     const [productos, setProductos] = useState([]);
@@ -22,6 +23,11 @@ export const useAdminProductos = () => {
         id_categoria: '',
     });
     const [validated, setValidated] = useState(false);
+
+    // Inventory filters
+    const [busqueda, setBusqueda] = useState('');
+    const [filtroCategoria, setFiltroCategoria] = useState('');
+    const [filtroDisponible, setFiltroDisponible] = useState('');
 
     const { toast, confirm, showSuccess, showError, hideToast, showConfirm } = useNotification();
 
@@ -52,6 +58,18 @@ export const useAdminProductos = () => {
         loadProductos();
         loadCategorias();
     }, [loadProductos, loadCategorias]);
+
+    const productosFiltrados = useMemo(() => {
+        return productos.filter(p => {
+            const matchBusqueda = !busqueda || p.nombre.toLowerCase().includes(busqueda.toLowerCase());
+            const matchCategoria = !filtroCategoria || String(p.categoria?.id) === filtroCategoria;
+            const matchDisponible = filtroDisponible === '' ? true
+                : filtroDisponible === 'true' ? p.disponible : !p.disponible;
+            return matchBusqueda && matchCategoria && matchDisponible;
+        });
+    }, [productos, busqueda, filtroCategoria, filtroDisponible]);
+
+    const pagination = usePagination(productosFiltrados, 10);
 
     const handleOpenModal = (type, item = null) => {
         setModalType(type);
@@ -182,6 +200,11 @@ export const useAdminProductos = () => {
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast,
         existingImages, newImagePreviews, handleAddImages,
-        handleRemoveExistingImage, handleRemoveNewImage
+        handleRemoveExistingImage, handleRemoveNewImage,
+        busqueda, setBusqueda,
+        filtroCategoria, setFiltroCategoria,
+        filtroDisponible, setFiltroDisponible,
+        productosFiltrados,
+        pagination,
     };
 };

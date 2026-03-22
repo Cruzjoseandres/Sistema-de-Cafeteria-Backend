@@ -1,13 +1,15 @@
+import React from 'react';
 import { Container, Table, Button, Modal, Form, Badge, Spinner, Alert } from 'react-bootstrap';
 import { useAdminMesas } from './useAdminMesas';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
+import PaginationBar from '../../../components/PaginationBar';
 
 const AdminMesas = () => {
     const {
         mesas, loading, error, showModal, modalType, formData,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
-        toast, confirm, hideToast
+        toast, confirm, hideToast, pagination
     } = useAdminMesas();
 
     if (loading) {
@@ -52,7 +54,7 @@ const AdminMesas = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {mesas.map((mesa) => (
+                    {pagination.paginatedData.map((mesa) => (
                         <tr key={mesa.id}>
                             <td>{mesa.id}</td>
                             <td><strong>Mesa {mesa.numero}</strong></td>
@@ -80,8 +82,12 @@ const AdminMesas = () => {
                             </td>
                         </tr>
                     ))}
+                    {pagination.totalItems === 0 && (
+                        <tr><td colSpan="6" className="text-center text-muted">No hay mesas registradas.</td></tr>
+                    )}
                 </tbody>
             </Table>
+            <PaginationBar {...pagination} />
 
             <Modal show={showModal} onHide={handleCloseModal}>
                 <Modal.Header closeButton>

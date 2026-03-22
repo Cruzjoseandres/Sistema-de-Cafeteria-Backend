@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
-import { Container, Table, Button, Form, Badge, Spinner, Alert, Row, Col } from 'react-bootstrap';
+import { Container, Table, Button, Form, Badge, Spinner, Alert, Row, Col, InputGroup } from 'react-bootstrap';
 import { useAdminProductos } from './useAdminProductos';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
+import PaginationBar from '../../../components/PaginationBar';
 import './AdminProductos.css';
 
 const AdminProductos = () => {
@@ -11,7 +12,11 @@ const AdminProductos = () => {
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast,
         existingImages, newImagePreviews, handleAddImages,
-        handleRemoveExistingImage, handleRemoveNewImage
+        handleRemoveExistingImage, handleRemoveNewImage,
+        busqueda, setBusqueda,
+        filtroCategoria, setFiltroCategoria,
+        filtroDisponible, setFiltroDisponible,
+        pagination,
     } = useAdminProductos();
 
     const fileInputRef = useRef(null);
@@ -217,7 +222,7 @@ const AdminProductos = () => {
             <NotificationToast show={toast.show} message={toast.message} variant={toast.variant} onClose={hideToast} />
             <ConfirmModal show={confirm.show} message={confirm.message} onConfirm={confirm.onConfirm} />
 
-            <div className="d-flex justify-content-between align-items-center mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                 <div>
                     <h1 className="admin-title-lg">Gestión de Productos</h1>
                     <p className="admin-subtitle m-0">Administra el inventario de la cafetería.</p>
@@ -226,6 +231,34 @@ const AdminProductos = () => {
                     + Añadir Producto
                 </button>
             </div>
+
+            {/* FILTROS DE BÚSQUEDA */}
+            <Row className="mb-3 g-2">
+                <Col xs={12} md={5}>
+                    <InputGroup>
+                        <InputGroup.Text><span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>search</span></InputGroup.Text>
+                        <Form.Control
+                            type="text"
+                            placeholder="Buscar producto..."
+                            value={busqueda}
+                            onChange={(e) => setBusqueda(e.target.value)}
+                        />
+                    </InputGroup>
+                </Col>
+                <Col xs={6} md={3}>
+                    <Form.Select value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}>
+                        <option value="">Todas las categorías</option>
+                        {categorias.map(cat => <option key={cat.id} value={cat.id}>{cat.nombre}</option>)}
+                    </Form.Select>
+                </Col>
+                <Col xs={6} md={3}>
+                    <Form.Select value={filtroDisponible} onChange={(e) => setFiltroDisponible(e.target.value)}>
+                        <option value="">Todos los estados</option>
+                        <option value="true">En Stock</option>
+                        <option value="false">Agotado</option>
+                    </Form.Select>
+                </Col>
+            </Row>
 
             <div className="admin-card p-0" style={{ overflow: 'hidden' }}>
                 <Table hover responsive className="custom-table m-0 align-middle">
@@ -240,7 +273,7 @@ const AdminProductos = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {productos.map((producto) => (
+                        {pagination.paginatedData.map((producto) => (
                             <tr key={producto.id}>
                                 <td style={{ verticalAlign: 'middle' }}>
                                     {producto.imagePaths && producto.imagePaths.length > 0 ? (
@@ -281,7 +314,7 @@ const AdminProductos = () => {
                                 </td>
                             </tr>
                         ))}
-                        {productos.length === 0 && (
+                        {pagination.totalItems === 0 && (
                             <tr>
                                 <td colSpan="6" className="text-center py-4 text-muted">No se encontraron productos en el inventario.</td>
                             </tr>
@@ -289,6 +322,7 @@ const AdminProductos = () => {
                     </tbody>
                 </Table>
             </div>
+            <PaginationBar {...pagination} />
         </Container>
     );
 };

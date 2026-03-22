@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { getVentasGenerales } from '../../../../../services/ReporteService';
+import { usePagination } from '../../../../../hooks/usePagination';
 
 export const useVentasGenerales = () => {
     const [data, setData] = useState([]);
@@ -23,6 +24,7 @@ export const useVentasGenerales = () => {
     const totalIngresos = data.reduce((sum, item) => sum + item.total_ventas, 0);
     const totalEfectivo = data.reduce((sum, item) => sum + (item.total_efectivo || 0), 0);
     const totalQr = data.reduce((sum, item) => sum + (item.total_qr || 0), 0);
+    const pagination = usePagination(data, 15);
 
-    return { data, loading, error, totalIngresos, totalEfectivo, totalQr };
+    return { data, loading, error, totalIngresos, totalEfectivo, totalQr, pagination };
 };

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getAllMesas, createMesa, updateMesa, deleteMesa } from '../../../../services/MesaService';
 import { useNotification } from '../../../../hooks/useNotification';
+import { usePagination } from '../../../../hooks/usePagination';
 
 export const useAdminMesas = () => {
     const [mesas, setMesas] = useState([]);
@@ -35,6 +36,8 @@ export const useAdminMesas = () => {
     useEffect(() => {
         loadMesas();
     }, [loadMesas]);
+
+    const pagination = usePagination(mesas, 10);
 
     const handleOpenModal = (type, item = null) => {
         setModalType(type);
@@ -108,6 +111,6 @@ export const useAdminMesas = () => {
     return {
         mesas, loading, error, showModal, modalType, formData,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
-        toast, confirm, hideToast
+        toast, confirm, hideToast, pagination
     };
 };

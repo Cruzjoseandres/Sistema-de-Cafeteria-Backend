@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getMisPedidos } from '../../../../services/PedidoService';
 import { useNavigate } from 'react-router-dom';
+import { usePagination } from '../../../../hooks/usePagination';
 
 export const useMeseroMisPedidos = () => {
     const [pedidos, setPedidos] = useState([]);
@@ -48,8 +49,10 @@ export const useMeseroMisPedidos = () => {
         return matchesSearch && matchesStatus;
     });
 
+    const pagination = usePagination(filteredPedidos, 10);
+
     return {
-        pedidos: filteredPedidos, // Retornamos los filtrados para que la UI los use directamente
+        pedidos: filteredPedidos,
         allPedidos: pedidos,
         loading,
         error,
@@ -58,6 +61,7 @@ export const useMeseroMisPedidos = () => {
         searchTerm,
         setSearchTerm,
         handleViewPedido,
-        fetchMisPedidos
+        fetchMisPedidos,
+        pagination
     };
 };
