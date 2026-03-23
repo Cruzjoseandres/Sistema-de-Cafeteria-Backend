@@ -57,6 +57,31 @@ export class CloudinaryService {
   }
 
   /**
+   * Sube un PDF (Buffer) a Cloudinary como recurso raw.
+   * No consume créditos de transformación — solo almacenamiento.
+   * @param buffer Buffer del PDF generado
+   * @param publicId Nombre público opcional (sin extensión)
+   * @returns URL permanente segura del PDF
+   */
+  async uploadPdf(buffer: Buffer, publicId: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: 'cafeteria_pedidos',
+          public_id: publicId,
+          resource_type: 'raw',
+          format: 'pdf',
+          overwrite: true,
+        },
+        (error, result: UploadApiResponse) => {
+          if (error) return reject(error);
+          resolve(result.secure_url);
+        },
+      ).end(buffer);
+    });
+  }
+
+  /**
    * Obtiene la última imagen subida a una carpeta específica.
    */
   async getLatestQRUrl(): Promise<string | null> {

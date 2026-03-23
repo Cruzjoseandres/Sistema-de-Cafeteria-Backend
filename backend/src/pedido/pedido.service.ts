@@ -6,8 +6,7 @@ import { Cuenta } from '../cuenta/entities/cuenta.entity';
 import { DetallePedido } from '../detalle-pedido/entities/detalle-pedido.entity';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 const PdfPrinter = require('pdfmake/js/Printer').default;
 const virtualfs = require('pdfmake/js/virtual-fs').default;
 const URLResolver = require('pdfmake/js/URLResolver').default;
@@ -21,6 +20,7 @@ export class PedidoService {
     private readonly cuentaRepository: Repository<Cuenta>,
     @InjectRepository(DetallePedido)
     private readonly detallePedidoRepository: Repository<DetallePedido>,
+    private readonly cloudinaryService: CloudinaryService,
   ) { }
 
   async create(createPedidoDto: CreatePedidoDto) {
@@ -182,29 +182,21 @@ export class PedidoService {
     };
 
     const pdfDoc = await printer.createPdfKitDocument(docDefinition as any);
-    
-    // Ensure uploads folder exists
-    const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    const pedidosDir = path.join(uploadsDir, 'pedidos');
-    if (!fs.existsSync(pedidosDir)) {
-      fs.mkdirSync(pedidosDir, { recursive: true });
-    }
 
-    const fileName = `pedido_${pedido.id}_${Date.now()}.pdf`;
-    const filePath = path.join(pedidosDir, fileName);
-    
-    const writeStream = fs.createWriteStream(filePath);
-    pdfDoc.pipe(writeStream);
-    pdfDoc.end();
-
-    await new Promise((resolve, reject) => {
-      writeStream.on('finish', () => resolve(null));
-      writeStream.on('error', reject);
+    // Collect PDF into a buffer
+    const chunks: Buffer[] = [];
+    await new Promise<void>((resolve, reject) => {
+      pdfDoc.on('data', (chunk: Buffer) => chunks.push(chunk));
+      pdfDoc.on('end', () => resolve());
+      pdfDoc.on('error', reject);
+      pdfDoc.end();
     });
+    const pdfBuffer = Buffer.concat(chunks);
 
-    return `${apiUrl}/uploads/pedidos/${fileName}`;
+    // Upload to Cloudinary (raw, no transformation credits)
+    const publicId = `pedido_${pedido.id}_${Date.now()}`;
+    const pdfUrl = await this.cloudinaryService.uploadPdf(pdfBuffer, publicId);
+
+    return pdfUrl;
   }
 }
