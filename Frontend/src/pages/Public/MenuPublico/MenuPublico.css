@@ -104,8 +104,7 @@
 .menu-producto-imagenes {
     position: relative;
     width: 100%;
-    /* taller image on mobile, even taller on desktop */
-    height: 200px;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     background: #f3f4f6;
 }
@@ -243,16 +242,17 @@
 .menu-detail-carousel {
     border-radius: 12px;
     overflow: hidden;
+    aspect-ratio: 1 / 1;
 }
 
 .menu-detail-carousel-img {
-    height: 280px;
-    object-fit: cover;
+    height: 100%;
     width: 100%;
+    object-fit: cover;
 }
 
 .menu-detail-precio {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: 800;
     color: var(--neon-success);
     white-space: nowrap;
@@ -279,22 +279,9 @@
 
 /* ---------- Responsive ---------- */
 
-/* Mobile: taller images on a single card column */
+/* Mobile */
 @media (max-width: 575px) {
     .menu-publico-header h1 { font-size: 1.7rem; }
-    .menu-producto-imagenes { height: 190px; }
-    .menu-detail-carousel-img { height: 220px; }
     .menu-detail-precio { font-size: 1.6rem; }
-    .menu-login-banner { text-align: center; justify-content: center; }
-}
-
-/* Tablet */
-@media (min-width: 576px) and (max-width: 991px) {
-    .menu-producto-imagenes { height: 200px; }
-}
-
-/* Desktop: bigger images */
-@media (min-width: 992px) {
-    .menu-producto-imagenes { height: 220px; }
-    .menu-detail-carousel-img { height: 340px; }
+    .menu-login-banner { text-align: center; justify-content: center; flex-direction: column; }
 }
