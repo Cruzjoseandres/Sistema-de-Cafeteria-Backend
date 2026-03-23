@@ -188,13 +188,14 @@
     border: none;
     border-radius: 20px;
     overflow: hidden;
-    background: var(--bg-main);
+    background: #ffffff; /* Solid white to fix transparency issue */
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .menu-modal-header-img {
     position: relative;
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 280px; /* Fixed height to prevent white gaps */
     background: #f3f4f6;
 }
 
@@ -211,7 +212,7 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     border: none;
     display: flex;
     align-items: center;
@@ -220,15 +221,18 @@
     z-index: 10;
     cursor: pointer;
     backdrop-filter: blur(4px);
-    transition: background 0.2s;
+    transition: transform 0.2s, background 0.2s;
+    color: #333;
 }
 
 .menu-modal-close-btn:hover {
-    background: #fff;
+    background: #ffffff;
+    transform: scale(1.05);
 }
 
 .menu-detail-body {
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 0.5rem;
+    background: #ffffff;
 }
 
 .menu-detail-title-row {
@@ -236,47 +240,49 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
 }
 
 .menu-detail-title {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 800;
-    color: var(--text-main);
+    color: #1a1a1a;
     margin: 0;
-    line-height: 1.2;
+    line-height: 1.25;
 }
 
 .menu-detail-precio {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 800;
-    color: var(--neon-success);
+    color: var(--neon-primary); /* Matches page palette */
     white-space: nowrap;
 }
 
 .menu-detail-categoria-badge {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
+    padding: 0.35rem 0.85rem;
     background: rgba(13, 110, 253, 0.1);
     color: var(--neon-primary);
     border-radius: 999px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .menu-detail-descripcion {
     font-size: 0.95rem;
     line-height: 1.6;
-    color: var(--text-muted);
-    margin-bottom: 2rem;
+    color: #555555;
+    margin-bottom: 1.5rem;
 }
 
 .menu-modal-footer {
     display: flex;
-    padding: 1.25rem 1.5rem;
-    background: var(--glass-bg);
-    border-top: 1px solid var(--glass-border-light);
+    padding: 0 1.5rem 1.5rem;
+    background: #ffffff;
+    border-top: none;
 }
 
 .menu-modal-login-btn {
@@ -292,6 +298,7 @@
     align-items: center;
     gap: 0.5rem;
     transition: opacity 0.2s;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
 }
 
 .menu-modal-login-btn:hover {
