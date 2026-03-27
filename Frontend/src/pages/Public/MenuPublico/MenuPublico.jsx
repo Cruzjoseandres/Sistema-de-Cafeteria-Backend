@@ -5,6 +5,98 @@ import { getMenuPublico, getCategoriasPublicas } from '../../../../services/Publ
 import { getAccessToken } from '../../../../utils/TokenUtilities';
 import './MenuPublico.css';
 
+/* ---------- Subcomponents ---------- */
+const ProductoDetailView = ({ producto, onBack }) => {
+    const [cantidad, setCantidad] = useState(1);
+    const [notas, setNotas] = useState('');
+
+    const handleAumentar = () => setCantidad(prev => prev + 1);
+    const handleDisminuir = () => {
+        if (cantidad > 1) setCantidad(prev => prev - 1);
+    };
+
+    const handleAgregar = () => {
+        // Acción de agregar a un futuro carrito
+        onBack();
+    };
+
+    const total = parseFloat(producto.precio) * cantidad;
+
+    return (
+        <div className="producto-detail-view-container fade-in">
+            <div className="producto-detail-content">
+                <div className="producto-detail-header-img">
+                    <button className="producto-detail-back-btn" onClick={onBack} aria-label="Volver">
+                        <span className="material-symbols-outlined">arrow_back_ios_new</span>
+                    </button>
+                    
+                    {producto.imagePaths && producto.imagePaths.length > 0 ? (
+                        <Carousel interval={4000} indicators={producto.imagePaths.length > 1} controls={producto.imagePaths.length > 1}>
+                            {producto.imagePaths.map((src, idx) => (
+                                <Carousel.Item key={idx}>
+                                    <img
+                                        className="d-block w-100"
+                                        src={src}
+                                        alt={`${producto.nombre} - ${idx + 1}`}
+                                    />
+                                </Carousel.Item>
+                            ))}
+                        </Carousel>
+                    ) : (
+                        <div className="d-flex flex-column align-items-center justify-content-center h-100" style={{ minHeight: '300px' }}>
+                            <span className="material-symbols-outlined d-block mb-2" style={{ fontSize: '3.5rem', color: '#ccc' }}>image_not_supported</span>
+                            <span className="text-muted font-weight-bold">Sin imágenes</span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="producto-detail-body">
+                    <h3 className="producto-detail-title">{producto.nombre}</h3>
+                    <p className="producto-detail-descripcion-short">{producto.descripcion || 'Sin descripción disponible.'}</p>
+                    <div className="producto-detail-precio-row">
+                        <span className="precio-bold">Bs {parseFloat(producto.precio).toFixed(0)}</span>
+                    </div>
+
+                    <div className="producto-detail-section">
+                        <h4 className="section-title">Notas para este producto</h4>
+                        <p className="section-subtitle">El restaurante intentará seguirlas cuando lo prepare.</p>
+                        <textarea 
+                            className="form-control producto-detail-notas" 
+                            placeholder="Escribí las instrucciones que necesites."
+                            value={notas}
+                            onChange={(e) => setNotas(e.target.value)}
+                            maxLength={100}
+                            rows={3}
+                        />
+                        <div className="text-end text-muted small mt-1">{notas.length}/100</div>
+                    </div>
+                </div>
+
+                <div className="producto-detail-footer">
+                    <div className="producto-detail-footer-info">
+                        <span>{cantidad} {cantidad === 1 ? 'producto' : 'productos'}</span>
+                        <span className="fw-bold">Bs {total.toFixed(0)}</span>
+                    </div>
+                    <div className="d-flex align-items-center gap-3">
+                        <div className="producto-detail-quantity">
+                            <button onClick={handleDisminuir} disabled={cantidad <= 1}>
+                                <span className="material-symbols-outlined">remove</span>
+                            </button>
+                            <span className="quantity-text">{cantidad}</span>
+                            <button onClick={handleAumentar}>
+                                <span className="material-symbols-outlined">add</span>
+                            </button>
+                        </div>
+                        <button className="btn-agregar-carrito" onClick={handleAgregar}>
+                            Agregar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 /* ---------- Main Component ---------- */
 const MenuPublico = () => {
     const [productos, setProductos] = useState([]);
@@ -79,20 +171,7 @@ const MenuPublico = () => {
                 <p>Descubre lo que tenemos preparado para ti hoy</p>
             </div>
 
-            {/* Login Banner */}
-            {!token && (
-                <div className="menu-login-banner fade-in">
-                    <p className="mb-0">
-                        <span className="material-symbols-outlined align-middle me-1" style={{ fontSize: '1.2rem' }}>login</span>
-                        Inicia sesión para hacer un pedido
-                    </p>
-                    <Link to="/login">
-                        <button className="btn btn-primary btn-sm px-4 py-2" style={{ borderRadius: '8px', fontWeight: 600 }}>
-                            Iniciar Sesión
-                        </button>
-                    </Link>
-                </div>
-            )}
+
 
             {/* Category Chips */}
             <div className="menu-category-chips fade-in">
@@ -155,82 +234,13 @@ const MenuPublico = () => {
                 ))
             )}
 
-            {/* Premium Product Detail Modal */}
-            <Modal
-                show={!!selectedProduct}
-                onHide={() => setSelectedProduct(null)}
-                dialogClassName="custom-menu-modal"
-                centered
-            >
-                {selectedProduct && (
-                    <>
-                        <div className="menu-modal-header-img">
-                            <button className="menu-modal-close-btn" onClick={() => setSelectedProduct(null)} aria-label="Cerrar">
-                                <span className="material-symbols-outlined">close</span>
-                            </button>
-                            
-                            {selectedProduct.imagePaths && selectedProduct.imagePaths.length > 0 ? (
-                                <Carousel interval={4000} indicators={selectedProduct.imagePaths.length > 1} controls={selectedProduct.imagePaths.length > 1}>
-                                    {selectedProduct.imagePaths.map((src, idx) => (
-                                        <Carousel.Item key={idx}>
-                                            <img
-                                                className="d-block w-100"
-                                                src={src}
-                                                alt={`${selectedProduct.nombre} - ${idx + 1}`}
-                                                style={{ height: '30vh', minHeight: '280px', objectFit: 'cover' }}
-                                            />
-                                        </Carousel.Item>
-                                    ))}
-                                </Carousel>
-                            ) : (
-                                <div className="d-flex flex-column align-items-center justify-content-center h-100" style={{ minHeight: '280px' }}>
-                                    <span className="material-symbols-outlined d-block mb-2" style={{ fontSize: '3.5rem', color: '#ccc' }}>image_not_supported</span>
-                                    <span className="text-muted font-weight-bold">Sin imágenes</span>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="menu-detail-body">
-                            <span className="menu-detail-categoria-badge">
-                                {selectedProduct.categoria?.nombre || 'Sin categoría'}
-                            </span>
-                            
-                            <div className="menu-detail-title-row">
-                                <h3 className="menu-detail-title">{selectedProduct.nombre}</h3>
-                                <div className="menu-detail-precio">
-                                    Bs {parseFloat(selectedProduct.precio).toFixed(0)}
-                                </div>
-                            </div>
-                            
-                            {selectedProduct.descripcion ? (
-                                <div className="menu-detail-descripcion">
-                                    {selectedProduct.descripcion}
-                                </div>
-                            ) : (
-                                <p className="text-muted fst-italic mb-4">Sin descripción disponible.</p>
-                            )}
-
-                            <div className="d-flex align-items-center mt-2">
-                                <span className="badge bg-success bg-opacity-10 text-success d-flex align-items-center gap-1 py-2 px-3" style={{ borderRadius: '8px', border: '1px solid rgba(25, 135, 84, 0.2)' }}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>check_circle</span>
-                                    Disponible en menú
-                                </span>
-                            </div>
-                        </div>
-
-                        {!token && (
-                            <div className="menu-modal-footer">
-                                <Link to="/login" className="w-100" style={{ textDecoration: 'none' }}>
-                                    <button className="menu-modal-login-btn">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>login</span>
-                                        Iniciar sesión para pedir
-                                    </button>
-                                </Link>
-                            </div>
-                        )}
-                    </>
-                )}
-            </Modal>
+            {/* Exclusive Product Detail View */}
+            {selectedProduct && (
+                <ProductoDetailView 
+                    producto={selectedProduct} 
+                    onBack={() => setSelectedProduct(null)} 
+                />
+            )}
         </Container>
     );
 };
