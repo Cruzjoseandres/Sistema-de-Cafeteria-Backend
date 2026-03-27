@@ -1,110 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Container, Card, Spinner, Alert, Row, Col, Modal, Carousel } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { Container, Spinner, Alert, Row, Col, Carousel } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { getMenuPublico, getCategoriasPublicas } from '../../../../services/PublicService';
 import { getAccessToken } from '../../../../utils/TokenUtilities';
 import './MenuPublico.css';
 
-/* ---------- Subcomponents ---------- */
-const ProductoDetailView = ({ producto, onBack }) => {
-    const [cantidad, setCantidad] = useState(1);
-    const [notas, setNotas] = useState('');
-
-    const handleAumentar = () => setCantidad(prev => prev + 1);
-    const handleDisminuir = () => {
-        if (cantidad > 1) setCantidad(prev => prev - 1);
-    };
-
-    const handleAgregar = () => {
-        // Acción de agregar a un futuro carrito
-        onBack();
-    };
-
-    const total = parseFloat(producto.precio) * cantidad;
-
-    return (
-        <div className="producto-detail-view-container fade-in">
-            <div className="producto-detail-content">
-                <div className="producto-detail-header-img">
-                    <button className="producto-detail-back-btn" onClick={onBack} aria-label="Volver">
-                        <span className="material-symbols-outlined">arrow_back_ios_new</span>
-                    </button>
-                    
-                    {producto.imagePaths && producto.imagePaths.length > 0 ? (
-                        <Carousel interval={4000} indicators={producto.imagePaths.length > 1} controls={producto.imagePaths.length > 1}>
-                            {producto.imagePaths.map((src, idx) => (
-                                <Carousel.Item key={idx}>
-                                    <img
-                                        className="d-block w-100"
-                                        src={src}
-                                        alt={`${producto.nombre} - ${idx + 1}`}
-                                    />
-                                </Carousel.Item>
-                            ))}
-                        </Carousel>
-                    ) : (
-                        <div className="d-flex flex-column align-items-center justify-content-center h-100" style={{ minHeight: '300px' }}>
-                            <span className="material-symbols-outlined d-block mb-2" style={{ fontSize: '3.5rem', color: '#ccc' }}>image_not_supported</span>
-                            <span className="text-muted font-weight-bold">Sin imágenes</span>
-                        </div>
-                    )}
-                </div>
-
-                <div className="producto-detail-body">
-                    <h3 className="producto-detail-title">{producto.nombre}</h3>
-                    <p className="producto-detail-descripcion-short">{producto.descripcion || 'Sin descripción disponible.'}</p>
-                    <div className="producto-detail-precio-row">
-                        <span className="precio-bold">Bs {parseFloat(producto.precio).toFixed(0)}</span>
-                    </div>
-
-                    <div className="producto-detail-section">
-                        <h4 className="section-title">Notas para este producto</h4>
-                        <p className="section-subtitle">El restaurante intentará seguirlas cuando lo prepare.</p>
-                        <textarea 
-                            className="form-control producto-detail-notas" 
-                            placeholder="Escribí las instrucciones que necesites."
-                            value={notas}
-                            onChange={(e) => setNotas(e.target.value)}
-                            maxLength={100}
-                            rows={3}
-                        />
-                        <div className="text-end text-muted small mt-1">{notas.length}/100</div>
-                    </div>
-                </div>
-
-                <div className="producto-detail-footer">
-                    <div className="producto-detail-footer-info">
-                        <span>{cantidad} {cantidad === 1 ? 'producto' : 'productos'}</span>
-                        <span className="fw-bold">Bs {total.toFixed(0)}</span>
-                    </div>
-                    <div className="d-flex align-items-center gap-3">
-                        <div className="producto-detail-quantity">
-                            <button onClick={handleDisminuir} disabled={cantidad <= 1}>
-                                <span className="material-symbols-outlined">remove</span>
-                            </button>
-                            <span className="quantity-text">{cantidad}</span>
-                            <button onClick={handleAumentar}>
-                                <span className="material-symbols-outlined">add</span>
-                            </button>
-                        </div>
-                        <button className="btn-agregar-carrito" onClick={handleAgregar}>
-                            Agregar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
 /* ---------- Main Component ---------- */
 const MenuPublico = () => {
+    const navigate = useNavigate();
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [categoriaFilter, setCategoriaFilter] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedProduct, setSelectedProduct] = useState(null);
 
     const token = getAccessToken();
 
@@ -207,7 +116,7 @@ const MenuPublico = () => {
                         <Row className="g-3 g-md-4">
                             {prods.map((producto) => (
                                 <Col key={producto.id} xs={12} md={6} lg={4}>
-                                    <div className="menu-producto-item" onClick={() => setSelectedProduct(producto)}>
+                                    <div className="menu-producto-item" onClick={() => navigate(`/producto/${producto.id}`)}>
                                         <div className="menu-producto-info">
                                             <h5 className="menu-producto-nombre">{producto.nombre}</h5>
                                             {producto.descripcion && (
@@ -232,14 +141,6 @@ const MenuPublico = () => {
                         </Row>
                     </div>
                 ))
-            )}
-
-            {/* Exclusive Product Detail View */}
-            {selectedProduct && (
-                <ProductoDetailView 
-                    producto={selectedProduct} 
-                    onBack={() => setSelectedProduct(null)} 
-                />
             )}
         </Container>
     );

@@ -21,4 +21,14 @@ const getCategoriasPublicas = async () => {
     }
 }
 
-export { getMenuPublico, getCategoriasPublicas };
+const getProductoPublicoById = async (id) => {
+    try {
+        const response = await apiClient.get(`/public/productos/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}
+
+export { getMenuPublico, getCategoriasPublicas, getProductoPublicoById };

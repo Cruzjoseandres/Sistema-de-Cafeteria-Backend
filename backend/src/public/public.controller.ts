@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Producto } from '../producto/entities/producto.entity';
@@ -36,5 +36,23 @@ export class PublicController {
             where: { D_E_L_E_T_E_D: false },
             order: { id: 'ASC' },
         });
+    }
+
+    @Get('productos/:id')
+    async getProducto(@Param('id') id: string) {
+        const producto = await this.productoRepository.findOne({
+            where: { id: +id, D_E_L_E_T_E_D: false },
+            relations: ['categoria'],
+        });
+
+        if (!producto) return null;
+
+        return {
+            ...producto,
+            categoria: producto.categoria ? {
+                id: producto.categoria.id,
+                nombre: producto.categoria.nombre,
+            } : null,
+        };
     }
 }

@@ -8,6 +8,7 @@ import { getAccessToken, getUserFromToken, removeAccessToken } from '../utils/To
 // Páginas públicas
 import FormLogin from './pages/auth/Login/FormLogin.jsx';
 import MenuPublico from './pages/Public/MenuPublico/MenuPublico.jsx';
+import ProductoDetalle from './pages/Public/MenuPublico/ProductoDetalle/ProductoDetalle.jsx';
 
 // Páginas de Admin
 import AdminDashboard from './pages/Admin/Dashboard/AdminDashboard.jsx';
@@ -65,6 +66,7 @@ const App = () => {
         <Route element={<PublicLayout />}>
           <Route path="/login" element={<FormLogin />} />
           <Route path="/menu" element={<MenuPublico />} />
+          <Route path="/producto/:id" element={<ProductoDetalle />} />
 
           {/* Redirect raíz al menú público */}
           <Route path="/" element={<Navigate to="/menu" replace />} />
