@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Spinner, Alert, Carousel } from 'react-bootstrap';
 import { useProductoDetalle } from './useProductoDetalle';
 import './ProductoDetalle.css';
@@ -9,8 +8,8 @@ const ProductoDetalle = () => {
     if (loading) {
         return (
             <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
-                <Spinner animation="border" variant="primary" />
-                <p className="mt-3 text-muted">Cargando detalles...</p>
+                <Spinner animation="grow" variant="primary" />
+                <p className="mt-3 text-muted fw-500">Cargando experiencia...</p>
             </div>
         );
     }
@@ -18,12 +17,12 @@ const ProductoDetalle = () => {
     if (error || !producto) {
         return (
             <Container className="mt-5">
-                <Alert variant="danger" className="text-center py-4 rounded-4">
-                    <span className="material-symbols-outlined d-block mb-3" style={{ fontSize: '3rem' }}>error</span>
-                    <h4>¡Ups! Algo salió mal</h4>
-                    <p>{error || 'Producto no encontrado.'}</p>
-                    <button className="btn btn-outline-danger mt-3" onClick={handleBack}>
-                        Volver al Menú
+                <Alert variant="danger" className="text-center py-5 border-0 shadow-sm rounded-4">
+                    <span className="material-symbols-outlined d-block mb-3" style={{ fontSize: '4rem', opacity: 0.5 }}>error</span>
+                    <h3 className="fw-bold">No pudimos encontrar el producto</h3>
+                    <p className="text-muted mb-4">{error || 'El producto solicitado no está disponible.'}</p>
+                    <button className="btn btn-primary px-4 py-2 rounded-pill fw-bold" onClick={handleBack}>
+                        Volver al menú
                     </button>
                 </Alert>
             </Container>
@@ -32,69 +31,63 @@ const ProductoDetalle = () => {
 
     return (
         <div className="producto-detalle-page fade-in">
-            <Container fluid className="px-0 px-lg-3">
-                <div className="producto-detalle-container">
+            <Container fluid className="px-0 px-lg-4">
+                <div className="producto-detalle-main-card">
                     
-                    {/* Media Section */}
-                    <div className="producto-detalle-media">
-                        <button className="producto-detalle-back-btn" onClick={handleBack} aria-label="Volver">
-                            <span className="material-symbols-outlined">arrow_back</span>
+                    {/* Sección de Imagen (Izquierda en Laptop, Arriba en Móvil) */}
+                    <div className="detalle-media-section">
+                        <button className="detalle-back-floating" onClick={handleBack} aria-label="Atrás">
+                            <span className="material-symbols-outlined">west</span>
                         </button>
 
                         {producto.imagePaths && producto.imagePaths.length > 0 ? (
-                            <Carousel interval={5000} indicators={producto.imagePaths.length > 1} controls={producto.imagePaths.length > 1} className="h-100">
+                            <Carousel interval={null} indicators={producto.imagePaths.length > 1} className="h-100 shadow-lg">
                                 {producto.imagePaths.map((src, idx) => (
                                     <Carousel.Item key={idx} className="h-100">
                                         <img
-                                            className="producto-detalle-img"
+                                            className="detalle-img-hero"
                                             src={src}
-                                            alt={`${producto.nombre} - ${idx + 1}`}
+                                            alt={producto.nombre}
                                         />
                                     </Carousel.Item>
                                 ))}
                             </Carousel>
                         ) : (
-                            <div className="d-flex flex-column align-items-center justify-content-center h-100 bg-light">
-                                <span className="material-symbols-outlined text-muted mb-2" style={{ fontSize: '4rem' }}>image_not_supported</span>
-                                <span className="text-muted fw-bold">Sin imágenes disponibles</span>
+                            <div className="detalle-no-img">
+                                <span className="material-symbols-outlined">image_not_supported</span>
+                                <p>Sin imagen</p>
                             </div>
                         )}
                     </div>
 
-                    {/* Info Section */}
-                    <div className="producto-detalle-info">
-                        <div className="producto-detalle-badge-row">
-                            <span className="badge-categoria px-3 py-1 bg-primary bg-opacity-10 text-primary rounded-pill fw-bold" style={{ fontSize: '0.8rem', letterSpacing: '0.5px' }}>
+                    {/* Sección de Información (Derecha en Laptop, Abajo en Móvil) */}
+                    <div className="detalle-info-section">
+                        <h1 className="detalle-product-title">
+                            <span className="detalle-category-label">
                                 {producto.categoria?.nombre || 'General'}
                             </span>
-                            <div className="d-flex align-items-center gap-1 text-success fw-bold" style={{ fontSize: '0.9rem' }}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>check_circle</span>
-                                Disponible
-                            </div>
+                            {producto.nombre}
+                        </h1>
+
+                        <div className="detalle-price-tag mb-4">
+                            <span className="currency">Bs</span>
+                            <span className="amount">{parseFloat(producto.precio).toFixed(0)}</span>
+                            <span className="unit">/ unidad</span>
                         </div>
 
-                        <h1 className="producto-detalle-nombre">{producto.nombre}</h1>
-
-                        <div className="producto-detalle-precio">
-                            <span className="material-symbols-outlined text-primary" style={{ fontSize: '1.8rem' }}>sell</span>
-                            <span className="amount">Bs {parseFloat(producto.precio).toFixed(0)}</span>
-                            <span className="text-muted fw-500" style={{ fontSize: '1rem' }}>/ por unidad</span>
-                        </div>
-
-                        <div className="producto-detalle-desc-box">
-                            <h4 className="producto-detalle-desc-title">
-                                <span className="material-symbols-outlined">subject</span>
-                                Descripción del Producto
-                            </h4>
-                            <p className="producto-detalle-desc-text">
-                                {producto.descripcion || 'Este producto no cuenta con una descripción detallada en este momento.'}
+                        <div className="detalle-description-block">
+                            <h5 className="detalle-section-label">
+                                <span className="material-symbols-outlined">notes</span>
+                                Descripción completa
+                            </h5>
+                            <p className="detalle-description-text">
+                                {producto.descripcion || 'Este producto es parte de nuestra selección exclusiva. Pregunta por más detalles en caja.'}
                             </p>
                         </div>
 
-                        <div className="producto-detalle-footer">
-                            <p className="text-muted small d-flex align-items-center justify-content-center gap-2" style={{ opacity: 0.8 }}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>restaurant</span>
-                                Elaborado con los mejores estándares de calidad
+                        <div className="detalle-footer-tranquilo">
+                            <p className="mensaje-bonito">
+                                Hecho con amor para endulzar tu día.
                             </p>
                         </div>
                     </div>

@@ -1,155 +1,209 @@
-/* ---------- Standalone Product Detail Page ---------- */
+/* ---------- Premium Standalone Product Detail Page ---------- */
 
 .producto-detalle-page {
     min-height: 100vh;
-    background: #f8f9fa;
-    padding-bottom: 5rem;
+    background: #fbfbfb; /* Fondo más suave */
+    display: flex;
+    flex-direction: column;
 }
 
-.producto-detalle-container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: #fff;
+.producto-detalle-main-card {
+    background: #ffffff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 0 40px rgba(0,0,0,0.03);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.02);
 }
 
-@media (min-width: 992px) {
-    .producto-detalle-container {
-        flex-direction: row;
-        align-items: stretch;
-        min-height: 80vh;
-        margin-top: 3rem;
-        margin-bottom: 3rem;
-        border-radius: 32px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-    }
-}
-
-/* Header Image Section */
-.producto-detalle-media {
+/* Hero Section (Media) */
+.detalle-media-section {
     position: relative;
     width: 100%;
-    height: 45vh;
-    background: #fff;
+    height: auto;
+    aspect-ratio: 1/1;
+    max-height: 450px;
+    background: #ffffff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 @media (min-width: 992px) {
-    .producto-detalle-media {
-        width: 50%;
-        height: auto;
-        min-height: 600px;
+    .detalle-media-section {
+        padding: 0;
+        max-height: none;
     }
 }
 
-.producto-detalle-img {
+.detalle-img-hero {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Ensure full 800x800 is visible */
     display: block;
 }
 
-.producto-detalle-back-btn {
+/* Floating Back Button */
+.detalle-back-floating {
     position: absolute;
     top: 20px;
     left: 20px;
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.95);
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    z-index: 10;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    z-index: 100;
     cursor: pointer;
-    backdrop-filter: blur(4px);
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    color: #333;
 }
 
-.producto-detalle-back-btn:hover {
-    transform: scale(1.1);
+.detalle-back-floating:hover {
+    transform: translateX(-5px);
     background: #fff;
 }
 
-/* Body Info Section */
-.producto-detalle-info {
-    padding: 2.5rem 2rem;
+/* Info Section (Content) */
+.detalle-info-section {
+    padding: 2rem 1.5rem;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-@media (min-width: 992px) {
-    .producto-detalle-info {
-        padding: 4rem;
-        justify-content: center;
-    }
-}
-
-.producto-detalle-badge-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.producto-detalle-nombre {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: #1a1a1a;
-    margin-bottom: 1rem;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-}
-
-.producto-detalle-precio {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 2.5rem;
-}
-
-.producto-detalle-precio .amount {
-    font-size: 2rem;
-    font-weight: 900;
+/* Metadata (Category & Status) */
+.detalle-category-label {
+    display: block;
     color: var(--neon-primary, #0d6efd);
-}
-
-.producto-detalle-desc-box {
-    background: #f8f9fa;
-    padding: 2rem;
-    border-radius: 20px;
-    border: 1px solid #eee;
-    margin-bottom: 2.5rem;
-}
-
-.producto-detalle-desc-title {
     font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #888;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.75rem;
 }
 
-.producto-detalle-desc-text {
-    font-size: 1.05rem;
+/* Title & Price */
+.detalle-product-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #1a1a1a;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.03em;
+}
+
+.detalle-price-tag {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+}
+
+.detalle-price-tag .currency {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--neon-primary, #0d6efd);
+}
+
+.detalle-price-tag .amount {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--neon-primary, #0d6efd);
+    line-height: 1;
+}
+
+.detalle-price-tag .unit {
+    font-size: 1rem;
+    color: #777;
+    font-weight: 600;
+}
+
+/* Description Block */
+.detalle-description-block {
+    margin-top: 2rem;
+    background: #fcfcfc;
+    padding: 2rem;
+    border-radius: 24px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.detalle-section-label {
+    font-size: 0.85rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #555;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.detalle-description-text {
+    font-size: 1.1rem;
     line-height: 1.7;
     color: #333;
     margin-bottom: 0;
 }
 
-.producto-detalle-footer {
+/* Footer Tranquilo */
+.detalle-footer-tranquilo {
     margin-top: auto;
-    padding-top: 2rem;
-    border-top: 1px solid #f0f0f0;
+    padding-top: 4rem;
     text-align: center;
+}
+
+.mensaje-bonito {
+    font-family: 'Outfit', sans-serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: #888;
+    opacity: 0.8;
+}
+
+/* ADAPTAPTIVE DESIGN */
+
+@media (min-width: 992px) {
+    .producto-detalle-main-card {
+        flex-direction: row;
+        min-height: 80vh;
+        max-width: 1200px;
+        margin: 4rem auto;
+        border-radius: 40px;
+        overflow: hidden;
+        box-shadow: 0 30px 100px rgba(0,0,0,0.1);
+    }
+
+    .detalle-media-section {
+        width: 50%;
+        height: auto;
+    }
+
+    .detalle-info-section {
+        width: 50%;
+        padding: 5rem;
+        justify-content: center;
+    }
+
+    .detalle-product-title {
+        font-size: 3.5rem;
+    }
+
+    .detalle-price-tag .amount {
+        font-size: 3rem;
+    }
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
