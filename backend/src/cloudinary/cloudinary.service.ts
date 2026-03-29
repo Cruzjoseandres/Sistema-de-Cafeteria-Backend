@@ -69,7 +69,7 @@ export class CloudinaryService {
         {
           folder: 'cafeteria_pedidos',
           public_id: publicId,
-          resource_type: 'raw',
+          resource_type: 'image', // Cambiado de 'raw' a 'image' para mayor compatibilidad y evitar errores 401
           format: 'pdf',
           overwrite: true,
         },

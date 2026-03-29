@@ -193,7 +193,7 @@ export class PedidoService {
     });
     const pdfBuffer = Buffer.concat(chunks);
 
-    // Upload to Cloudinary (raw, no transformation credits)
+    // Upload to Cloudinary (como 'image' para permitir visualización directa sin errores 401)
     const publicId = `pedido_${pedido.id}_${Date.now()}`;
     const pdfUrl = await this.cloudinaryService.uploadPdf(pdfBuffer, publicId);
 
