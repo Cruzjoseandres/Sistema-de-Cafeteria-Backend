@@ -64,6 +64,11 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <span className="material-symbols-outlined">table_restaurant</span>
                     Mesas
                 </NavLink>
+                <NavLink to="/menu" onClick={handleNavClick}
+                    className={({ isActive }) => isActive ? 'admin-nav-item active' : 'admin-nav-item'}>
+                    <span className="material-symbols-outlined">restaurant_menu</span>
+                    Menú
+                </NavLink>
             </nav>
 
             <div className="admin-sidebar-footer" onClick={doLogout} style={{ cursor: 'pointer' }} title="Cerrar sesión">
