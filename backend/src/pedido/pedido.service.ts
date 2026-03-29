@@ -193,9 +193,14 @@ export class PedidoService {
     });
     const pdfBuffer = Buffer.concat(chunks);
 
-    // Upload to Cloudinary (como 'image' para permitir visualización directa sin errores 401)
+    // Forzar descarga directa con fl_attachment para evitar problemas de CORS/iframe
     const publicId = `pedido_${pedido.id}_${Date.now()}`;
-    const pdfUrl = await this.cloudinaryService.uploadPdf(pdfBuffer, publicId);
+    const rawPdfUrl = await this.cloudinaryService.uploadPdf(pdfBuffer, publicId);
+
+    // Insertar fl_attachment en la URL para que el navegador lo descargue directamente
+    // antes: .../raw/upload/v123/...
+    // después: .../raw/upload/fl_attachment/v123/...
+    const pdfUrl = rawPdfUrl.replace('/raw/upload/', '/raw/upload/fl_attachment/');
 
     return pdfUrl;
   }
