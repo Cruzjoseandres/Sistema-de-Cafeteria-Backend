@@ -19,12 +19,12 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'el-cafe-comadre-logo-transparent.png',
+            src: '/el-cafe-comadre-logo-transparent.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'el-cafe-comadre-logo-transparent.png',
+            src: '/el-cafe-comadre-logo-transparent.png',
             sizes: '512x512',
             type: 'image/png'
           }
