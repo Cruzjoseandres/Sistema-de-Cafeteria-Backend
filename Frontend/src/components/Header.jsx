@@ -21,7 +21,20 @@ const Header = () => {
                     <span className="material-symbols-outlined brand-icon">coffee_maker</span>
                     Cafetería
                 </Link>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+
+                <div className="d-flex align-items-center ms-auto gap-2">
+                    {isInstallable && (
+                        <button 
+                            className="btn btn-primary d-flex align-items-center gap-1 btn-sm font-weight-bold rounded-pill px-3 py-1 heartbeat-btn" 
+                            onClick={installPWA}
+                        >
+                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>install_mobile</span>
+                            <span className="d-none d-sm-inline">Instalar</span>
+                        </button>
+                    )}
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" className="ms-2" />
+                </div>
+
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
                         <Link className="nav-link d-flex align-items-center gap-2" to="/menu">
@@ -60,18 +73,6 @@ const Header = () => {
                             </>
                         )}
                     </Nav>
-
-                    {isInstallable && (
-                        <Nav className="me-2 d-flex align-items-center mt-2 mt-lg-0">
-                            <button 
-                                className="btn btn-primary d-flex align-items-center gap-2 btn-sm font-weight-bold rounded-pill px-3 py-2 heartbeat-btn" 
-                                onClick={installPWA}
-                            >
-                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>install_mobile</span>
-                                Instalar App
-                            </button>
-                        </Nav>
-                    )}
 
                     {token && (
                         <Nav>
