@@ -553,8 +553,8 @@ export const usePedidoView = () => {
         const oldestTime = Math.min(...todosLosDetalles.map(d => new Date(d.created_at || Date.now()).getTime()));
         const detalleCreation = new Date(detalle.created_at).getTime();
         
-        const diffMinutes = (detalleCreation - oldestTime) / (1000 * 60);
-        return diffMinutes > 5 ? 'Extras' : 'Pedido Inicial';
+        // 2000 ms (2 segundos) de tolerancia máxima para absorber el tiempo de ejecución en la Base de Datos del insert del lote original.
+        return (detalleCreation - oldestTime) > 2000 ? 'Extras' : 'Pedido Inicial';
     };
 
     // ----- PAYMENT HANDLING -----
