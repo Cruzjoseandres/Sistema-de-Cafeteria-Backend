@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getPedidoById, updatePedido, deletePedido, generateWhatsAppPdf } from '../../../../services/PedidoService';
 import { createCuenta, getCuentasByPedido, deleteCuenta, updateCuenta, getQRUrl } from '../../../../services/CuentaService';
-import { createDetalle, getDetallesByCuenta, updateDetalle, deleteDetalle } from '../../../../services/DetallePedidoService';
+import { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, deleteDetalle } from '../../../../services/DetallePedidoService';
 import { getAllProductos } from '../../../../services/ProductoService';
 import { getAllCategorias } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
@@ -220,13 +220,14 @@ export const usePedidoView = () => {
                 }
 
                 const aCrear = dDetalles.filter(d => d.isNew || d.id < 0);
-                for (const c of aCrear) {
-                    await createDetalle({
+                if (aCrear.length > 0) {
+                    const bulkArray = aCrear.map(c => ({
                         id_cuenta: realCuentaId,
                         id_producto: c.producto.id,
                         cantidad: c.cantidad,
                         comentario: c.comentario || ''
-                    });
+                    }));
+                    await createBulkDetalles(bulkArray);
                 }
 
                 const aModificar = dDetalles.filter(d => !d.isNew && d.id > 0 && d.isModified);

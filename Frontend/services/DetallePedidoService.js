@@ -17,6 +17,16 @@ const createDetalle = async (data) => {
     }
 };
 
+const createBulkDetalles = async (dataArray) => {
+    try {
+        const response = await apiClient.post(`/detalle-pedido/bulk`, dataArray);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 const getDetallesByCuenta = async (idCuenta) => {
     try {
         const response = await apiClient.get(`/detalle-pedido/cuenta/${idCuenta}`);
@@ -47,4 +57,4 @@ const deleteDetalle = async (id) => {
     }
 };
 
-export { createDetalle, getDetallesByCuenta, updateDetalle, deleteDetalle };
+export { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, deleteDetalle };

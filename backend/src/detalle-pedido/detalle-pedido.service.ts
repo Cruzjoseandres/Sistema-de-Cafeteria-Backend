@@ -46,6 +46,42 @@ export class DetallePedidoService {
     return this.findOne(detalleCreado.id);
   }
 
+  async createBulk(createDetallePedidoDtoArray: CreateDetallePedidoDto[]) {
+    if (!createDetallePedidoDtoArray || createDetallePedidoDtoArray.length === 0) return [];
+    
+    // Obtener ids de productos
+    const productIds = Array.from(new Set(createDetallePedidoDtoArray.map(d => Number(d.id_producto))));
+    // Cargar productos en memoria para obviar múltiples queries
+    const productos = await this.productoRepository.findByIds(productIds);
+    const productosMap = new Map(productos.map(p => [p.id, p]));
+
+    const detallesToInsert = createDetallePedidoDtoArray.map(dto => {
+      const producto = productosMap.get(Number(dto.id_producto));
+      if (!producto) {
+        throw new NotFoundException(`Producto #${dto.id_producto} no encontrado`);
+      }
+      return {
+        cantidad: Number(dto.cantidad),
+        subtotal: Number(producto.precio) * Number(dto.cantidad),
+        comentario: dto.comentario || '',
+        cuenta: { id: Number(dto.id_cuenta) } as any,
+        producto: { id: producto.id } as any,
+        estado: { id: 1 } as any, // ACTIVO
+      };
+    });
+
+    const detallesCreados = await this.detalleRepository.save(detallesToInsert);
+
+    // Recalcular total de las cuentas involucradas solo una vez
+    const cuentasIds = Array.from(new Set(createDetallePedidoDtoArray.map(d => Number(d.id_cuenta))));
+    for (const cuentaId of cuentasIds) {
+      await this.recalcularTotalCuenta(cuentaId);
+    }
+
+    return detallesCreados;
+  }
+
+
   async findByCuenta(idCuenta: number) {
     return this.detalleRepository.find({
       where: { cuenta: { id: idCuenta }, D_E_L_E_T_E_D: false },

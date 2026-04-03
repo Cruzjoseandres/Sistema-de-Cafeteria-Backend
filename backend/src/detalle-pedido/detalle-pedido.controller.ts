@@ -17,6 +17,13 @@ export class DetallePedidoController {
     return await this.detallePedidoService.create(createDetallePedidoDto);
   }
 
+  @Post('bulk')
+  @Roles('ADMINISTRADOR', 'MESERO')
+  async createBulk(@Body() createDetallePedidoDtoArray: CreateDetallePedidoDto[]) {
+    return await this.detallePedidoService.createBulk(createDetallePedidoDtoArray);
+  }
+
+
   @Get()
   @Roles('ADMINISTRADOR', 'MESERO')
   async findAll() {
