@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['el-cafe-comadre-logo-transparent.png'],
       manifest: {
-        name: 'Cafetería',
-        short_name: 'Cafetería',
+        name: 'CafeteriaPRD',
+        short_name: 'CafeteriaPRD',
         description: 'Sistema de Gestión - Cafetería',
         theme_color: '#ffffff',
         background_color: '#ffffff',
