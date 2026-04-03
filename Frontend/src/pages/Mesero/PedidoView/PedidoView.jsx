@@ -15,7 +15,6 @@ const PedidoView = () => {
         nombreCliente, setNombreCliente,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
-        filtroDisponible, setFiltroDisponible,
         productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
         handleAddCuenta, handleDeleteCuenta,
         handleOpenAddItem, handleAddMultipleItems,
@@ -217,8 +216,9 @@ const PedidoView = () => {
                                                                 </span>
                                                                 {grupo.titulo}
                                                             </div>
-                                                            <Table hover className="mb-0 align-middle" style={{ tableLayout: 'fixed' }}>
-                                                                <thead className="table-light">
+                                                            <div className="table-responsive">
+                                                                <Table hover className="mb-0 align-middle text-nowrap" style={{ minWidth: '600px' }}>
+                                                                    <thead className="table-light">
                                                                     <tr>
                                                                         <th style={{ width: '35%' }}>Producto</th>
                                                                         <th className="text-center" style={{ width: '160px' }}>Entregado / Total</th>
@@ -324,7 +324,8 @@ const PedidoView = () => {
                                                                 </tbody>
                                                             </Table>
                                                         </div>
-                                                    ))}
+                                                    </div>
+                                                ))}
                                                 </div>
                                             )}
                                         </Accordion.Body>
@@ -372,7 +373,7 @@ const PedidoView = () => {
             </Modal>
 
             {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST) ========== */}
-            <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl">
+            <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" fullscreen="lg-down">
                 <Modal.Header closeButton className="border-bottom-0 pb-2 px-3 px-md-4">
                     <Modal.Title className="d-flex align-items-center gap-1 gap-md-2 w-100 fs-5 fs-md-4 pe-2">
                         <span className="material-symbols-outlined text-warning fs-4 fs-md-3">fastfood</span>
@@ -386,7 +387,7 @@ const PedidoView = () => {
                     {/* FIxed Header Area */}
                     <div className="p-2 p-md-3 bg-white border-bottom flex-shrink-0 shadow-sm">
                         <Row className="g-2">
-                            <Col xs={12} md={6}>
+                            <Col xs={12} md={8}>
                                 <InputGroup>
                                     <InputGroup.Text className="bg-white"><span className="material-symbols-outlined fs-5">search</span></InputGroup.Text>
                                     <Form.Control
@@ -396,9 +397,14 @@ const PedidoView = () => {
                                         onChange={(e) => setBusquedaProducto(e.target.value)}
                                         autoFocus
                                     />
+                                    {busquedaProducto && (
+                                        <Button variant="outline-secondary" className="border-start-0 bg-white" onClick={() => setBusquedaProducto('')}>
+                                            <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
+                                        </Button>
+                                    )}
                                 </InputGroup>
                             </Col>
-                            <Col md={3} xs={6}>
+                            <Col md={4} xs={12}>
                                 <Form.Select
                                     value={filtroCategoria}
                                     onChange={(e) => setFiltroCategoria(e.target.value)}
@@ -407,16 +413,6 @@ const PedidoView = () => {
                                     {categorias.map((cat) => (
                                         <option key={cat.id} value={cat.id}>{cat.nombre}</option>
                                     ))}
-                                </Form.Select>
-                            </Col>
-                            <Col md={3} xs={6}>
-                                <Form.Select
-                                    value={filtroDisponible}
-                                    onChange={(e) => setFiltroDisponible(e.target.value)}
-                                >
-                                    <option value="disponible">Solo disponibles</option>
-                                    <option value="todos">Todos</option>
-                                    <option value="agotado">Solo agotados</option>
                                 </Form.Select>
                             </Col>
                         </Row>

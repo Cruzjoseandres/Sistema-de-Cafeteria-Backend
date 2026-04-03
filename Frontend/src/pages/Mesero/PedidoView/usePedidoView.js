@@ -46,7 +46,7 @@ export const usePedidoView = () => {
     
     const [busquedaProducto, setBusquedaProducto] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
-    const [filtroDisponible, setFiltroDisponible] = useState('disponible');
+    // Se quitó filtroDisponible, por defecto solo usamos verdaderos
     const [productosSeleccionados, setProductosSeleccionados] = useState({}); 
 
     // Payment State
@@ -301,7 +301,6 @@ export const usePedidoView = () => {
         setSelectedCuentaId(cuentaId);
         setBusquedaProducto('');
         setFiltroCategoria('');
-        setFiltroDisponible('disponible');
         setProductosSeleccionados({});
         setShowAddItemModal(true);
     };
@@ -421,7 +420,7 @@ export const usePedidoView = () => {
             if (dIndex === -1) return next;
 
             // Extra splitting logic for late additions to initial orders
-            if (nuevaCantidad > detalle.cantidad && getClasificacionDetalle(detalle) === 'Pedido Inicial') {
+            if (!detalle.isNew && nuevaCantidad > detalle.cantidad && getClasificacionDetalle(detalle) === 'Pedido Inicial') {
                 const extrasInSameCuenta = detalles.filter(d => 
                     d.producto?.id === detalle.producto?.id && getClasificacionDetalle(d) === 'Extras'
                 );
@@ -531,27 +530,31 @@ export const usePedidoView = () => {
 
     const totalPedido = draftCuentas.reduce((sum, c) => sum + Number(c.total || 0), 0);
 
+    const normalizeText = (text) => text ? text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
+
     const productosFiltrados = productos.filter(p => {
         const matchBusqueda = !busquedaProducto ||
-            p.nombre.toLowerCase().includes(busquedaProducto.toLowerCase()) ||
-            p.descripcion?.toLowerCase().includes(busquedaProducto.toLowerCase());
+            normalizeText(p.nombre).includes(normalizeText(busquedaProducto)) ||
+            normalizeText(p.descripcion).includes(normalizeText(busquedaProducto));
         const matchCategoria = !filtroCategoria || p.categoria?.id === parseInt(filtroCategoria);
-        const matchDisponible = filtroDisponible === 'todos' ||
-            (filtroDisponible === 'disponible' && p.disponible) ||
-            (filtroDisponible === 'agotado' && !p.disponible);
+        const matchDisponible = p.disponible;
         return matchBusqueda && matchCategoria && matchDisponible;
     });
 
     const getClasificacionDetalle = (detalle) => {
+        const cuenta = draftCuentas.find(c => c.id === detalle.cuenta?.id) || cuentas.find(c => c.id === detalle.cuenta?.id);
+        if (cuenta && cuenta.isNew) return 'Pedido Inicial';
+        if (detalle.isNew) return 'Extras';
+
         if (!detalle.created_at || !detalle.cuenta) return 'Pedido Inicial';
         const todosLosDetalles = draftDetallesPorCuenta[detalle.cuenta.id] || [];
         if (todosLosDetalles.length === 0) return 'Pedido Inicial';
 
-        const oldestTime = Math.min(...todosLosDetalles.map(d => new Date(d.created_at).getTime()));
+        const oldestTime = Math.min(...todosLosDetalles.map(d => new Date(d.created_at || Date.now()).getTime()));
         const detalleCreation = new Date(detalle.created_at).getTime();
         
         const diffMinutes = (detalleCreation - oldestTime) / (1000 * 60);
-        return diffMinutes > 2 ? 'Extras' : 'Pedido Inicial';
+        return diffMinutes > 5 ? 'Extras' : 'Pedido Inicial';
     };
 
     // ----- PAYMENT HANDLING -----
@@ -721,7 +724,6 @@ export const usePedidoView = () => {
         nombreCliente, setNombreCliente,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
-        filtroDisponible, setFiltroDisponible,
         productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
         handleAddCuenta, handleDeleteCuenta,
         handleOpenAddItem, handleAddMultipleItems,
