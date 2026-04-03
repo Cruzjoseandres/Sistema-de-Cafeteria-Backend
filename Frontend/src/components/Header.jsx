@@ -2,20 +2,22 @@ import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { getAccessToken, getUserInfo } from "../../utils/TokenUtilities";
 import useAuthentication from "../../hooks/useAuthentication";
+import { usePWA } from "../hooks/usePWA";
 
 const Header = () => {
     const { doLogout } = useAuthentication();
     const token = getAccessToken();
     const userInfo = getUserInfo();
+    const { isInstallable, installPWA } = usePWA();
 
     const onLogoutClick = () => {
         doLogout();
     };
 
     return (
-        <Navbar bg="white" variant="light" expand="lg" className="sticky-top">
+        <Navbar bg="white" variant="light" expand="lg" className="sticky-top shadow-sm">
             <Container>
-                <Link className="navbar-brand" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'}>
+                <Link className="navbar-brand font-weight-bold" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'} style={{ color: 'var(--primary-color)' }}>
                     <span className="material-symbols-outlined brand-icon">coffee_maker</span>
                     Cafetería
                 </Link>
@@ -58,6 +60,18 @@ const Header = () => {
                             </>
                         )}
                     </Nav>
+
+                    {isInstallable && (
+                        <Nav className="me-2 d-flex align-items-center mt-2 mt-lg-0">
+                            <button 
+                                className="btn btn-primary d-flex align-items-center gap-2 btn-sm font-weight-bold rounded-pill px-3 py-2 heartbeat-btn" 
+                                onClick={installPWA}
+                            >
+                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>install_mobile</span>
+                                Instalar App
+                            </button>
+                        </Nav>
+                    )}
 
                     {token && (
                         <Nav>
