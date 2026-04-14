@@ -14,10 +14,24 @@ const DeliveryCell = memo(({ det, onRegister }) => {
     const [entregada, setEntregada] = useState(det.cantidad_entregada ?? 0);
     const total = det.cantidad;
 
-    const update = (val) => {
-        const clamped = Math.max(0, Math.min(val, total));
-        setEntregada(clamped);
-        onRegister(det.id, clamped);
+    const updateDelta = (delta) => {
+        setEntregada(prev => {
+            const next = Math.max(0, Math.min(prev + delta, total));
+            if (next !== prev) {
+                onRegister(det.id, next);
+            }
+            return next;
+        });
+    };
+
+    const updateAbsolute = (val) => {
+        setEntregada(prev => {
+            const next = Math.max(0, Math.min(val, total));
+            if (next !== prev) {
+                onRegister(det.id, next);
+            }
+            return next;
+        });
     };
 
     const allDone = entregada >= total;
@@ -30,7 +44,7 @@ const DeliveryCell = memo(({ det, onRegister }) => {
                 className="btn btn-outline-secondary btn-sm px-2 py-1 fw-bold"
                 style={{ minWidth: '30px', lineHeight: 1 }}
                 disabled={noneDone}
-                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); if (!noneDone) update(entregada - 1); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateDelta(-1); }}
             >−</button>
 
             <span
@@ -46,7 +60,7 @@ const DeliveryCell = memo(({ det, onRegister }) => {
                 className="btn btn-outline-primary btn-sm px-2 py-1 fw-bold"
                 style={{ minWidth: '30px', lineHeight: 1 }}
                 disabled={allDone}
-                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); if (!allDone) update(entregada + 1); }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateDelta(1); }}
             >+</button>
 
             {/* Checkbox Todo — comparte el mismo estado local */}
@@ -55,7 +69,7 @@ const DeliveryCell = memo(({ det, onRegister }) => {
                 className="form-check-input ms-2"
                 style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer', flexShrink: 0 }}
                 checked={allDone}
-                onChange={(e) => update(e.target.checked ? total : 0)}
+                onChange={(e) => updateAbsolute(e.target.checked ? total : 0)}
                 title={allDone ? 'Desmarcar entrega completa' : 'Marcar todo como entregado'}
             />
         </div>
