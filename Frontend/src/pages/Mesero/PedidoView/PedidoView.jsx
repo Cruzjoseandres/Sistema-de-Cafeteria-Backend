@@ -42,23 +42,23 @@ const DeliveryCell = memo(({ det, onRegister }) => {
             <button
                 type="button"
                 className="btn btn-outline-secondary btn-sm px-2 py-1 fw-bold"
-                style={{ minWidth: '30px', lineHeight: 1 }}
+                style={{ minWidth: '35px', height: '35px', lineHeight: 1, touchAction: 'manipulation', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 disabled={noneDone}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateDelta(-1); }}
             >−</button>
 
             <span
-                className={`fw-bold fs-6 ${allDone ? 'text-success' : 'text-primary'}`}
-                style={{ minWidth: '32px', textAlign: 'center', display: 'inline-block', userSelect: 'none' }}
+                className={`fw-bold fs-5 ${allDone ? 'text-success' : 'text-primary'}`}
+                style={{ minWidth: '40px', textAlign: 'center', display: 'inline-block', userSelect: 'none' }}
             >
                 {entregada}
             </span>
-            <span className="text-muted small">/ {total}</span>
+            <span className="text-muted fs-6">/ {total}</span>
 
             <button
                 type="button"
                 className="btn btn-outline-primary btn-sm px-2 py-1 fw-bold"
-                style={{ minWidth: '30px', lineHeight: 1 }}
+                style={{ minWidth: '35px', height: '35px', lineHeight: 1, touchAction: 'manipulation', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 disabled={allDone}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); updateDelta(1); }}
             >+</button>
@@ -67,7 +67,7 @@ const DeliveryCell = memo(({ det, onRegister }) => {
             <input
                 type="checkbox"
                 className="form-check-input ms-2"
-                style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer', flexShrink: 0 }}
+                style={{ width: '1.5rem', height: '1.5rem', cursor: 'pointer', flexShrink: 0, touchAction: 'manipulation' }}
                 checked={allDone}
                 onChange={(e) => updateAbsolute(e.target.checked ? total : 0)}
                 title={allDone ? 'Desmarcar entrega completa' : 'Marcar todo como entregado'}
