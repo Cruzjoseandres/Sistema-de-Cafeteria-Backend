@@ -1,7 +1,8 @@
 import { Mesa } from "src/mesa/entities/mesa.entity";
 import { Usuario } from "src/usuario/entities/usuario.entity";
 import { Estado } from "src/estado/entities/estado.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
+import { Cuenta } from "src/cuenta/entities/cuenta.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from "typeorm";
 
 @Entity()
 export class Pedido {
@@ -40,4 +41,7 @@ export class Pedido {
     @ManyToOne(() => Mesa, (mesa) => mesa.pedidos)
     @JoinColumn({ name: 'id_mesa' })
     mesa: Mesa;
+
+    @OneToMany(() => Cuenta, (cuenta) => cuenta.pedido)
+    cuentas: Cuenta[];
 }
