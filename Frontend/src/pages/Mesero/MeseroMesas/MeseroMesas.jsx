@@ -42,22 +42,23 @@ const MeseroMesas = () => {
         <Container className="mt-4">
             {/* Header con botón crear pedido */}
             <div className="d-flex justify-content-between align-items-center mb-4 fade-in">
-                <h1 className="d-flex align-items-center gap-2 mb-0">
-                    <span className="material-symbols-outlined text-primary" style={{ fontSize: '2.5rem' }}>deck</span>
+                <h2 className="d-flex align-items-center gap-2 mb-0 fw-bold" style={{ fontSize: '1.5rem' }}>
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: '2rem' }}>deck</span>
                     Mesas y Pedidos
-                </h1>
-                <Button variant="primary" size="lg" onClick={() => setShowCrearPedidoModal(true)} className="shadow-sm">
-                    <span className="material-symbols-outlined">add_circle</span>
-                    Crear Pedido
+                </h2>
+                <Button variant="primary" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-1 shadow-sm text-nowrap px-3 py-2 fw-bold">
+                    <span className="material-symbols-outlined fs-5">add_circle</span>
+                    <span className="d-none d-sm-inline">Crear Pedido</span>
+                    <span className="d-inline d-sm-none">Crear</span>
                 </Button>
             </div>
 
             {/* Pedidos activos */}
             <div className="mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-                    <h5 className="mb-0">📋 Pedidos Activos</h5>
-                    <div className="d-flex flex-wrap align-items-center gap-3">
-                        <InputGroup style={{ maxWidth: '280px' }}>
+                    <h5 className="mb-0 fw-bold text-secondary">📋 Pedidos Activos</h5>
+                    <div className="d-flex flex-grow-1 flex-md-grow-0 flex-wrap align-items-center gap-3 justify-content-end">
+                        <InputGroup className="flex-fill" style={{ minWidth: '200px', maxWidth: '350px' }}>
                             <InputGroup.Text className="bg-white border-end-0">
                                 <span className="material-symbols-outlined text-muted" style={{ fontSize: '1.2rem' }}>search</span>
                             </InputGroup.Text>
@@ -75,7 +76,7 @@ const MeseroMesas = () => {
                             label="Solo Mis Pedidos"
                             checked={filtroMisPedidos}
                             onChange={(e) => setFiltroMisPedidos(e.target.checked)}
-                            className="fw-bold text-primary"
+                            className="fw-bold text-primary m-0"
                         />
                     </div>
                 </div>
