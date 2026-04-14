@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getPedidoById, updatePedido, deletePedido, generateWhatsAppPdf } from '../../../../services/PedidoService';
 import { createCuenta, getCuentasByPedido, deleteCuenta, updateCuenta, getQRUrl } from '../../../../services/CuentaService';
@@ -28,6 +28,8 @@ export const usePedidoView = () => {
 
     // Draft State
     const [draftCuentas, setDraftCuentas] = useState([]);
+    // Debounce timers for delivery updates (per detalleId)
+    const deliveryTimers = useRef({});
     const [draftDetallesPorCuenta, setDraftDetallesPorCuenta] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -490,30 +492,43 @@ export const usePedidoView = () => {
         setHasUnsavedChanges(true);
     };
 
-    const handleEntregarItem = async (detalleId, nuevaCantidad) => {
-        try {
-            if (detalleId > 0) {
-                await updateDetalle(detalleId, { cantidad_entregada: nuevaCantidad });
-            }
-            // Update silently in both states to reflect changes without throwing away drafts
-            const updateFn = prev => {
-                const next = { ...prev };
-                for (const c in next) {
-                    const dIdx = next[c].findIndex(d => d.id === detalleId);
-                    if (dIdx !== -1) {
-                        next[c] = [...next[c]];
-                        next[c][dIdx] = { ...next[c][dIdx], cantidad_entregada: nuevaCantidad };
-                        break;
-                    }
+    // ------------------------------------
+    // ENTREGA DE ITEMS — Optimistic UI + Debounced API sync
+    // La UI se actualiza INMEDIATAMENTE (sin esperar al servidor).
+    // El API call se agrupa con debounce de 500ms por item para evitar spam.
+    // ------------------------------------
+    const handleEntregarItem = (detalleId, nuevaCantidad) => {
+        // 1. Actualizar la UI de forma instantánea (optimistic)
+        const updateFn = prev => {
+            const next = { ...prev };
+            for (const c in next) {
+                const dIdx = next[c].findIndex(d => d.id === detalleId);
+                if (dIdx !== -1) {
+                    next[c] = [...next[c]];
+                    next[c][dIdx] = { ...next[c][dIdx], cantidad_entregada: nuevaCantidad };
+                    break;
                 }
-                return next;
-            };
-            setDraftDetallesPorCuenta(updateFn);
-            setDetallesPorCuenta(updateFn);
-            
-        } catch (err) {
-            console.error(err);
-            showError('Error al registrar entrega');
+            }
+            return next;
+        };
+        setDraftDetallesPorCuenta(updateFn);
+        setDetallesPorCuenta(updateFn);
+
+        // 2. Sincronizar con el servidor con debounce (500ms de inactividad)
+        if (detalleId > 0) {
+            if (deliveryTimers.current[detalleId]) {
+                clearTimeout(deliveryTimers.current[detalleId]);
+            }
+            deliveryTimers.current[detalleId] = setTimeout(async () => {
+                try {
+                    await updateDetalle(detalleId, { cantidad_entregada: nuevaCantidad });
+                } catch (err) {
+                    console.error('Error al sincronizar entrega con el servidor:', err);
+                    // Opcional: mostrar toast de error sin revertir (el usuario puede reintentar)
+                    showError('Error al sincronizar entrega. Verificá tu conexión.');
+                }
+                delete deliveryTimers.current[detalleId];
+            }, 500);
         }
     };
 

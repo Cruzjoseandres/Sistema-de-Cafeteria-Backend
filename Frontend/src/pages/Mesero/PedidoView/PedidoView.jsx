@@ -222,7 +222,8 @@ const PedidoView = () => {
                                                                     <thead className="table-light">
                                                                     <tr>
                                                                         <th style={{ width: '35%' }}>Producto</th>
-                                                                        <th className="text-center" style={{ width: '160px' }}>Entregado / Total</th>
+                                                                        <th className="text-center" style={{ width: isDeliver ? '190px' : '160px' }}>Entregado / Total</th>
+                                                                        {isDeliver && <th className="text-center" style={{ width: '56px' }}>Todo</th>}
                                                                         {!isDeliver && <th className="text-end" style={{ width: '100px' }}>Subtotal</th>}
                                                                         <th className="px-3">Nota</th>
                                                                         {isEdit && <th className="text-center" style={{ width: '60px' }}>Acción</th>}
@@ -230,54 +231,47 @@ const PedidoView = () => {
                                                                 </thead>
                                                                 <tbody>
                                                                     {grupo.items.map((det) => (
-                                                                        <tr key={det.id}>
+                                                                        <tr key={det.id} style={isDeliver && det.cantidad_entregada === det.cantidad ? { background: 'rgba(25,135,84,0.05)' } : {}}>
                                                                             <td className="fw-medium">{det.producto?.nombre}</td>
                                                                             <td>
                                                                                 {isDeliver ? (
-                                                                                    <div className="d-flex align-items-center justify-content-center">
-                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start"
+                                                                                    <div className="d-flex align-items-center justify-content-center gap-1">
+                                                                                        {/* Botón − con onPointerDown: dispara sin esperar click completo */}
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            className="btn btn-outline-secondary btn-sm px-2 py-1 fw-bold"
+                                                                                            style={{ minWidth: '30px', lineHeight: 1 }}
                                                                                             disabled={det.cantidad_entregada <= 0}
                                                                                             onPointerDown={(e) => {
                                                                                                 e.preventDefault();
                                                                                                 e.stopPropagation();
-                                                                                                if (det.cantidad_entregada > 0) handleEntregarItem(det.id, det.cantidad_entregada - 1);
+                                                                                                if (det.cantidad_entregada > 0)
+                                                                                                    handleEntregarItem(det.id, det.cantidad_entregada - 1);
                                                                                             }}
+                                                                                        >−</button>
+
+                                                                                        {/* Contador como texto puro — SIN Form.Control, sin key remount */}
+                                                                                        <span
+                                                                                            className={`fw-bold fs-6 ${det.cantidad_entregada === det.cantidad ? 'text-success' : 'text-primary'}`}
+                                                                                            style={{ minWidth: '32px', textAlign: 'center', display: 'inline-block' }}
                                                                                         >
-                                                                                            -
-                                                                                        </Button>
-                                                                                        <div className="px-2 border-top border-bottom py-1 fw-bold bg-light d-flex gap-1 align-items-center">
-                                                                                            <Form.Control
-                                                                                                type="number"
-                                                                                                className={`p-0 text-center fw-bold border-0 bg-transparent ${det.cantidad_entregada === det.cantidad ? 'text-success' : 'text-primary'}`}
-                                                                                                style={{ width: '35px', boxShadow: 'none' }}
-                                                                                                defaultValue={det.cantidad_entregada}
-                                                                                                key={`deliv-${det.id}-${det.cantidad_entregada}`}
-                                                                                                onBlur={(e) => {
-                                                                                                    let val = parseInt(e.target.value);
-                                                                                                    if (isNaN(val) || val < 0) val = 0;
-                                                                                                    if (val > det.cantidad) val = det.cantidad;
-                                                                                                    e.target.value = val;
-                                                                                                    if (val !== det.cantidad_entregada) {
-                                                                                                        handleEntregarItem(det.id, val);
-                                                                                                    }
-                                                                                                }}
-                                                                                                onKeyDown={(e) => {
-                                                                                                    if (e.key === 'Enter') e.target.blur();
-                                                                                                }}
-                                                                                            />
-                                                                                            <span className="text-muted">/</span>
-                                                                                            <span className="text-muted">{det.cantidad}</span>
-                                                                                        </div>
-                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-end"
+                                                                                            {det.cantidad_entregada}
+                                                                                        </span>
+                                                                                        <span className="text-muted small">/ {det.cantidad}</span>
+
+                                                                                        {/* Botón + con onPointerDown: dispara sin esperar click completo */}
+                                                                                        <button
+                                                                                            type="button"
+                                                                                            className="btn btn-outline-primary btn-sm px-2 py-1 fw-bold"
+                                                                                            style={{ minWidth: '30px', lineHeight: 1 }}
                                                                                             disabled={det.cantidad_entregada >= det.cantidad}
                                                                                             onPointerDown={(e) => {
                                                                                                 e.preventDefault();
                                                                                                 e.stopPropagation();
-                                                                                                if (det.cantidad_entregada < det.cantidad) handleEntregarItem(det.id, det.cantidad_entregada + 1);
+                                                                                                if (det.cantidad_entregada < det.cantidad)
+                                                                                                    handleEntregarItem(det.id, det.cantidad_entregada + 1);
                                                                                             }}
-                                                                                        >
-                                                                                            +
-                                                                                        </Button>
+                                                                                        >+</button>
                                                                                     </div>
                                                                                 ) : (isEdit && cuenta.estado?.id !== 3) ? (
                                                                                     <div className="d-flex align-items-center justify-content-center">
@@ -318,6 +312,21 @@ const PedidoView = () => {
                                                                                     </div>
                                                                                 )}
                                                                             </td>
+                                                                            {/* Checkbox "Todo" — solo en modo entrega, marca/desmarca todo de golpe */}
+                                                                            {isDeliver && (
+                                                                                <td className="text-center">
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        className="form-check-input"
+                                                                                        style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
+                                                                                        checked={det.cantidad_entregada === det.cantidad}
+                                                                                        onChange={(e) => {
+                                                                                            handleEntregarItem(det.id, e.target.checked ? det.cantidad : 0);
+                                                                                        }}
+                                                                                        title={det.cantidad_entregada === det.cantidad ? 'Desmarcar entrega completa' : 'Marcar todo como entregado'}
+                                                                                    />
+                                                                                </td>
+                                                                            )}
                                                                             {!isDeliver && <td className="text-end fw-bold text-success">Bs. {Number(det.subtotal).toFixed(2)}</td>}
                                                                             <td className="px-3 text-muted" style={{ maxWidth: '150px' }}>
                                                                                 <div className="text-truncate">{det.comentario || '-'}</div>
