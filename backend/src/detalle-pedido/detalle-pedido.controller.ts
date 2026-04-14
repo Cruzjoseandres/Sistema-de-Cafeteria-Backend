@@ -42,6 +42,12 @@ export class DetallePedidoController {
     return await this.detallePedidoService.findOne(+id);
   }
 
+  @Patch('bulk-entrega')
+  @Roles('ADMINISTRADOR', 'MESERO')
+  async bulkUpdateEntrega(@Body() items: { id: number; cantidad_entregada: number }[]) {
+    return await this.detallePedidoService.bulkUpdateEntrega(items);
+  }
+
   @Patch(':id')
   @Roles('ADMINISTRADOR', 'MESERO')
   async update(@Param('id') id: string, @Body() updateDetallePedidoDto: UpdateDetallePedidoDto) {

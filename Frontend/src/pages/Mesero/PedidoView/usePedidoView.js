@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getPedidoById, updatePedido, deletePedido, generateWhatsAppPdf } from '../../../../services/PedidoService';
 import { createCuenta, getCuentasByPedido, deleteCuenta, updateCuenta, getQRUrl } from '../../../../services/CuentaService';
-import { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, deleteDetalle } from '../../../../services/DetallePedidoService';
+import { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, bulkUpdateEntrega, deleteDetalle } from '../../../../services/DetallePedidoService';
 import { getAllProductos } from '../../../../services/ProductoService';
 import { getAllCategorias } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
@@ -28,8 +28,9 @@ export const usePedidoView = () => {
 
     // Draft State
     const [draftCuentas, setDraftCuentas] = useState([]);
-    // Debounce timers for delivery updates (per detalleId)
-    const deliveryTimers = useRef({});
+    // Mapa de cambios de entrega pendientes: { [detalleId]: cantidad_entregada }
+    // Se llena instantáneamente al tocar +/−/checkbox y se envía de una sola vez al salir
+    const deliveryPendingMap = useRef({});
     const [draftDetallesPorCuenta, setDraftDetallesPorCuenta] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -493,12 +494,11 @@ export const usePedidoView = () => {
     };
 
     // ------------------------------------
-    // ENTREGA DE ITEMS — Optimistic UI + Debounced API sync
-    // La UI se actualiza INMEDIATAMENTE (sin esperar al servidor).
-    // El API call se agrupa con debounce de 500ms por item para evitar spam.
+    // ENTREGA DE ITEMS — 100% local, sin llamadas al servidor por cada toque.
+    // Los cambios se acumulan en deliveryPendingMap y se envían en bulk al salir.
     // ------------------------------------
     const handleEntregarItem = (detalleId, nuevaCantidad) => {
-        // 1. Actualizar la UI de forma instantánea (optimistic)
+        // 1. Actualizar UI de forma instantánea
         const updateFn = prev => {
             const next = { ...prev };
             for (const c in next) {
@@ -514,25 +514,35 @@ export const usePedidoView = () => {
         setDraftDetallesPorCuenta(updateFn);
         setDetallesPorCuenta(updateFn);
 
-        // 2. Sincronizar con el servidor con debounce (500ms de inactividad)
+        // 2. Registrar el cambio pendiente (sobreescribe si el mismo item fue tocado varias veces)
         if (detalleId > 0) {
-            if (deliveryTimers.current[detalleId]) {
-                clearTimeout(deliveryTimers.current[detalleId]);
-            }
-            deliveryTimers.current[detalleId] = setTimeout(async () => {
-                try {
-                    await updateDetalle(detalleId, { cantidad_entregada: nuevaCantidad });
-                } catch (err) {
-                    console.error('Error al sincronizar entrega con el servidor:', err);
-                    // Opcional: mostrar toast de error sin revertir (el usuario puede reintentar)
-                    showError('Error al sincronizar entrega. Verificá tu conexión.');
-                }
-                delete deliveryTimers.current[detalleId];
-            }, 500);
+            deliveryPendingMap.current[detalleId] = nuevaCantidad;
+        }
+    };
+
+    // Envía todos los cambios de entrega acumulados al servidor en una sola llamada
+    const flushDeliveryChanges = async () => {
+        const pending = deliveryPendingMap.current;
+        const items = Object.entries(pending).map(([id, cantidad_entregada]) => ({
+            id: Number(id),
+            cantidad_entregada,
+        }));
+        if (items.length === 0) return;
+        deliveryPendingMap.current = {}; // Limpiar antes del request
+        try {
+            await bulkUpdateEntrega(items);
+        } catch (err) {
+            console.error('Error al sincronizar entregas:', err);
+            showError('Error al guardar entregas. Revisá tu conexión.');
         }
     };
 
     const navigateBack = async () => {
+        // En modo entrega, guardar todos los cambios pendientes antes de salir
+        if (viewMode === 'deliver') {
+            await flushDeliveryChanges();
+        }
+
         if (hasUnsavedChanges) {
             const confirmed = await showConfirm('Tienes cambios sin guardar. ¿Deseas salir de todas formas y perderlos?', { 
                 confirmVariant: 'danger', 
