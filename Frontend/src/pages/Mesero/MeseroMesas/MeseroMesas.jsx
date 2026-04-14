@@ -1,4 +1,4 @@
-import { Container, Card, Badge, Spinner, Alert, Row, Col, Button, Modal, Form } from 'react-bootstrap';
+import { Container, Card, Badge, Spinner, Alert, Row, Col, Button, Modal, Form, InputGroup } from 'react-bootstrap';
 import { useMeseroMesas } from './useMeseroMesas';
 import './MeseroMesas.css';
 
@@ -8,6 +8,7 @@ const MeseroMesas = () => {
         showCrearPedidoModal, setShowCrearPedidoModal,
         mesaSeleccionada, setMesaSeleccionada, mesasDisponibles,
         filtroMisPedidos, setFiltroMisPedidos,
+        filtroBusqueda, setFiltroBusqueda,
         handleCrearPedido, handleAbrirPedido
     } = useMeseroMesas();
 
@@ -53,16 +54,30 @@ const MeseroMesas = () => {
 
             {/* Pedidos activos */}
             <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-3">
+                <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
                     <h5 className="mb-0">📋 Pedidos Activos</h5>
-                    <Form.Check 
-                        type="switch"
-                        id="mis-pedidos-switch"
-                        label="Solo Mis Pedidos"
-                        checked={filtroMisPedidos}
-                        onChange={(e) => setFiltroMisPedidos(e.target.checked)}
-                        className="fw-bold text-primary"
-                    />
+                    <div className="d-flex flex-wrap align-items-center gap-3">
+                        <InputGroup style={{ maxWidth: '280px' }}>
+                            <InputGroup.Text className="bg-white border-end-0">
+                                <span className="material-symbols-outlined text-muted" style={{ fontSize: '1.2rem' }}>search</span>
+                            </InputGroup.Text>
+                            <Form.Control 
+                                placeholder="Mesa, Cliente, Pedido..."
+                                className="border-start-0 ps-0"
+                                style={{ boxShadow: 'none' }}
+                                value={filtroBusqueda}
+                                onChange={(e) => setFiltroBusqueda(e.target.value)}
+                            />
+                        </InputGroup>
+                        <Form.Check 
+                            type="switch"
+                            id="mis-pedidos-switch"
+                            label="Solo Mis Pedidos"
+                            checked={filtroMisPedidos}
+                            onChange={(e) => setFiltroMisPedidos(e.target.checked)}
+                            className="fw-bold text-primary"
+                        />
+                    </div>
                 </div>
                 {pedidosActivosFiltrados.length === 0 ? (
                     <Alert variant="info" className="text-center">No hay pedidos activos disponibles.</Alert>
@@ -78,11 +93,23 @@ const MeseroMesas = () => {
                                                 {pedido.mesa?.es_juntada ? 'Mesa Juntada' : `Mesa ${pedido.mesa?.numero}`}
                                             </Badge>
                                         </div>
-                                        <small className="text-muted d-flex align-items-center gap-1 mb-1 fw-bold">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>person</span>
-                                            {pedido.usuario?.persona?.nombre} {pedido.usuario?.persona?.apellido}
-                                        </small>
-                                        <small className="text-muted d-flex align-items-center gap-1">
+                                        <div className="d-flex align-items-center gap-2 mb-1">
+                                            <Badge bg="light" text="dark" className="border d-flex align-items-center p-1" style={{ width: "24px", height: "24px", justifyContent: "center" }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>person</span>
+                                            </Badge>
+                                            <span className="text-muted fw-bold small text-truncate" title="Mesero asignado">
+                                                {pedido.usuario?.persona?.nombre} {pedido.usuario?.persona?.apellido}
+                                            </span>
+                                        </div>
+                                        <div className="d-flex align-items-center gap-2 mb-1">
+                                            <Badge bg="light" text="dark" className="border d-flex align-items-center p-1" style={{ width: "24px", height: "24px", justifyContent: "center" }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>groups</span>
+                                            </Badge>
+                                            <span className="text-secondary fw-bold small text-truncate" title="Cliente principal">
+                                                {pedido.cuentas && pedido.cuentas.length > 0 ? pedido.cuentas[0].nombre_cliente : 'Sin Cliente'}
+                                            </span>
+                                        </div>
+                                        <small className="text-muted d-flex align-items-center gap-2 mt-2">
                                             <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>schedule</span>
                                             {new Date(pedido.fecha_apertura).toLocaleTimeString()}
                                         </small>

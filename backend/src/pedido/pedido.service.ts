@@ -35,7 +35,7 @@ export class PedidoService {
 
   async findAll() {
     return await this.pedidoRepository.find({
-      relations: ['mesa', 'usuario', 'usuario.persona', 'estado'],
+      relations: ['mesa', 'usuario', 'usuario.persona', 'estado', 'cuentas'],
       where: { D_E_L_E_T_E_D: false },
       order: { created_at: 'DESC' }
     });
