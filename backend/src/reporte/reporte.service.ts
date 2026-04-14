@@ -16,8 +16,8 @@ export class ReporteService {
         private readonly pedidoRepository: Repository<Pedido>,
     ) { }
 
-    async getVentasGenerales() {
-        const result = await this.cuentaRepository
+    async getVentasGenerales(startDate?: string, endDate?: string) {
+        let query = this.cuentaRepository
             .createQueryBuilder('cuenta')
             .select("TO_CHAR(cuenta.updated_at AT TIME ZONE 'UTC' AT TIME ZONE 'America/La_Paz', 'YYYY-MM-DD')", 'fecha')
             .addSelect('SUM(cuenta.total)', 'total_ventas')
@@ -36,7 +36,17 @@ export class ReporteService {
                 'total_qr'
             )
             .where('cuenta.D_E_L_E_T_E_D = false')
-            .andWhere('cuenta.id_estado = 3') // SOLO CUENTAS PAGADAS
+            .andWhere('cuenta.id_estado = 3'); // SOLO CUENTAS PAGADAS
+
+        if (startDate && endDate) {
+            query = query.andWhere("cuenta.updated_at::date >= :startDate AND cuenta.updated_at::date <= :endDate", { startDate, endDate });
+        } else if (startDate) {
+            query = query.andWhere("cuenta.updated_at::date >= :startDate", { startDate });
+        } else if (endDate) {
+            query = query.andWhere("cuenta.updated_at::date <= :endDate", { endDate });
+        }
+
+        const result = await query
             .groupBy("TO_CHAR(cuenta.updated_at AT TIME ZONE 'UTC' AT TIME ZONE 'America/La_Paz', 'YYYY-MM-DD')")
             .orderBy('fecha', 'ASC')
             .getRawMany();
@@ -49,14 +59,26 @@ export class ReporteService {
         }));
     }
 
-    async getVentasProducto() {
-        const result = await this.detallePedidoRepository
+    async getVentasProducto(startDate?: string, endDate?: string) {
+        let query = this.detallePedidoRepository
             .createQueryBuilder('dp')
             .innerJoin('dp.producto', 'producto')
+            .innerJoin('dp.cuenta', 'cuenta')
             .select('producto.nombre', 'producto')
             .addSelect('SUM(dp.cantidad)', 'cantidad_vendida')
             .addSelect('SUM(dp.subtotal)', 'ingreso_generado')
             .where('dp.D_E_L_E_T_E_D = false')
+            .andWhere('cuenta.id_estado = 3'); // Solo cuentas pagadas
+
+        if (startDate && endDate) {
+            query = query.andWhere("cuenta.updated_at::date >= :startDate AND cuenta.updated_at::date <= :endDate", { startDate, endDate });
+        } else if (startDate) {
+            query = query.andWhere("cuenta.updated_at::date >= :startDate", { startDate });
+        } else if (endDate) {
+            query = query.andWhere("cuenta.updated_at::date <= :endDate", { endDate });
+        }
+
+        const result = await query
             .groupBy('producto.id')
             .addGroupBy('producto.nombre')
             .orderBy('cantidad_vendida', 'DESC')
@@ -341,12 +363,22 @@ export class ReporteService {
         };
     }
 
-    async getPedidosEliminados() {
-        const deletedOrders = await this.pedidoRepository
+    async getPedidosEliminados(startDate?: string, endDate?: string) {
+        let query = this.pedidoRepository
             .createQueryBuilder('pedido')
             .leftJoinAndSelect('pedido.usuario', 'usuario')
             .leftJoinAndSelect('usuario.persona', 'persona')
-            .where('pedido.D_E_L_E_T_E_D = true')
+            .where('pedido.D_E_L_E_T_E_D = true');
+
+        if (startDate && endDate) {
+            query = query.andWhere("pedido.updated_at::date >= :startDate AND pedido.updated_at::date <= :endDate", { startDate, endDate });
+        } else if (startDate) {
+            query = query.andWhere("pedido.updated_at::date >= :startDate", { startDate });
+        } else if (endDate) {
+            query = query.andWhere("pedido.updated_at::date <= :endDate", { endDate });
+        }
+
+        const deletedOrders = await query
             .orderBy('pedido.updated_at', 'DESC')
             .getMany();
 

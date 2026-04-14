@@ -43,7 +43,7 @@ export class PedidoService {
 
   async findMisPedidos(userId: number) {
     return await this.pedidoRepository.find({
-      relations: ['mesa', 'estado'],
+      relations: ['mesa', 'estado', 'cuentas'],
       where: { D_E_L_E_T_E_D: false, usuario: { id: userId } },
       order: { created_at: 'DESC' }
     });

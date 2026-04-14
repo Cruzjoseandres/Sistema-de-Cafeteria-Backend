@@ -11,14 +11,20 @@ export class ReporteController {
 
     @Get('ventas-generales')
     @Roles('ADMINISTRADOR')
-    async getVentasGenerales() {
-        return await this.reporteService.getVentasGenerales();
+    async getVentasGenerales(
+        @Query('startDate') startDate?: string,
+        @Query('endDate') endDate?: string,
+    ) {
+        return await this.reporteService.getVentasGenerales(startDate, endDate);
     }
 
     @Get('ventas-producto')
     @Roles('ADMINISTRADOR')
-    async getVentasProducto() {
-        return await this.reporteService.getVentasProducto();
+    async getVentasProducto(
+        @Query('startDate') startDate?: string,
+        @Query('endDate') endDate?: string,
+    ) {
+        return await this.reporteService.getVentasProducto(startDate, endDate);
     }
 
     @Get('rendimiento-personal')
@@ -41,8 +47,11 @@ export class ReporteController {
 
     @Get('pedidos-eliminados')
     @Roles('ADMINISTRADOR')
-    async getPedidosEliminados() {
-        return await this.reporteService.getPedidosEliminados();
+    async getPedidosEliminados(
+        @Query('startDate') startDate?: string,
+        @Query('endDate') endDate?: string,
+    ) {
+        return await this.reporteService.getPedidosEliminados(startDate, endDate);
     }
 
     @Get('actividad-reciente')

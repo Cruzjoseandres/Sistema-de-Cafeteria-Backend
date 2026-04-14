@@ -13,9 +13,12 @@ const getAuthHeaders = () => {
     };
 }
 
-const getVentasGenerales = async () => {
+const getVentasGenerales = async (startDate = null, endDate = null) => {
     try {
-        const response = await apiClient.get(`/reporte/ventas-generales`);
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        const response = await apiClient.get(`/reporte/ventas-generales`, { params });
         return response.data;
     } catch (error) {
         console.error(error);
@@ -23,9 +26,12 @@ const getVentasGenerales = async () => {
     }
 }
 
-const getVentasProducto = async () => {
+const getVentasProducto = async (startDate = null, endDate = null) => {
     try {
-        const response = await apiClient.get(`/reporte/ventas-producto`);
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        const response = await apiClient.get(`/reporte/ventas-producto`, { params });
         return response.data;
     } catch (error) {
         console.error(error);
@@ -61,9 +67,12 @@ const getDashboardKpis = async (startDate, endDate) => {
     }
 }
 
-const getPedidosEliminados = async () => {
+const getPedidosEliminados = async (startDate = null, endDate = null) => {
     try {
-        const response = await apiClient.get(`/reporte/pedidos-eliminados`);
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        const response = await apiClient.get(`/reporte/pedidos-eliminados`, { params });
         return response.data;
     } catch (error) {
         console.error(error);

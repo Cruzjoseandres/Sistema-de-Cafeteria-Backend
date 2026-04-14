@@ -41,6 +41,7 @@ export const usePedidoView = () => {
     const [showAddCuentaModal, setShowAddCuentaModal] = useState(false);
     const [showAddItemModal, setShowAddItemModal] = useState(false);
     const [selectedCuentaId, setSelectedCuentaId] = useState(null);
+    const [asignarNombre, setAsignarNombre] = useState(false);
     
     const [nombreCliente, setNombreCliente] = useState('');
     
@@ -264,13 +265,16 @@ export const usePedidoView = () => {
 
     // --- CUENTAS DRAFT ---
     const handleAddCuenta = () => {
-        if (!nombreCliente.trim()) return;
         const newTempId = generateTempId();
+        // Si el usuario no asignó nombre, auto-generar "Cuenta N"
+        const autoNombre = asignarNombre && nombreCliente.trim()
+            ? nombreCliente.trim()
+            : `Cuenta ${draftCuentas.length + 1}`;
         
         const nuevaCuenta = {
             id: newTempId,
             id_pedido: pedido.id,
-            nombre_cliente: nombreCliente,
+            nombre_cliente: autoNombre,
             total: 0,
             isNew: true
         };
@@ -280,8 +284,9 @@ export const usePedidoView = () => {
         
         setHasUnsavedChanges(true);
         setNombreCliente('');
+        setAsignarNombre(false);
         setShowAddCuentaModal(false);
-        showSuccess(`Cuenta de "${nombreCliente}" agregada al borrador`);
+        showSuccess(`Cuenta "${autoNombre}" agregada al borrador`);
     };
 
     const handleDeleteCuenta = async (cuentaId) => {
@@ -723,6 +728,7 @@ export const usePedidoView = () => {
         showAddCuentaModal, setShowAddCuentaModal,
         showAddItemModal, setShowAddItemModal,
         nombreCliente, setNombreCliente,
+        asignarNombre, setAsignarNombre,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
         productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,

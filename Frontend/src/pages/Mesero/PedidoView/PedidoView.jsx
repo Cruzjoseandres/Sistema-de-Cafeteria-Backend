@@ -13,6 +13,7 @@ const PedidoView = () => {
         showAddCuentaModal, setShowAddCuentaModal,
         showAddItemModal, setShowAddItemModal,
         nombreCliente, setNombreCliente,
+        asignarNombre, setAsignarNombre,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
         productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
@@ -236,7 +237,12 @@ const PedidoView = () => {
                                                                                     <div className="d-flex align-items-center justify-content-center">
                                                                                         <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start"
                                                                                             disabled={det.cantidad_entregada <= 0}
-                                                                                            onClick={() => handleEntregarItem(det.id, det.cantidad_entregada - 1)}>
+                                                                                            onPointerDown={(e) => {
+                                                                                                e.preventDefault();
+                                                                                                e.stopPropagation();
+                                                                                                if (det.cantidad_entregada > 0) handleEntregarItem(det.id, det.cantidad_entregada - 1);
+                                                                                            }}
+                                                                                        >
                                                                                             -
                                                                                         </Button>
                                                                                         <div className="px-2 border-top border-bottom py-1 fw-bold bg-light d-flex gap-1 align-items-center">
@@ -264,7 +270,12 @@ const PedidoView = () => {
                                                                                         </div>
                                                                                         <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-end"
                                                                                             disabled={det.cantidad_entregada >= det.cantidad}
-                                                                                            onClick={() => handleEntregarItem(det.id, det.cantidad_entregada + 1)}>
+                                                                                            onPointerDown={(e) => {
+                                                                                                e.preventDefault();
+                                                                                                e.stopPropagation();
+                                                                                                if (det.cantidad_entregada < det.cantidad) handleEntregarItem(det.id, det.cantidad_entregada + 1);
+                                                                                            }}
+                                                                                        >
                                                                                             +
                                                                                         </Button>
                                                                                     </div>
@@ -345,28 +356,57 @@ const PedidoView = () => {
             </Card>
 
             {/* ========== MODAL AGREGAR CUENTA ========== */}
-            <Modal show={showAddCuentaModal} onHide={() => setShowAddCuentaModal(false)}>
+            <Modal show={showAddCuentaModal} onHide={() => { setShowAddCuentaModal(false); setAsignarNombre(false); setNombreCliente(''); }}>
                 <Modal.Header closeButton className="border-0 pb-0">
                     <Modal.Title className="d-flex align-items-center gap-2">
                         <span className="material-symbols-outlined text-primary">person</span> Nueva Cuenta
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form.Group>
-                        <Form.Label>Nombre del cliente *</Form.Label>
-                        <Form.Control
-                            type="text"
-                            value={nombreCliente}
-                            onChange={(e) => setNombreCliente(e.target.value)}
-                            placeholder="Ej: Juan, Mesa completa, etc."
-                            className="bg-light"
-                            autoFocus
+                    {/* Toggle: asignar nombre */}
+                    <div className="d-flex align-items-center gap-3 p-3 bg-light rounded mb-3">
+                        <Form.Check
+                            type="switch"
+                            id="asignar-nombre-switch"
+                            label={asignarNombre ? 'Con nombre asignado' : 'Sin nombre (automático)'}
+                            checked={asignarNombre}
+                            onChange={(e) => {
+                                setAsignarNombre(e.target.checked);
+                                if (!e.target.checked) setNombreCliente('');
+                            }}
                         />
-                    </Form.Group>
+                    </div>
+
+                    {asignarNombre && (
+                        <Form.Group className="fade-in">
+                            <Form.Label>Nombre del cliente</Form.Label>
+                            <Form.Control
+                                type="text"
+                                value={nombreCliente}
+                                onChange={(e) => setNombreCliente(e.target.value)}
+                                placeholder="Ej: Juan, Mesa completa, etc."
+                                className="bg-light"
+                                autoFocus
+                                onKeyDown={(e) => { if (e.key === 'Enter') handleAddCuenta(); }}
+                            />
+                        </Form.Group>
+                    )}
+
+                    {!asignarNombre && (
+                        <p className="text-muted small mb-0">
+                            <span className="material-symbols-outlined" style={{ fontSize: '1rem', verticalAlign: 'middle' }}>info</span>
+                            {' '}Se creará automáticamente como <strong>"Cuenta {cuentas.length + 1}"</strong>. Podés asignarle un nombre activando el interruptor de arriba.
+                        </p>
+                    )}
                 </Modal.Body>
                 <Modal.Footer className="border-0 pt-0">
-                    <Button variant="secondary" onClick={() => setShowAddCuentaModal(false)}>Cancelar</Button>
-                    <Button variant="primary" onClick={handleAddCuenta} disabled={!nombreCliente.trim()} className="px-4">
+                    <Button variant="secondary" onClick={() => { setShowAddCuentaModal(false); setAsignarNombre(false); setNombreCliente(''); }}>Cancelar</Button>
+                    <Button
+                        variant="primary"
+                        onClick={handleAddCuenta}
+                        disabled={asignarNombre && !nombreCliente.trim()}
+                        className="px-4"
+                    >
                         Crear Cuenta
                     </Button>
                 </Modal.Footer>

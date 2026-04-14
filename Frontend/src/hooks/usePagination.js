@@ -4,10 +4,24 @@ import { useState, useMemo, useEffect } from 'react';
  * Reusable client-side pagination hook.
  * @param {Array} data - Full data array to paginate.
  * @param {number} defaultPageSize - Default number of items per page.
+ * @param {string} storageKey - Optional sessionStorage key to persist pageSize across navigations.
  */
-export const usePagination = (data = [], defaultPageSize = 10) => {
+export const usePagination = (data = [], defaultPageSize = 10, storageKey = null) => {
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(defaultPageSize);
+    const [pageSize, setPageSizeState] = useState(() => {
+        if (storageKey) {
+            const saved = sessionStorage.getItem(`pagination_size_${storageKey}`);
+            if (saved) return Number(saved);
+        }
+        return defaultPageSize;
+    });
+
+    const setPageSize = (size) => {
+        setPageSizeState(size);
+        if (storageKey) {
+            sessionStorage.setItem(`pagination_size_${storageKey}`, String(size));
+        }
+    };
 
     // Reset to page 1 whenever the data or pageSize changes
     useEffect(() => {
