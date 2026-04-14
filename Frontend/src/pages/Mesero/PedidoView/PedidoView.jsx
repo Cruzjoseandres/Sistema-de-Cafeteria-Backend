@@ -159,29 +159,29 @@ const PedidoView = () => {
                 </div>
                 
                 {(isEdit || isReadOnly) && (
-                    <div className="d-flex gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons justify-content-end w-100 w-md-auto">
-                        <Button variant="info" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-2 px-md-4 py-2 action-btn" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minHeight: "45px" }}>
-                            <span className="material-symbols-outlined mb-1">share</span> <span className="d-none d-sm-inline">Compartir</span>
+                    <div className="d-flex flex-row flex-nowrap gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons justify-content-center justify-content-md-end w-100 w-md-auto mt-3 mt-md-0">
+                        <Button variant="info" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-1 px-md-4 py-2" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                            <span className="material-symbols-outlined mb-1 fs-5">share</span> Compartir
                         </Button>
                         {isEdit && !isPedidoCompletado && (
                             <>
                                 {hasUnsavedChanges ? (
                                     <>
-                                        <Button variant="warning" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-2 px-md-4 py-2 action-btn" onClick={handleCancelarCambios} disabled={saving} style={{ minHeight: "45px" }}>
-                                            <span className="material-symbols-outlined mb-1">undo</span> <span className="d-none d-sm-inline">Cancelar</span>
+                                        <Button variant="warning" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-1 px-md-4 py-2" onClick={handleCancelarCambios} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined mb-1 fs-5">undo</span> Cancelar
                                         </Button>
-                                        <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-2 px-md-4 py-2 action-btn" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ minHeight: "45px" }}>
-                                            {saving ? <Spinner size="sm" animation="border" className="mb-1" /> : <span className="material-symbols-outlined mb-1">save</span>} 
-                                            <span className="d-none d-sm-inline">Guardar</span>
+                                        <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-1 px-md-4 py-2" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            {saving ? <Spinner size="sm" animation="border" className="mb-1" /> : <span className="material-symbols-outlined mb-1 fs-5">save</span>} 
+                                            Guardar
                                         </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-2 px-md-4 py-2 action-btn" onClick={handleTerminarPedido} disabled={saving} style={{ minHeight: "45px" }}>
-                                            <span className="material-symbols-outlined mb-1">check_circle</span> <span className="d-none d-sm-inline">Terminar</span>
+                                        <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleTerminarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined mb-1 fs-5">check_circle</span> Terminar
                                         </Button>
-                                        <Button variant="danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-2 px-md-4 py-2 action-btn" onClick={handleCancelarPedido} disabled={saving} style={{ minHeight: "45px" }}>
-                                            <span className="material-symbols-outlined mb-1">delete_forever</span> <span className="d-none d-sm-inline">Eliminar</span>
+                                        <Button variant="danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleCancelarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined mb-1 fs-5">delete_forever</span> Eliminar
                                         </Button>
                                     </>
                                 )}
