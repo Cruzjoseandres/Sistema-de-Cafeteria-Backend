@@ -1,8 +1,67 @@
+import { useState, memo } from 'react';
 import { Container, Card, Badge, Spinner, Alert, Row, Col, Button, Modal, Form, Table, Accordion, InputGroup } from 'react-bootstrap';
 import { usePedidoView } from './usePedidoView';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
 import './PedidoView.css';
+
+/**
+ * Celda de entrega completamente aislada con estado local propio.
+ * React.memo = cero re-renders del padre al tocar +/−/checkbox.
+ * onRegister solo escribe en deliveryPendingMap (ref) en usePedidoView.
+ */
+const DeliveryCell = memo(({ det, onRegister }) => {
+    const [entregada, setEntregada] = useState(det.cantidad_entregada ?? 0);
+    const total = det.cantidad;
+
+    const update = (val) => {
+        const clamped = Math.max(0, Math.min(val, total));
+        setEntregada(clamped);
+        onRegister(det.id, clamped);
+    };
+
+    const allDone = entregada >= total;
+    const noneDone = entregada <= 0;
+
+    return (
+        <div className="d-flex align-items-center justify-content-center gap-1">
+            <button
+                type="button"
+                className="btn btn-outline-secondary btn-sm px-2 py-1 fw-bold"
+                style={{ minWidth: '30px', lineHeight: 1 }}
+                disabled={noneDone}
+                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); if (!noneDone) update(entregada - 1); }}
+            >−</button>
+
+            <span
+                className={`fw-bold fs-6 ${allDone ? 'text-success' : 'text-primary'}`}
+                style={{ minWidth: '32px', textAlign: 'center', display: 'inline-block', userSelect: 'none' }}
+            >
+                {entregada}
+            </span>
+            <span className="text-muted small">/ {total}</span>
+
+            <button
+                type="button"
+                className="btn btn-outline-primary btn-sm px-2 py-1 fw-bold"
+                style={{ minWidth: '30px', lineHeight: 1 }}
+                disabled={allDone}
+                onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); if (!allDone) update(entregada + 1); }}
+            >+</button>
+
+            {/* Checkbox Todo — comparte el mismo estado local */}
+            <input
+                type="checkbox"
+                className="form-check-input ms-2"
+                style={{ width: '1.2rem', height: '1.2rem', cursor: 'pointer', flexShrink: 0 }}
+                checked={allDone}
+                onChange={(e) => update(e.target.checked ? total : 0)}
+                title={allDone ? 'Desmarcar entrega completa' : 'Marcar todo como entregado'}
+            />
+        </div>
+    );
+});
+
 
 const PedidoView = () => {
     const {
@@ -231,48 +290,14 @@ const PedidoView = () => {
                                                                 </thead>
                                                                 <tbody>
                                                                     {grupo.items.map((det) => (
-                                                                        <tr key={det.id} style={isDeliver && det.cantidad_entregada === det.cantidad ? { background: 'rgba(25,135,84,0.05)' } : {}}>
+                                                                         <tr key={det.id} style={isDeliver ? { background: 'transparent' } : {}}>
                                                                             <td className="fw-medium">{det.producto?.nombre}</td>
                                                                             <td>
                                                                                 {isDeliver ? (
-                                                                                    <div className="d-flex align-items-center justify-content-center gap-1">
-                                                                                        {/* Botón − con onPointerDown: dispara sin esperar click completo */}
-                                                                                        <button
-                                                                                            type="button"
-                                                                                            className="btn btn-outline-secondary btn-sm px-2 py-1 fw-bold"
-                                                                                            style={{ minWidth: '30px', lineHeight: 1 }}
-                                                                                            disabled={det.cantidad_entregada <= 0}
-                                                                                            onPointerDown={(e) => {
-                                                                                                e.preventDefault();
-                                                                                                e.stopPropagation();
-                                                                                                if (det.cantidad_entregada > 0)
-                                                                                                    handleEntregarItem(det.id, det.cantidad_entregada - 1);
-                                                                                            }}
-                                                                                        >−</button>
-
-                                                                                        {/* Contador como texto puro — SIN Form.Control, sin key remount */}
-                                                                                        <span
-                                                                                            className={`fw-bold fs-6 ${det.cantidad_entregada === det.cantidad ? 'text-success' : 'text-primary'}`}
-                                                                                            style={{ minWidth: '32px', textAlign: 'center', display: 'inline-block' }}
-                                                                                        >
-                                                                                            {det.cantidad_entregada}
-                                                                                        </span>
-                                                                                        <span className="text-muted small">/ {det.cantidad}</span>
-
-                                                                                        {/* Botón + con onPointerDown: dispara sin esperar click completo */}
-                                                                                        <button
-                                                                                            type="button"
-                                                                                            className="btn btn-outline-primary btn-sm px-2 py-1 fw-bold"
-                                                                                            style={{ minWidth: '30px', lineHeight: 1 }}
-                                                                                            disabled={det.cantidad_entregada >= det.cantidad}
-                                                                                            onPointerDown={(e) => {
-                                                                                                e.preventDefault();
-                                                                                                e.stopPropagation();
-                                                                                                if (det.cantidad_entregada < det.cantidad)
-                                                                                                    handleEntregarItem(det.id, det.cantidad_entregada + 1);
-                                                                                            }}
-                                                                                        >+</button>
-                                                                                    </div>
+                                                                                    <DeliveryCell
+                                                                                        det={det}
+                                                                                        onRegister={handleEntregarItem}
+                                                                                    />
                                                                                 ) : (isEdit && cuenta.estado?.id !== 3) ? (
                                                                                     <div className="d-flex align-items-center justify-content-center">
                                                                                         <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start"
@@ -312,21 +337,8 @@ const PedidoView = () => {
                                                                                     </div>
                                                                                 )}
                                                                             </td>
-                                                                            {/* Checkbox "Todo" — solo en modo entrega, marca/desmarca todo de golpe */}
-                                                                            {isDeliver && (
-                                                                                <td className="text-center">
-                                                                                    <input
-                                                                                        type="checkbox"
-                                                                                        className="form-check-input"
-                                                                                        style={{ width: '1.25rem', height: '1.25rem', cursor: 'pointer' }}
-                                                                                        checked={det.cantidad_entregada === det.cantidad}
-                                                                                        onChange={(e) => {
-                                                                                            handleEntregarItem(det.id, e.target.checked ? det.cantidad : 0);
-                                                                                        }}
-                                                                                        title={det.cantidad_entregada === det.cantidad ? 'Desmarcar entrega completa' : 'Marcar todo como entregado'}
-                                                                                    />
-                                                                                </td>
-                                                                            )}
+                                                                            {/* Checkbox Todo ya incluido dentro de DeliveryCell — rellenar celda en deliver para layout */}
+                                                                            {isDeliver && <td />}
                                                                             {!isDeliver && <td className="text-end fw-bold text-success">Bs. {Number(det.subtotal).toFixed(2)}</td>}
                                                                             <td className="px-3 text-muted" style={{ maxWidth: '150px' }}>
                                                                                 <div className="text-truncate">{det.comentario || '-'}</div>

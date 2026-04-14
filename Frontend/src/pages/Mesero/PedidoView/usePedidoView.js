@@ -494,27 +494,12 @@ export const usePedidoView = () => {
     };
 
     // ------------------------------------
-    // ENTREGA DE ITEMS — 100% local, sin llamadas al servidor por cada toque.
-    // Los cambios se acumulan en deliveryPendingMap y se envían en bulk al salir.
+    // ENTREGA DE ITEMS — 100% local, sin re-renders globales.
+    // Cada fila maneja su propio estado visual (DeliveryRow en el JSX).
+    // Solo se acumula en el mapa para el flush bulk al salir.
     // ------------------------------------
     const handleEntregarItem = (detalleId, nuevaCantidad) => {
-        // 1. Actualizar UI de forma instantánea
-        const updateFn = prev => {
-            const next = { ...prev };
-            for (const c in next) {
-                const dIdx = next[c].findIndex(d => d.id === detalleId);
-                if (dIdx !== -1) {
-                    next[c] = [...next[c]];
-                    next[c][dIdx] = { ...next[c][dIdx], cantidad_entregada: nuevaCantidad };
-                    break;
-                }
-            }
-            return next;
-        };
-        setDraftDetallesPorCuenta(updateFn);
-        setDetallesPorCuenta(updateFn);
-
-        // 2. Registrar el cambio pendiente (sobreescribe si el mismo item fue tocado varias veces)
+        // Solo registrar en el mapa pendiente — el estado visual lo maneja DeliveryRow
         if (detalleId > 0) {
             deliveryPendingMap.current[detalleId] = nuevaCantidad;
         }
