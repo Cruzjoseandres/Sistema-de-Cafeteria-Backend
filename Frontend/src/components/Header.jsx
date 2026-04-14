@@ -55,10 +55,15 @@ const Header = () => {
 
                         {token && userInfo?.rol === 'ADMINISTRADOR' && (
                             <>
+                                <Link className="nav-link font-weight-bold text-primary" to="/admin">
+                                    <span className="material-symbols-outlined align-middle me-1" style={{ fontSize: '1.2rem' }}>dashboard</span>
+                                    Dashboard
+                                </Link>
                                 <Link className="nav-link" to="/admin/usuarios">Usuarios</Link>
-                                <Link className="nav-link" to="/admin/productos">Productos</Link>
+                                <Link className="nav-link" to="/admin/productos">Inv. / Productos</Link>
                                 <Link className="nav-link" to="/admin/categorias">Categorías</Link>
                                 <Link className="nav-link" to="/admin/mesas">Mesas</Link>
+                                <Link className="nav-link" to="/admin/reportes">Reportes</Link>
                             </>
                         )}
 
