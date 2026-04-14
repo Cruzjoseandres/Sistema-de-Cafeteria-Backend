@@ -135,6 +135,19 @@ export class DetallePedidoService {
     return this.findOne(id);
   }
 
+  async bulkUpdateEntrega(items: { id: number; cantidad_entregada: number }[]) {
+    if (!items || items.length === 0) return { updated: 0 };
+
+    // Actualizar todos en paralelo con Promise.all — eficiente y seguro
+    await Promise.all(
+      items.map(({ id, cantidad_entregada }) =>
+        this.detalleRepository.update(id, { cantidad_entregada: Number(cantidad_entregada) })
+      )
+    );
+
+    return { updated: items.length };
+  }
+
   async remove(id: number) {
     const detalle = await this.findOne(id);
     const cuentaId = detalle.cuenta.id;

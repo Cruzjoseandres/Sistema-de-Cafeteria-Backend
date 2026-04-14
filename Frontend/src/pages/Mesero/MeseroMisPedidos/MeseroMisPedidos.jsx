@@ -107,6 +107,12 @@ const MeseroMisPedidos = () => {
 
                                         <div className="mb-3 flex-grow-1">
                                             <h5 className="fw-bold fs-4 mb-1">Pedido #{pedido.id}</h5>
+                                            {pedido.cuentas && pedido.cuentas.length > 0 && (
+                                                <p className="text-muted small mb-1 d-flex align-items-center gap-1 flex-wrap">
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>people</span>
+                                                    {pedido.cuentas.map(c => c.nombre_cliente).join(' · ')}
+                                                </p>
+                                            )}
                                             <p className="text-muted small mb-0 d-flex align-items-center gap-1">
                                                 <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>schedule</span>
                                                 {new Date(pedido.created_at).toLocaleString()}

@@ -6,19 +6,21 @@ export const useVentasProducto = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const fetchData = async (startDate = null, endDate = null) => {
+        try {
+            setLoading(true);
+            const result = await getVentasProducto(startDate, endDate);
+            setData(result);
+        } catch (err) {
+            setError('Error al obtener ventas por producto');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const result = await getVentasProducto();
-                setData(result);
-            } catch (err) {
-                setError('Error al obtener ventas por producto');
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchData();
     }, []);
 
-    return { data, loading, error };
+    return { data, loading, error, fetchData };
 };

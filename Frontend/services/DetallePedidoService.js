@@ -47,6 +47,16 @@ const updateDetalle = async (id, data) => {
     }
 };
 
+const bulkUpdateEntrega = async (items) => {
+    try {
+        const response = await apiClient.patch(`/detalle-pedido/bulk-entrega`, items);
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 const deleteDetalle = async (id) => {
     try {
         const response = await apiClient.delete(`/detalle-pedido/${id}`);
@@ -57,4 +67,4 @@ const deleteDetalle = async (id) => {
     }
 };
 
-export { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, deleteDetalle };
+export { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, bulkUpdateEntrega, deleteDetalle };

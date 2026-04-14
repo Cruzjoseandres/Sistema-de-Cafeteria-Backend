@@ -49,7 +49,7 @@ export const useMeseroMisPedidos = () => {
         return matchesSearch && matchesStatus;
     });
 
-    const pagination = usePagination(filteredPedidos, 10);
+    const pagination = usePagination(filteredPedidos, 10, 'mis-pedidos');
 
     return {
         pedidos: filteredPedidos,

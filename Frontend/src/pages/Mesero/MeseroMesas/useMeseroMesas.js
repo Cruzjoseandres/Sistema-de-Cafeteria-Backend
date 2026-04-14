@@ -63,6 +63,9 @@ export const useMeseroMesas = () => {
         }
     };
 
+    // Buscador
+    const [filtroBusqueda, setFiltroBusqueda] = useState('');
+
     const setFiltroMisPedidosPersistent = (value) => {
         setFiltroMisPedidos(value);
         localStorage.setItem('filtroMisPedidos', JSON.stringify(value));
@@ -77,15 +80,29 @@ export const useMeseroMesas = () => {
         return !pedidosActivos.some(p => p.mesa?.id === m.id);
     });
 
-    const pedidosActivosFiltrados = filtroMisPedidos 
-        ? pedidosActivos.filter(p => p.usuario?.id === currentUser?.id)
-        : pedidosActivos;
+    const pedidosActivosFiltrados = pedidosActivos.filter(p => {
+        if (filtroMisPedidos && p.usuario?.id !== currentUser?.id) return false;
+        
+        if (filtroBusqueda.trim() !== '') {
+            const query = filtroBusqueda.toLowerCase();
+            const esMesa = p.mesa?.numero?.toString().includes(query) || (p.mesa?.es_juntada && 'juntada'.includes(query));
+            const esPedido = p.id?.toString().includes(query);
+            // Search multiple accounts if they exist
+            const coincidenciaCuenta = p.cuentas?.some(c => c.nombre_cliente?.toLowerCase().includes(query));
+            
+            if (!esMesa && !esPedido && !coincidenciaCuenta) {
+                return false;
+            }
+        }
+        return true;
+    });
 
     return {
         mesas, pedidosActivos, pedidosActivosFiltrados, loading, error,
         showCrearPedidoModal, setShowCrearPedidoModal,
         mesaSeleccionada, setMesaSeleccionada, mesasDisponibles,
         filtroMisPedidos, setFiltroMisPedidos: setFiltroMisPedidosPersistent,
+        filtroBusqueda, setFiltroBusqueda,
         handleCrearPedido, handleAbrirPedido
     };
 };

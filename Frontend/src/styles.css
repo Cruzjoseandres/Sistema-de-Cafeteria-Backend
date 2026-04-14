@@ -490,3 +490,38 @@ p {
 .text-danger {
   color: var(--neon-danger) !important;
 }
+
+/* =========================================
+   DESKTOP FORCED VIEW (Vista Escritorio en móvil)
+   ========================================= */
+body.desktop-forced {
+  min-width: 960px;
+  overflow-x: auto;
+}
+
+body.desktop-forced .container,
+body.desktop-forced .container-fluid {
+  min-width: 900px;
+}
+
+/* Forzar que los layout flex/grid no se rompan */
+body.desktop-forced .row {
+  flex-wrap: nowrap !important;
+}
+
+/* Mantener columnas en ancho completo de escritorio */
+body.desktop-forced [class*="col-xs"],
+body.desktop-forced [class*="col-sm"],
+body.desktop-forced [class*="col-md"] {
+  flex: unset;
+  width: unset;
+}
+
+/* Forzar navbar a modo expandido */
+body.desktop-forced .navbar-collapse {
+  display: flex !important;
+  flex-basis: auto;
+}
+body.desktop-forced .navbar-toggler {
+  display: none !important;
+}

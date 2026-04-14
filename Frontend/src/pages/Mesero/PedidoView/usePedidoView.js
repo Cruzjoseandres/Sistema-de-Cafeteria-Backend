@@ -1,8 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { getPedidoById, updatePedido, deletePedido, generateWhatsAppPdf } from '../../../../services/PedidoService';
 import { createCuenta, getCuentasByPedido, deleteCuenta, updateCuenta, getQRUrl } from '../../../../services/CuentaService';
-import { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, deleteDetalle } from '../../../../services/DetallePedidoService';
+import { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, bulkUpdateEntrega, deleteDetalle } from '../../../../services/DetallePedidoService';
 import { getAllProductos } from '../../../../services/ProductoService';
 import { getAllCategorias } from '../../../../services/CategoriaService';
 import { useNotification } from '../../../../hooks/useNotification';
@@ -28,6 +28,9 @@ export const usePedidoView = () => {
 
     // Draft State
     const [draftCuentas, setDraftCuentas] = useState([]);
+    // Mapa de cambios de entrega pendientes: { [detalleId]: cantidad_entregada }
+    // Se llena instantáneamente al tocar +/−/checkbox y se envía de una sola vez al salir
+    const deliveryPendingMap = useRef({});
     const [draftDetallesPorCuenta, setDraftDetallesPorCuenta] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -41,6 +44,7 @@ export const usePedidoView = () => {
     const [showAddCuentaModal, setShowAddCuentaModal] = useState(false);
     const [showAddItemModal, setShowAddItemModal] = useState(false);
     const [selectedCuentaId, setSelectedCuentaId] = useState(null);
+    const [asignarNombre, setAsignarNombre] = useState(false);
     
     const [nombreCliente, setNombreCliente] = useState('');
     
@@ -264,13 +268,16 @@ export const usePedidoView = () => {
 
     // --- CUENTAS DRAFT ---
     const handleAddCuenta = () => {
-        if (!nombreCliente.trim()) return;
         const newTempId = generateTempId();
+        // Si el usuario no asignó nombre, auto-generar "Cuenta N"
+        const autoNombre = asignarNombre && nombreCliente.trim()
+            ? nombreCliente.trim()
+            : `Cuenta ${draftCuentas.length + 1}`;
         
         const nuevaCuenta = {
             id: newTempId,
             id_pedido: pedido.id,
-            nombre_cliente: nombreCliente,
+            nombre_cliente: autoNombre,
             total: 0,
             isNew: true
         };
@@ -280,8 +287,9 @@ export const usePedidoView = () => {
         
         setHasUnsavedChanges(true);
         setNombreCliente('');
+        setAsignarNombre(false);
         setShowAddCuentaModal(false);
-        showSuccess(`Cuenta de "${nombreCliente}" agregada al borrador`);
+        showSuccess(`Cuenta "${autoNombre}" agregada al borrador`);
     };
 
     const handleDeleteCuenta = async (cuentaId) => {
@@ -485,34 +493,41 @@ export const usePedidoView = () => {
         setHasUnsavedChanges(true);
     };
 
-    const handleEntregarItem = async (detalleId, nuevaCantidad) => {
+    // ------------------------------------
+    // ENTREGA DE ITEMS — 100% local, sin re-renders globales.
+    // Cada fila maneja su propio estado visual (DeliveryRow en el JSX).
+    // Solo se acumula en el mapa para el flush bulk al salir.
+    // ------------------------------------
+    const handleEntregarItem = (detalleId, nuevaCantidad) => {
+        // Solo registrar en el mapa pendiente — el estado visual lo maneja DeliveryRow
+        if (detalleId > 0) {
+            deliveryPendingMap.current[detalleId] = nuevaCantidad;
+        }
+    };
+
+    // Envía todos los cambios de entrega acumulados al servidor en una sola llamada
+    const flushDeliveryChanges = async () => {
+        const pending = deliveryPendingMap.current;
+        const items = Object.entries(pending).map(([id, cantidad_entregada]) => ({
+            id: Number(id),
+            cantidad_entregada,
+        }));
+        if (items.length === 0) return;
+        deliveryPendingMap.current = {}; // Limpiar antes del request
         try {
-            if (detalleId > 0) {
-                await updateDetalle(detalleId, { cantidad_entregada: nuevaCantidad });
-            }
-            // Update silently in both states to reflect changes without throwing away drafts
-            const updateFn = prev => {
-                const next = { ...prev };
-                for (const c in next) {
-                    const dIdx = next[c].findIndex(d => d.id === detalleId);
-                    if (dIdx !== -1) {
-                        next[c] = [...next[c]];
-                        next[c][dIdx] = { ...next[c][dIdx], cantidad_entregada: nuevaCantidad };
-                        break;
-                    }
-                }
-                return next;
-            };
-            setDraftDetallesPorCuenta(updateFn);
-            setDetallesPorCuenta(updateFn);
-            
+            await bulkUpdateEntrega(items);
         } catch (err) {
-            console.error(err);
-            showError('Error al registrar entrega');
+            console.error('Error al sincronizar entregas:', err);
+            showError('Error al guardar entregas. Revisá tu conexión.');
         }
     };
 
     const navigateBack = async () => {
+        // En modo entrega, guardar todos los cambios pendientes antes de salir
+        if (viewMode === 'deliver') {
+            await flushDeliveryChanges();
+        }
+
         if (hasUnsavedChanges) {
             const confirmed = await showConfirm('Tienes cambios sin guardar. ¿Deseas salir de todas formas y perderlos?', { 
                 confirmVariant: 'danger', 
@@ -723,6 +738,7 @@ export const usePedidoView = () => {
         showAddCuentaModal, setShowAddCuentaModal,
         showAddItemModal, setShowAddItemModal,
         nombreCliente, setNombreCliente,
+        asignarNombre, setAsignarNombre,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
         productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,

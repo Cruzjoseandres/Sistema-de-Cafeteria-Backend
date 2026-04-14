@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { getAccessToken, getUserInfo } from "../../utils/TokenUtilities";
 import useAuthentication from "../../hooks/useAuthentication";
 import { usePWA } from "../hooks/usePWA";
+import { useViewMode } from "../hooks/useViewMode";
 
 const Header = () => {
     const { doLogout } = useAuthentication();
     const token = getAccessToken();
     const userInfo = getUserInfo();
     const { isInstallable, installPWA } = usePWA();
+    const { isDesktop, toggleViewMode } = useViewMode();
 
     const onLogoutClick = () => {
         doLogout();
@@ -89,6 +91,21 @@ const Header = () => {
                                 <NavDropdown.Item disabled>
                                     <small className="text-muted-custom">Rol: {userInfo?.rol}</small>
                                 </NavDropdown.Item>
+                                <NavDropdown.Divider />
+                                {/* Toggle Vista Móvil / Escritorio */}
+                                <button
+                                    className="dropdown-item d-flex align-items-center gap-2"
+                                    onClick={toggleViewMode}
+                                    id="toggle-view-mode-btn"
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
+                                        {isDesktop ? 'smartphone' : 'desktop_windows'}
+                                    </span>
+                                    {isDesktop ? 'Cambiar a Vista Móvil' : 'Cambiar a Vista Escritorio'}
+                                    <span className={`ms-auto badge rounded-pill ${isDesktop ? 'bg-primary' : 'bg-secondary'}`} style={{ fontSize: '0.65rem' }}>
+                                        {isDesktop ? 'ESCRITORIO' : 'MÓVIL'}
+                                    </span>
+                                </button>
                                 <NavDropdown.Divider />
                                 <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={onLogoutClick}>
                                     <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>logout</span>

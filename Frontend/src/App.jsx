@@ -4,6 +4,7 @@ import Header from './components/Header.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import AdminLayout from './components/AdminLayout/AdminLayout.jsx';
 import { getAccessToken, getUserFromToken, removeAccessToken } from '../utils/TokenUtilities.js';
+import { useViewMode } from './hooks/useViewMode.js';
 
 // Páginas públicas
 import FormLogin from './pages/auth/Login/FormLogin.jsx';
@@ -35,6 +36,9 @@ const PublicLayout = () => (
 );
 
 const App = () => {
+  // Aplica la clase desktop-forced si el usuario la tenía guardada
+  useViewMode();
+
   useEffect(() => {
     const checkSession = () => {
       const token = getAccessToken();

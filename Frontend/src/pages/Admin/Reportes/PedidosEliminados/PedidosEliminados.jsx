@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Spinner, Form, InputGroup } from 'react-bootstrap';
+import { Card, Table, Spinner, Form, InputGroup, Button } from 'react-bootstrap';
 import { getPedidosEliminados } from '../../../../../services/ReporteService';
 
 const PedidosEliminados = () => {
     const [pedidos, setPedidos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    const fetchPedidos = async (start = null, end = null) => {
+        try {
+            setLoading(true);
+            const data = await getPedidosEliminados(start, end);
+            setPedidos(data);
+        } catch (error) {
+            console.error("Error cargando pedidos eliminados:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchPedidos = async () => {
-            try {
-                const data = await getPedidosEliminados();
-                setPedidos(data);
-            } catch (error) {
-                console.error("Error cargando pedidos eliminados:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchPedidos();
     }, []);
+
+    const handleFilter = () => fetchPedidos(startDate || null, endDate || null);
+    const handleClear = () => { setStartDate(''); setEndDate(''); fetchPedidos(null, null); };
 
     const filteredPedidos = pedidos.filter(p => 
         p.responsable?.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -49,14 +55,26 @@ const PedidosEliminados = () => {
                             Listado histórico de pedidos cancelados o eliminados y sus justificaciones.
                         </p>
                     </div>
-                    <div style={{ minWidth: '250px' }}>
-                        <InputGroup>
+                    <div className="d-flex align-items-end gap-2 flex-wrap">
+                        <Form.Group>
+                            <Form.Label className="small text-muted mb-1">Desde</Form.Label>
+                            <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} size="sm" />
+                        </Form.Group>
+                        <Form.Group>
+                            <Form.Label className="small text-muted mb-1">Hasta</Form.Label>
+                            <Form.Control type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} size="sm" />
+                        </Form.Group>
+                        <Button variant="primary" size="sm" onClick={handleFilter}>Filtrar</Button>
+                        {(startDate || endDate) && (
+                            <Button variant="outline-secondary" size="sm" onClick={handleClear}>Limpiar</Button>
+                        )}
+                        <InputGroup style={{ minWidth: '220px' }}>
                             <InputGroup.Text className="bg-light border-end-0">
                                 <span className="material-symbols-outlined fs-5">search</span>
                             </InputGroup.Text>
                             <Form.Control
                                 type="text"
-                                placeholder="Buscar por ID, mesero o motivo..."
+                                placeholder="Buscar por ID, mesero..."
                                 className="bg-light border-start-0"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}

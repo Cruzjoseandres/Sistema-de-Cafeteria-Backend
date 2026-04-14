@@ -1,11 +1,23 @@
-import React from 'react';
-import { Row, Col, Card, Table, Spinner, Alert } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Row, Col, Card, Table, Spinner, Alert, Form, Button } from 'react-bootstrap';
 import { useVentasGenerales } from './useVentasGenerales';
 import PaginationBar from '../../../../components/PaginationBar';
 import './VentasGenerales.css';
 
 const VentasGenerales = () => {
-    const { data, loading, error, totalIngresos, totalEfectivo, totalQr, pagination } = useVentasGenerales();
+    const { data, loading, error, totalIngresos, totalEfectivo, totalQr, pagination, fetchData } = useVentasGenerales();
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    const handleFilter = () => {
+        fetchData(startDate || null, endDate || null);
+    };
+
+    const handleClear = () => {
+        setStartDate('');
+        setEndDate('');
+        fetchData(null, null);
+    };
 
     if (loading) {
         return (
@@ -21,7 +33,24 @@ const VentasGenerales = () => {
 
     return (
         <div className="ventas-generales-container fade-in">
-            <h4 className="mb-4">Ventas Generales</h4>
+            <div className="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3">
+                <h4 className="mb-0">Ventas Generales</h4>
+                <div className="d-flex align-items-end gap-2 flex-wrap">
+                    <Form.Group>
+                        <Form.Label className="small text-muted mb-1">Desde</Form.Label>
+                        <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} size="sm" />
+                    </Form.Group>
+                    <Form.Group>
+                        <Form.Label className="small text-muted mb-1">Hasta</Form.Label>
+                        <Form.Control type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} size="sm" />
+                    </Form.Group>
+                    <Button variant="primary" size="sm" onClick={handleFilter}>Filtrar</Button>
+                    {(startDate || endDate) && (
+                        <Button variant="outline-secondary" size="sm" onClick={handleClear}>Limpiar</Button>
+                    )}
+                </div>
+            </div>
+
             <Row className="mb-4 g-3">
                 <Col xs={12} sm={4}>
                     <Card className="admin-card text-center py-4 h-100">
@@ -80,7 +109,7 @@ const VentasGenerales = () => {
                             ))}
                             {pagination.totalItems === 0 && (
                                 <tr>
-                                    <td colSpan="4" className="text-center text-muted">No hay datos de ventas disponibles</td>
+                                    <td colSpan="4" className="text-center text-muted">No hay datos de ventas{startDate || endDate ? ' en el rango seleccionado' : ' disponibles'}</td>
                                 </tr>
                             )}
                         </tbody>
