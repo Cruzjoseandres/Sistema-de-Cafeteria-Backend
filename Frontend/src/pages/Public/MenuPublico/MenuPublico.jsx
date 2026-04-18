@@ -41,6 +41,11 @@ const MenuPublico = () => {
         ? productos.filter(p => p.categoria?.id === parseInt(categoriaFilter))
         : productos;
 
+    const handleProductClick = (id) => {
+        const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '';
+        navigate(`${basePath}/producto/${id}`);
+    };
+
     // Group by category
     const grouped = filteredProductos.reduce((acc, p) => {
         const key = p.categoria?.nombre || 'Sin categoría';
@@ -52,7 +57,7 @@ const MenuPublico = () => {
     if (loading) {
         return (
             <Container className="mt-5 text-center">
-                <Spinner animation="border" style={{ color: 'var(--neon-primary)' }}>
+                <Spinner animation="border" style={{ color: 'var(--cafe-primary)' }}>
                     <span className="visually-hidden">Cargando...</span>
                 </Spinner>
                 <p className="mt-3 text-muted">Cargando menú...</p>
@@ -116,7 +121,7 @@ const MenuPublico = () => {
                         <Row className="g-3 g-md-4">
                             {prods.map((producto) => (
                                 <Col key={producto.id} xs={12} md={6} lg={4}>
-                                    <div className="menu-producto-item" onClick={() => navigate(`/producto/${producto.id}`)}>
+                                    <div className="menu-producto-item" onClick={() => handleProductClick(producto.id)}>
                                         <div className="menu-producto-info">
                                             <h5 className="menu-producto-nombre">{producto.nombre}</h5>
                                             {producto.descripcion && (

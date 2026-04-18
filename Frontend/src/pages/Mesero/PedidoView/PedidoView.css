@@ -9,12 +9,12 @@
 }
 
 .bg-gradient-success {
-    background: linear-gradient(135deg, #198754, #20c997);
+    background: linear-gradient(135deg, var(--cafe-success), #14532B);
     border: none;
 }
 
 .bg-gradient-success:hover {
-    background: linear-gradient(135deg, #157347, #1ba87e);
+    background: linear-gradient(135deg, #14532B, var(--cafe-success));
 }
 
 .custom-accordion .accordion-button {
@@ -44,7 +44,7 @@
 
 .total-pedido-container {
     background: linear-gradient(to right, #f8f9fa, #e9ecef);
-    border-left: 5px solid #0d6efd;
+    border-left: 5px solid var(--cafe-primary);
 }
 
 .scale-15 {
@@ -99,9 +99,9 @@
 }
 
 @keyframes heartbeat {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
-    15% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
-    30% { transform: scale(1); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0); }
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
+    15% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(217, 119, 6, 0); }
+    30% { transform: scale(1); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
 }
 
 .heartbeat-btn {

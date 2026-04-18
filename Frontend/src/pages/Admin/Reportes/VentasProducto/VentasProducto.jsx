@@ -53,7 +53,7 @@ const VentasProducto = () => {
                 <Card.Body>
                     <Table responsive hover className="admin-table m-0">
                         <thead>
-                            <tr>
+                            <tr className="text-nowrap">
                                 <th>Producto</th>
                                 <th>Cantidad Vendida</th>
                                 <th className="text-end">Ingreso Generado</th>
@@ -63,7 +63,7 @@ const VentasProducto = () => {
                             {data.length > 0 ? (
                                 data.map((item, index) => (
                                     <tr key={index}>
-                                        <td><strong>{item.producto}</strong></td>
+                                        <td className="text-nowrap"><strong>{item.producto}</strong></td>
                                         <td>
                                             <Badge bg="info">{item.cantidad_vendida} ud.</Badge>
                                         </td>

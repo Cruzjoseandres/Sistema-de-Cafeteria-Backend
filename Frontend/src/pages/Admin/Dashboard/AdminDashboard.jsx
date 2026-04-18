@@ -271,8 +271,8 @@ const AdminDashboard = () => {
                                     </thead>
                                     <tbody>
                                         {kpis?.recent_orders && kpis.recent_orders.length > 0 ? (
-                                            kpis.recent_orders.map((order, idx) => (
-                                                <tr key={idx}>
+                                            [...kpis.recent_orders].reverse().map((order, idx) => (
+                                                <tr key={order.id || idx}>
                                                     <td className="fw-bold">{order.id}</td>
                                                     <td className="text-muted">{order.items}</td>
                                                     <td className="text-end fw-bold">Bs. {parseFloat(order.amount).toFixed(2)}</td>

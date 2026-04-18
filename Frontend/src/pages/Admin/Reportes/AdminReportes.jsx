@@ -20,60 +20,62 @@ const AdminReportes = () => {
                     </div>
                 </div>
 
-                <ButtonGroup className="admin-tabs" style={{ background: 'var(--admin-bg)', padding: '4px', borderRadius: '10px', display: 'inline-flex' }}>
-                    <Button
-                        variant="link"
-                        className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'generales' ? 'active-tab' : 'inactive-tab'}`}
-                        style={{
-                            color: activeTab === 'generales' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
-                            background: activeTab === 'generales' ? 'var(--admin-accent)' : 'transparent',
-                            fontWeight: activeTab === 'generales' ? 600 : 500,
-                            transition: 'all 0.2s ease'
-                        }}
-                        onClick={() => setActiveTab('generales')}
-                    >
-                        Ventas Generales
-                    </Button>
-                    <Button
-                        variant="link"
-                        className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'productos' ? 'active-tab' : 'inactive-tab'}`}
-                        style={{
-                            color: activeTab === 'productos' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
-                            background: activeTab === 'productos' ? 'var(--admin-accent)' : 'transparent',
-                            fontWeight: activeTab === 'productos' ? 600 : 500,
-                            transition: 'all 0.2s ease'
-                        }}
-                        onClick={() => setActiveTab('productos')}
-                    >
-                        Ventas por Producto
-                    </Button>
-                    <Button
-                        variant="link"
-                        className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'personal' ? 'active-tab' : 'inactive-tab'}`}
-                        style={{
-                            color: activeTab === 'personal' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
-                            background: activeTab === 'personal' ? 'var(--admin-accent)' : 'transparent',
-                            fontWeight: activeTab === 'personal' ? 600 : 500,
-                            transition: 'all 0.2s ease'
-                        }}
-                        onClick={() => setActiveTab('personal')}
-                    >
-                        Rendimiento del Personal
-                    </Button>
-                    <Button
-                        variant="link"
-                        className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'eliminados' ? 'active-tab' : 'inactive-tab'}`}
-                        style={{
-                            color: activeTab === 'eliminados' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
-                            background: activeTab === 'eliminados' ? 'var(--admin-accent)' : 'transparent',
-                            fontWeight: activeTab === 'eliminados' ? 600 : 500,
-                            transition: 'all 0.2s ease'
-                        }}
-                        onClick={() => setActiveTab('eliminados')}
-                    >
-                        Pedidos Eliminados
-                    </Button>
-                </ButtonGroup>
+                <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', paddingBottom: '4px', WebkitOverflowScrolling: 'touch', maxWidth: '100%' }}>
+                    <ButtonGroup className="admin-tabs" style={{ background: 'var(--admin-bg)', padding: '4px', borderRadius: '10px', display: 'inline-flex' }}>
+                        <Button
+                            variant="link"
+                            className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'generales' ? 'active-tab' : 'inactive-tab'}`}
+                            style={{
+                                color: activeTab === 'generales' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
+                                background: activeTab === 'generales' ? 'var(--admin-accent)' : 'transparent',
+                                fontWeight: activeTab === 'generales' ? 600 : 500,
+                                transition: 'all 0.2s ease'
+                            }}
+                            onClick={() => setActiveTab('generales')}
+                        >
+                            Ventas Generales
+                        </Button>
+                        <Button
+                            variant="link"
+                            className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'productos' ? 'active-tab' : 'inactive-tab'}`}
+                            style={{
+                                color: activeTab === 'productos' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
+                                background: activeTab === 'productos' ? 'var(--admin-accent)' : 'transparent',
+                                fontWeight: activeTab === 'productos' ? 600 : 500,
+                                transition: 'all 0.2s ease'
+                            }}
+                            onClick={() => setActiveTab('productos')}
+                        >
+                            Ventas por Producto
+                        </Button>
+                        <Button
+                            variant="link"
+                            className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'personal' ? 'active-tab' : 'inactive-tab'}`}
+                            style={{
+                                color: activeTab === 'personal' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
+                                background: activeTab === 'personal' ? 'var(--admin-accent)' : 'transparent',
+                                fontWeight: activeTab === 'personal' ? 600 : 500,
+                                transition: 'all 0.2s ease'
+                            }}
+                            onClick={() => setActiveTab('personal')}
+                        >
+                            Rendimiento del Personal
+                        </Button>
+                        <Button
+                            variant="link"
+                            className={`text-decoration-none px-4 py-2 rounded ${activeTab === 'eliminados' ? 'active-tab' : 'inactive-tab'}`}
+                            style={{
+                                color: activeTab === 'eliminados' ? 'var(--neon-primary)' : 'var(--admin-text-muted)',
+                                background: activeTab === 'eliminados' ? 'var(--admin-accent)' : 'transparent',
+                                fontWeight: activeTab === 'eliminados' ? 600 : 500,
+                                transition: 'all 0.2s ease'
+                            }}
+                            onClick={() => setActiveTab('eliminados')}
+                        >
+                            Pedidos Eliminados
+                        </Button>
+                    </ButtonGroup>
+                </div>
             </div>
 
             <div className="flex-grow-1 p-4" style={{ overflowY: 'auto' }}>

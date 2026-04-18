@@ -64,7 +64,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <span className="material-symbols-outlined">table_restaurant</span>
                     Mesas
                 </NavLink>
-                <NavLink to="/menu" onClick={handleNavClick}
+                <NavLink to="/admin/menu" onClick={handleNavClick}
                     className={({ isActive }) => isActive ? 'admin-nav-item active' : 'admin-nav-item'}>
                     <span className="material-symbols-outlined">restaurant_menu</span>
                     Menú

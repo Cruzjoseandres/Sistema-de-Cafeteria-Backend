@@ -57,8 +57,9 @@ export class CloudinaryService {
   }
 
   /**
-   * Sube un PDF (Buffer) a Cloudinary como recurso raw.
-   * No consume créditos de transformación — solo almacenamiento.
+   * Sube un PDF (Buffer) a Cloudinary.
+   * Usamos resource_type: 'image' para que los PDFs se abran inline en el navegador
+   * y no fuercen la descarga (los navegadores modernos visualizan los PDFs como web).
    * @param buffer Buffer del PDF generado
    * @param publicId Nombre público opcional (sin extensión)
    * @returns URL permanente segura del PDF
@@ -69,7 +70,7 @@ export class CloudinaryService {
         {
           folder: 'cafeteria_pedidos',
           public_id: publicId,
-          resource_type: 'raw',   // raw es el tipo correcto para PDFs
+          resource_type: 'image', // Cambiado a 'image' para visualización en línea
           type: 'upload',         // 'upload' = acceso público por defecto
           access_mode: 'public',  // Fuerza acceso público sin autenticación (evita error 401)
           format: 'pdf',

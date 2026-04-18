@@ -19,7 +19,7 @@ const Header = () => {
     return (
         <Navbar bg="white" variant="light" expand="lg" className="sticky-top shadow-sm">
             <Container>
-                <Link className="navbar-brand font-weight-bold" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'} style={{ color: 'var(--primary-color)' }}>
+                <Link className="navbar-brand font-weight-bold" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'} style={{ color: 'var(--cafe-primary)' }}>
                     <span className="material-symbols-outlined brand-icon">coffee_maker</span>
                     Cafetería
                 </Link>
@@ -55,10 +55,15 @@ const Header = () => {
 
                         {token && userInfo?.rol === 'ADMINISTRADOR' && (
                             <>
+                                <Link className="nav-link font-weight-bold text-primary" to="/admin">
+                                    <span className="material-symbols-outlined align-middle me-1" style={{ fontSize: '1.2rem' }}>dashboard</span>
+                                    Dashboard
+                                </Link>
                                 <Link className="nav-link" to="/admin/usuarios">Usuarios</Link>
-                                <Link className="nav-link" to="/admin/productos">Productos</Link>
+                                <Link className="nav-link" to="/admin/productos">Inv. / Productos</Link>
                                 <Link className="nav-link" to="/admin/categorias">Categorías</Link>
                                 <Link className="nav-link" to="/admin/mesas">Mesas</Link>
+                                <Link className="nav-link" to="/admin/reportes">Reportes</Link>
                             </>
                         )}
 
@@ -80,8 +85,8 @@ const Header = () => {
                         <Nav>
                             <NavDropdown
                                 title={
-                                    <span className="d-inline-flex align-items-center gap-2 font-weight-bold">
-                                        <span className="material-symbols-outlined" style={{ color: 'var(--primary-color)' }}>account_circle</span>
+                                <span className="d-inline-flex align-items-center gap-2 font-weight-bold">
+                                        <span className="material-symbols-outlined" style={{ color: 'var(--cafe-primary)' }}>account_circle</span>
                                         {userInfo?.persona ? `${userInfo.persona.nombre} ${userInfo.persona.apellido}` : userInfo?.username || "Usuario"}
                                     </span>
                                 }

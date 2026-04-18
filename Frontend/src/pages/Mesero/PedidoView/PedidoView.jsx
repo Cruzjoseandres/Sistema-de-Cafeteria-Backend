@@ -159,29 +159,29 @@ const PedidoView = () => {
                 </div>
                 
                 {(isEdit || isReadOnly) && (
-                    <div className="d-flex gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons flex-wrap justify-content-end">
-                        <Button variant="info" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-4 py-2" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
-                            <span className="material-symbols-outlined mb-1">share</span> Compartir
+                    <div className="d-flex flex-row flex-nowrap gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons justify-content-center justify-content-md-end w-100 w-md-auto mt-3 mt-md-0">
+                        <Button variant="info" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-1 px-md-4 py-2" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                            <span className="material-symbols-outlined mb-1 fs-5">share</span> Compartir
                         </Button>
                         {isEdit && !isPedidoCompletado && (
                             <>
                                 {hasUnsavedChanges ? (
                                     <>
-                                        <Button variant="warning" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-4 py-2" onClick={handleCancelarCambios} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
-                                            <span className="material-symbols-outlined mb-1">undo</span> Cancelar
+                                        <Button variant="warning" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-1 px-md-4 py-2" onClick={handleCancelarCambios} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined mb-1 fs-5">undo</span> Cancelar
                                         </Button>
-                                        <Button variant="primary" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-4 py-2" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
-                                            {saving ? <Spinner size="sm" animation="border" className="mb-1" /> : <span className="material-symbols-outlined mb-1">save</span>} 
+                                        <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-1 px-md-4 py-2" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            {saving ? <Spinner size="sm" animation="border" className="mb-1" /> : <span className="material-symbols-outlined mb-1 fs-5">save</span>} 
                                             Guardar
                                         </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <Button variant="success" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-4 py-2" onClick={handleTerminarPedido} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
-                                            <span className="material-symbols-outlined mb-1">check_circle</span> Terminar Pedido
+                                        <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleTerminarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined mb-1 fs-5">check_circle</span> Terminar
                                         </Button>
-                                        <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-4 py-2" onClick={handleCancelarPedido} disabled={saving} style={{ minWidth: "180px", minHeight: "45px" }}>
-                                            <span className="material-symbols-outlined mb-1">delete_forever</span> Eliminar Pedido
+                                        <Button variant="danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleCancelarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined mb-1 fs-5">delete_forever</span> Eliminar
                                         </Button>
                                     </>
                                 )}
@@ -247,24 +247,24 @@ const PedidoView = () => {
                                         </Accordion.Header>
                                         <Accordion.Body className="bg-light">
                                             {isEdit && (
-                                                <div className="d-flex justify-content-end gap-2 mb-3">
+                                                <div className="d-flex flex-row flex-nowrap justify-content-end gap-2 mb-3">
                                                     {cuenta.estado?.id !== 3 ? (
                                                         <>
-                                                            <Button variant="outline-danger" size="sm" className="d-flex align-items-center gap-1"
+                                                            <Button variant="outline-danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm px-1 py-2" style={{ fontSize: '0.85rem' }}
                                                                 onClick={() => handleDeleteCuenta(cuenta.id)}>
-                                                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                                                <span className="material-symbols-outlined fs-5">delete</span> <span className="d-none d-sm-inline">Eliminar</span>
                                                             </Button>
-                                                            <Button variant="primary" size="sm" className="d-flex align-items-center gap-1 shadow-sm"
+                                                            <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm px-1 py-2" style={{ fontSize: '0.85rem' }}
                                                                 onClick={() => handleOpenAddItem(cuenta.id)}>
-                                                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>add_circle</span> Agregar Prod.
+                                                                <span className="material-symbols-outlined fs-5">add_circle</span> <span className="d-none d-sm-inline">Añadir Prod.</span><span className="d-inline d-sm-none">Añadir</span>
                                                             </Button>
-                                                            <Button variant="success" size="sm" className="d-flex align-items-center gap-1 shadow-sm fw-bold px-3 text-white"
+                                                            <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 py-2 text-white" style={{ fontSize: '0.85rem' }}
                                                                 onClick={() => handleOpenPaymentModal(cuenta.id)}>
-                                                                <span className="material-symbols-outlined fs-6">payments</span> Cobrar
+                                                                <span className="material-symbols-outlined fs-5">payments</span> <span className="d-none d-sm-inline">Cobrar</span><span className="d-inline d-sm-none">Cobrar</span>
                                                             </Button>
                                                         </>
                                                     ) : (
-                                                        <Badge bg="success" className="py-2 px-3 d-flex align-items-center gap-1">
+                                                        <Badge bg="success" className="py-2 px-3 d-flex align-items-center gap-1 w-100 justify-content-center">
                                                             <span className="material-symbols-outlined fs-6">check_circle</span> Cuenta Pagada
                                                         </Badge>
                                                     )}
@@ -290,39 +290,44 @@ const PedidoView = () => {
                                                                 </span>
                                                                 {grupo.titulo}
                                                             </div>
-                                                            <div className="table-responsive">
-                                                                <Table hover className="mb-0 align-middle text-nowrap" style={{ minWidth: '600px' }}>
+                                                            <div className="table-responsive w-100" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+                                                                <Table hover className="mb-0 align-middle text-nowrap w-100">
                                                                     <thead className="table-light">
                                                                     <tr>
-                                                                        <th style={{ width: '35%' }}>Producto</th>
-                                                                        <th className="text-center" style={{ width: isDeliver ? '190px' : '160px' }}>Entregado / Total</th>
-                                                                        {isDeliver && <th className="text-center" style={{ width: '56px' }}>Todo</th>}
-                                                                        {!isDeliver && <th className="text-end" style={{ width: '100px' }}>Subtotal</th>}
-                                                                        <th className="px-3">Nota</th>
-                                                                        {isEdit && <th className="text-center" style={{ width: '60px' }}>Acción</th>}
+                                                                        <th className="w-50">Producto</th>
+                                                                        <th className="text-center" style={{ width: '120px' }}>{isDeliver ? 'Entrega' : 'Cant.'}</th>
+                                                                        {isDeliver && <th className="text-center" style={{ width: '50px' }}>Todo</th>}
+                                                                        {!isDeliver && <th className="text-end" style={{ width: '80px' }}>Total</th>}
+                                                                        {isEdit && <th className="text-center" style={{ width: '40px' }}></th>}
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
                                                                     {grupo.items.map((det) => (
                                                                          <tr key={det.id} style={isDeliver ? { background: 'transparent' } : {}}>
-                                                                            <td className="fw-medium">{det.producto?.nombre}</td>
+                                                                            <td className="fw-medium text-wrap" style={{ minWidth: '120px' }}>
+                                                                                <div style={{ lineHeight: '1.2' }}>{det.producto?.nombre}</div>
+                                                                                {det.comentario && <small className="text-muted d-block mt-1 fst-italic text-wrap" style={{ fontSize: '0.75rem', lineHeight: '1.1' }}>Nota: {det.comentario}</small>}
+                                                                            </td>
                                                                             <td>
                                                                                 {isDeliver ? (
-                                                                                    <DeliveryCell
-                                                                                        det={det}
-                                                                                        onRegister={handleEntregarItem}
-                                                                                    />
+                                                                                    <div className="d-flex justify-content-center">
+                                                                                        <DeliveryCell
+                                                                                            det={det}
+                                                                                            onRegister={handleEntregarItem}
+                                                                                        />
+                                                                                    </div>
                                                                                 ) : (isEdit && cuenta.estado?.id !== 3) ? (
                                                                                     <div className="d-flex align-items-center justify-content-center">
-                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start"
+                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start d-flex align-items-center justify-content-center"
+                                                                                            style={{ height: '32px', minWidth: '32px' }}
                                                                                             onClick={() => handleCambiarCantidadDetalle(det.id, det.cantidad - 1)}>
                                                                                             -
                                                                                         </Button>
-                                                                                        <div className="px-2 border-top border-bottom py-1 fw-bold bg-light">
+                                                                                        <div className="px-1 border-top border-bottom py-1 fw-bold bg-light" style={{ height: '32px' }}>
                                                                                             <Form.Control
                                                                                                 type="number"
-                                                                                                className="p-0 text-center fw-bold border-0 bg-transparent"
-                                                                                                style={{ width: '40px', boxShadow: 'none' }}
+                                                                                                className="p-0 text-center fw-bold border-0 bg-transparent hide-arrows"
+                                                                                                style={{ width: '30px', boxShadow: 'none', height: '100%' }}
                                                                                                 defaultValue={det.cantidad}
                                                                                                 key={`edit-${det.id}-${det.cantidad}`}
                                                                                                 onBlur={(e) => {
@@ -338,7 +343,8 @@ const PedidoView = () => {
                                                                                                 }}
                                                                                             />
                                                                                         </div>
-                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-end"
+                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-end d-flex align-items-center justify-content-center"
+                                                                                            style={{ height: '32px', minWidth: '32px' }}
                                                                                             onClick={() => handleCambiarCantidadDetalle(det.id, det.cantidad + 1)}>
                                                                                             +
                                                                                         </Button>
@@ -353,15 +359,12 @@ const PedidoView = () => {
                                                                             </td>
                                                                             {/* Checkbox Todo ya incluido dentro de DeliveryCell — rellenar celda en deliver para layout */}
                                                                             {isDeliver && <td />}
-                                                                            {!isDeliver && <td className="text-end fw-bold text-success">Bs. {Number(det.subtotal).toFixed(2)}</td>}
-                                                                            <td className="px-3 text-muted" style={{ maxWidth: '150px' }}>
-                                                                                <div className="text-truncate">{det.comentario || '-'}</div>
-                                                                            </td>
+                                                                            {!isDeliver && <td className="text-end fw-bold text-success" style={{ fontSize: '0.9rem' }}>{Number(det.subtotal).toFixed(2)}</td>}
                                                                             {isEdit && cuenta.estado?.id !== 3 && (
-                                                                                <td className="text-center">
+                                                                                <td className="text-center pe-2">
                                                                                     <Button variant="outline-danger" className="p-1 d-flex align-items-center justify-content-center mx-auto border-0"
                                                                                         onClick={() => handleDeleteDetalle(det.id)}>
-                                                                                        <span className="material-symbols-outlined">delete</span>
+                                                                                        <span className="material-symbols-outlined fs-5">close</span>
                                                                                     </Button>
                                                                                 </td>
                                                                             )}

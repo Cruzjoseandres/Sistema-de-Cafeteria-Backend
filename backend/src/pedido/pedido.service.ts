@@ -195,13 +195,9 @@ export class PedidoService {
 
     // Forzar descarga directa con fl_attachment para evitar problemas de CORS/iframe
     const publicId = `pedido_${pedido.id}_${Date.now()}`;
-    const rawPdfUrl = await this.cloudinaryService.uploadPdf(pdfBuffer, publicId);
+    const pdfUrl = await this.cloudinaryService.uploadPdf(pdfBuffer, publicId);
 
-    // Insertar fl_attachment en la URL para que el navegador lo descargue directamente
-    // antes: .../raw/upload/v123/...
-    // después: .../raw/upload/fl_attachment/v123/...
-    const pdfUrl = rawPdfUrl.replace('/raw/upload/', '/raw/upload/fl_attachment/');
-
+    // Devolvemos la URL directa para que el navegador lo visualice (inline) en vez de forzar descarga
     return pdfUrl;
   }
 }
