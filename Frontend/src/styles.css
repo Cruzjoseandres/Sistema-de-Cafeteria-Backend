@@ -8,8 +8,8 @@
   --cafe-surface: #FFFFFF;
   
   /* Primary & Accents (Warm, organic) */
-  --cafe-primary: #D97706; /* Amber/Burnt Orange */
-  --cafe-primary-hover: #B45309; 
+  --cafe-primary: #B4420A; /* Darker Burnt Orange for white text visibility */
+  --cafe-primary-hover: #963507; 
   --cafe-secondary: #78350F; /* Deep Coffee Brown */
   --cafe-secondary-hover: #451A03;
 

@@ -30,7 +30,8 @@ export const useProductoDetalle = () => {
     }, [id]);
 
     const handleBack = () => {
-        navigate('/menu');
+        const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '';
+        navigate(`${basePath}/menu`);
     };
 
     return {

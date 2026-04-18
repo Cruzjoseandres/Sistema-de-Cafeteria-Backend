@@ -119,6 +119,8 @@ const App = () => {
           <Route path="reportes" element={<AdminReportes />} />
           <Route path="actividad-reciente" element={<AdminActividad />} />
           <Route path="pedido/:id" element={<PedidoView />} />
+          <Route path="menu" element={<MenuPublico />} />
+          <Route path="producto/:id" element={<ProductoDetalle />} />
         </Route>
       </Routes>
     </Router>

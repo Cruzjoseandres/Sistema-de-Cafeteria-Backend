@@ -22,7 +22,6 @@
 
 
 
-/* ---------- Category Chips ---------- */
 .menu-category-chips {
     display: flex;
     gap: 0.6rem;
@@ -32,7 +31,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     position: sticky;
-    top: 76px; /* Acomoda debajo del Header */
+    top: 76px; /* Acomoda debajo del Header en vista publica */
     z-index: 1000;
     background: var(--bg-main, #f8f9fa); /* Fondo solido para el sticky */
     padding-top: 10px;
@@ -40,6 +39,18 @@
     margin-right: -1rem;
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+body.admin-body .menu-category-chips {
+    top: calc(-1 * var(--admin-padding-top, 2rem)); /* Cubrir todo el top de ser necesario */
+    padding-top: calc(var(--admin-padding-top, 2rem) + 10px); /* Bajar el contenido visual */
+    background: #f8f6f4; /* Mismo fondo de admin-theme */
+    z-index: 1050;
+    margin-left: calc(-1 * var(--admin-padding-x, 2rem));
+    margin-right: calc(-1 * var(--admin-padding-x, 2rem));
+    padding-left: calc(var(--admin-padding-x, 2rem) + 1rem); /* espaciado interno */
+    padding-right: var(--admin-padding-x, 2rem);
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Separador sutil */
 }
 
 .menu-category-chips::-webkit-scrollbar {
@@ -62,8 +73,8 @@
 }
 
 .menu-chip:hover {
-    color: var(--neon-primary);
-    background: rgba(13, 110, 253, 0.04);
+    color: var(--cafe-primary);
+    background: rgba(180, 66, 10, 0.04);
 }
 
 .menu-chip.active {

@@ -79,7 +79,7 @@
 /* Metadata (Category & Status) */
 .detalle-category-label {
     display: block;
-    color: var(--neon-primary, #0d6efd);
+    color: var(--cafe-primary, #B4420A);
     font-size: 0.85rem;
     font-weight: 800;
     text-transform: uppercase;
@@ -106,13 +106,13 @@
 .detalle-price-tag .currency {
     font-size: 1.2rem;
     font-weight: 800;
-    color: var(--neon-primary, #0d6efd);
+    color: var(--cafe-primary, #B4420A);
 }
 
 .detalle-price-tag .amount {
     font-size: 2.8rem;
     font-weight: 900;
-    color: var(--neon-primary, #0d6efd);
+    color: var(--cafe-primary, #B4420A);
     line-height: 1;
 }
 
