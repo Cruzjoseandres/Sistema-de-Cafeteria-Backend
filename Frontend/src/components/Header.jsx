@@ -19,7 +19,7 @@ const Header = () => {
     return (
         <Navbar bg="white" variant="light" expand="lg" className="sticky-top shadow-sm">
             <Container>
-                <Link className="navbar-brand font-weight-bold" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'} style={{ color: 'var(--primary-color)' }}>
+                <Link className="navbar-brand font-weight-bold" to={token ? (userInfo?.rol === 'ADMINISTRADOR' ? '/admin' : '/mesero/mesas') : '/login'} style={{ color: 'var(--cafe-primary)' }}>
                     <span className="material-symbols-outlined brand-icon">coffee_maker</span>
                     Cafetería
                 </Link>
@@ -85,8 +85,8 @@ const Header = () => {
                         <Nav>
                             <NavDropdown
                                 title={
-                                    <span className="d-inline-flex align-items-center gap-2 font-weight-bold">
-                                        <span className="material-symbols-outlined" style={{ color: 'var(--primary-color)' }}>account_circle</span>
+                                <span className="d-inline-flex align-items-center gap-2 font-weight-bold">
+                                        <span className="material-symbols-outlined" style={{ color: 'var(--cafe-primary)' }}>account_circle</span>
                                         {userInfo?.persona ? `${userInfo.persona.nombre} ${userInfo.persona.apellido}` : userInfo?.username || "Usuario"}
                                     </span>
                                 }
