@@ -38,7 +38,7 @@ const RendimientoPersonal = () => {
                     <h4 className="section-title m-0">Rendimiento de Personal</h4>
                     <p className="text-muted mt-1">Métricas de pedidos atendidos por cada mesero y ventas totales.</p>
                 </div>
-                <div className="d-flex align-items-center gap-2 date-filters pb-2">
+                <div className="d-flex flex-wrap align-items-end gap-2 date-filters pb-2">
                     <Form.Group>
                         <Form.Label className="small text-muted mb-1">Desde</Form.Label>
                         <Form.Control type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} size="sm" />
@@ -47,7 +47,7 @@ const RendimientoPersonal = () => {
                         <Form.Label className="small text-muted mb-1">Hasta</Form.Label>
                         <Form.Control type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} size="sm" />
                     </Form.Group>
-                    <Button variant="primary" size="sm" className="mt-4" onClick={handleFilter}>
+                    <Button variant="primary" size="sm" onClick={handleFilter}>
                         Filtrar
                     </Button>
                 </div>
@@ -57,7 +57,7 @@ const RendimientoPersonal = () => {
                 <Card.Body className="p-0">
                     <Table responsive hover className="custom-table m-0">
                         <thead>
-                            <tr>
+                            <tr className="text-nowrap">
                                 <th className="ps-4">MESERO</th>
                                 <th className="text-center">PEDIDOS ATENDIDOS</th>
                                 <th className="text-end pe-4">TOTAL RECAUDADO (Bs.)</th>
@@ -73,9 +73,9 @@ const RendimientoPersonal = () => {
                                         className="row-hover-highlight"
                                         title="Click para ver pedidos"
                                     >
-                                        <td className="ps-4 fw-bold align-middle">
+                                        <td className="ps-4 fw-bold align-middle text-nowrap">
                                             <div className="d-flex align-items-center gap-3">
-                                                <div className="personal-avatar">
+                                                <div className="personal-avatar flex-shrink-0">
                                                     <span className="material-symbols-outlined">person</span>
                                                 </div>
                                                 {item.mesero}
