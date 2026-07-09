@@ -159,35 +159,34 @@ const PedidoView = () => {
                 </div>
                 
                 {(isEdit || isReadOnly) && (
-                    <div className="d-flex flex-row flex-nowrap gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons justify-content-center justify-content-md-end w-100 w-md-auto mt-3 mt-md-0">
-                        <Button variant="info" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-1 px-md-4 py-2" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                            <span className="material-symbols-outlined mb-1 fs-5">share</span> Compartir
+                    <div className="d-flex flex-wrap gap-2 align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
+                        <Button variant="info" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-3 py-1 rounded-pill" onClick={handleOpenWhatsappModal} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                            <span className="material-symbols-outlined fs-6">share</span> Compartir
                         </Button>
                         {isEdit && !isPedidoCompletado && (
                             <>
                                 {hasUnsavedChanges ? (
                                     <>
-                                        <Button variant="warning" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-1 px-md-4 py-2" onClick={handleCancelarCambios} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            <span className="material-symbols-outlined mb-1 fs-5">undo</span> Cancelar
+                                        <Button variant="warning" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-3 py-1 rounded-pill" onClick={handleCancelarCambios} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined fs-6">undo</span> Cancelar
                                         </Button>
-                                        <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-1 px-md-4 py-2" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            {saving ? <Spinner size="sm" animation="border" className="mb-1" /> : <span className="material-symbols-outlined mb-1 fs-5">save</span>} 
+                                        <Button variant="primary" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-3 py-1 rounded-pill" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            {saving ? <Spinner size="sm" animation="border" /> : <span className="material-symbols-outlined fs-6">save</span>} 
                                             Guardar
                                         </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleTerminarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            <span className="material-symbols-outlined mb-1 fs-5">check_circle</span> Terminar
+                                        <Button variant="success" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded-pill" onClick={handleTerminarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined fs-6">check_circle</span> Terminar
                                         </Button>
-                                        <Button variant="danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleCancelarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            <span className="material-symbols-outlined mb-1 fs-5">delete_forever</span> Eliminar
+                                        <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded-pill" onClick={handleCancelarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined fs-6">delete_forever</span> Eliminar
                                         </Button>
                                     </>
                                 )}
                             </>
                         )}
-
                     </div>
                 )}
             </div>
@@ -208,17 +207,17 @@ const PedidoView = () => {
             {/* CUENTAS Y DETALLES - Sin Card anidada para maximizar el ancho disponible */}
             <div className="mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
-                    <h4 className="mb-0 fw-bold">Cuentas del Pedido</h4>
-                    <div className="d-flex gap-2 flex-wrap">
+                    <h4 className="mb-0 fw-bold fs-5">Cuentas del Pedido</h4>
+                    <div className="d-flex gap-2 flex-wrap align-items-center">
                         {isEdit && !isPedidoCompletado && cuentas.filter(c => !c.estado || c.estado.id !== 3).length > 1 && (
-                            <Button variant="success" className="d-flex align-items-center gap-1 fw-bold shadow-sm text-white" onClick={() => handleOpenPaymentModal('ALL')}>
-                                <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
+                            <Button variant="success" size="sm" className="d-flex align-items-center gap-1 fw-bold shadow-sm rounded-pill px-3 py-1 text-white" onClick={() => handleOpenPaymentModal('ALL')}>
+                                <span className="material-symbols-outlined fs-6">payments</span>
                                 Cobrar Todo (Bs. {cuentas.filter(c => !c.estado || c.estado.id !== 3).reduce((sum, c) => sum + Number(c.total||0), 0).toFixed(2)})
                             </Button>
                         )}
                         {isEdit && !isPedidoCompletado && (
-                            <Button variant="primary" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1">
-                                <span className="material-symbols-outlined animate-spin-hover">person_add</span> Nueva Cuenta
+                            <Button variant="primary" size="sm" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1 fw-bold rounded-pill px-3 py-1">
+                                <span className="material-symbols-outlined fs-6">person_add</span> Nueva Cuenta
                             </Button>
                         )}
                     </div>
@@ -246,24 +245,24 @@ const PedidoView = () => {
                                     </Accordion.Header>
                                     <Accordion.Body className="p-1 p-sm-3 bg-white">
                                         {isEdit && (
-                                            <div className="d-flex flex-row flex-nowrap justify-content-end gap-2 p-2 mb-2 bg-light rounded border">
+                                            <div className="d-flex flex-wrap justify-content-end gap-2 p-2 mb-2 bg-light rounded border">
                                                 {cuenta.estado?.id !== 3 ? (
                                                     <>
-                                                        <Button variant="outline-danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm px-2 py-2" style={{ fontSize: '0.85rem' }}
+                                                        <Button variant="outline-danger" size="sm" className="d-flex align-items-center gap-1 px-3 py-1 rounded-pill"
                                                             onClick={() => handleDeleteCuenta(cuenta.id)}>
-                                                            <span className="material-symbols-outlined fs-5">delete</span> <span className="d-none d-sm-inline">Eliminar</span>
+                                                            <span className="material-symbols-outlined fs-6">delete</span> Eliminar
                                                         </Button>
-                                                        <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm px-2 py-2" style={{ fontSize: '0.85rem' }}
+                                                        <Button variant="primary" size="sm" className="d-flex align-items-center gap-1 px-3 py-1 rounded-pill fw-bold"
                                                             onClick={() => handleOpenAddItem(cuenta.id)}>
-                                                            <span className="material-symbols-outlined fs-5">add_circle</span> <span className="d-none d-sm-inline">Añadir Prod.</span><span className="d-inline d-sm-none">Añadir</span>
+                                                            <span className="material-symbols-outlined fs-6">add_circle</span> Añadir Productos
                                                         </Button>
-                                                        <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-2 py-2 text-white" style={{ fontSize: '0.85rem' }}
+                                                        <Button variant="success" size="sm" className="d-flex align-items-center gap-1 px-3 py-1 rounded-pill fw-bold text-white"
                                                             onClick={() => handleOpenPaymentModal(cuenta.id)}>
-                                                            <span className="material-symbols-outlined fs-5">payments</span> <span className="d-none d-sm-inline">Cobrar</span><span className="d-inline d-sm-none">Cobrar</span>
+                                                            <span className="material-symbols-outlined fs-6">payments</span> Cobrar
                                                         </Button>
                                                     </>
                                                 ) : (
-                                                    <Badge bg="success" className="py-2 px-3 d-flex align-items-center gap-1 w-100 justify-content-center">
+                                                    <Badge bg="success" className="py-2 px-3 d-flex align-items-center gap-1 justify-content-center">
                                                         <span className="material-symbols-outlined fs-6">check_circle</span> Cuenta Pagada
                                                     </Badge>
                                                 )}

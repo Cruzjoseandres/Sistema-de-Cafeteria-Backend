@@ -17,14 +17,12 @@ export class ProductoService {
   ) { }
 
   async create(createProductoDto: CreateProductoDto, imagenes?: Express.Multer.File[]) {
-    if (!imagenes || imagenes.length === 0) {
-      throw new NotFoundException('Se requiere al menos una imagen válida (jpg, jpeg, png, gif, webp, bmp, svg)');
-    }
-
-    // Subir todas las imágenes a Cloudinary en paralelo
-    const imagePaths = await Promise.all(
-      imagenes.map(img => this.cloudinaryService.uploadImage(img.buffer, CLOUDINARY_FOLDER))
-    );
+    // Subir todas las imágenes a Cloudinary en paralelo si se enviaron
+    const imagePaths = imagenes && imagenes.length > 0
+      ? await Promise.all(
+          imagenes.map(img => this.cloudinaryService.uploadImage(img.buffer, CLOUDINARY_FOLDER))
+        )
+      : [];
 
     const producto = {
       nombre: createProductoDto.nombre,

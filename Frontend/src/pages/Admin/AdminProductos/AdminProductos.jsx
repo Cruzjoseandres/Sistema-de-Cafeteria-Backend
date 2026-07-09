@@ -142,7 +142,7 @@ const AdminProductos = () => {
 
                             <Col md={5}>
                                 <div className="admin-form-group">
-                                    <Form.Label className="admin-form-label">Imagen del Producto</Form.Label>
+                                    <Form.Label className="admin-form-label">Imagen del Producto (Opcional)</Form.Label>
 
                                     <div
                                         className="upload-area text-center"
@@ -150,7 +150,7 @@ const AdminProductos = () => {
                                         style={{
                                             border: '2px dashed var(--admin-border)',
                                             borderRadius: '12px',
-                                            padding: '3rem 1rem',
+                                            padding: '2rem 1rem',
                                             cursor: 'pointer',
                                             marginBottom: '1rem',
                                             transition: 'border-color 0.2s'
@@ -158,9 +158,9 @@ const AdminProductos = () => {
                                         onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--admin-accent)'}
                                         onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--admin-border)'}
                                     >
-                                        <div style={{ fontSize: '2rem', color: 'var(--admin-accent)', marginBottom: '0.5rem' }}>☁️</div>
-                                        <div style={{ fontWeight: 600 }}>Click to upload</div>
-                                        <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>SVG, PNG, JPG or GIF (max. 800x400px)</div>
+                                        <span className="material-symbols-outlined text-muted mb-1" style={{ fontSize: '2rem' }}>cloud_upload</span>
+                                        <div style={{ fontWeight: 600 }}>Haz clic para seleccionar imagen</div>
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>Opcional (SVG, PNG, JPG, WEBP)</div>
                                     </div>
 
                                     <input
@@ -289,7 +289,9 @@ const AdminProductos = () => {
                                             )}
                                         </div>
                                     ) : (
-                                        <span className="text-muted text-nowrap" style={{ fontSize: '0.8rem' }}>Sin imagen</span>
+                                        <div className="d-flex align-items-center justify-content-center bg-light border rounded" style={{ width: '40px', height: '40px' }} title="Sin imagen">
+                                            <span className="material-symbols-outlined text-muted" style={{ fontSize: '1.2rem' }}>image_not_supported</span>
+                                        </div>
                                     )}
                                 </td>
                                 <td className="py-3 fw-bold" style={{ minWidth: '180px', color: 'var(--admin-text-main)' }}>{producto.nombre}</td>

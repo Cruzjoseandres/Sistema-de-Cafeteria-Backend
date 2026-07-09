@@ -42,41 +42,46 @@ const MeseroMesas = () => {
         <Container className="mt-4">
             {/* Header con botón crear pedido */}
             <div className="d-flex justify-content-between align-items-center mb-4 fade-in">
-                <h2 className="d-flex align-items-center gap-2 mb-0 fw-bold fs-3">
-                    <span className="material-symbols-outlined text-dark">table_restaurant</span>
+                <h2 className="d-flex align-items-center gap-2 mb-0 fw-bold">
+                    <span className="material-symbols-outlined text-primary fs-2">table_restaurant</span>
                     Mesas y Pedidos
                 </h2>
-                <Button variant="dark" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-3 py-2 fw-medium">
-                    <span className="material-symbols-outlined fs-5">add</span>
+                <Button variant="primary" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-4 py-2 fw-bold rounded-pill">
+                    <span className="material-symbols-outlined fs-5">add_circle</span>
                     Nuevo Pedido
                 </Button>
             </div>
 
             {/* Pedidos activos */}
             <div className="mb-4">
-                <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3">
-                    <h5 className="mb-0 fw-bold text-secondary">📋 Pedidos Activos</h5>
+                <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 bg-white p-3 rounded shadow-sm border">
+                    <h5 className="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                        <span className="material-symbols-outlined text-primary">receipt_long</span>
+                        Pedidos Activos
+                    </h5>
                     <div className="d-flex flex-grow-1 flex-md-grow-0 flex-wrap align-items-center gap-3 justify-content-end">
-                        <InputGroup className="flex-fill" style={{ minWidth: '200px', maxWidth: '350px' }}>
-                            <InputGroup.Text className="bg-white border-end-0">
-                                <span className="material-symbols-outlined text-muted" style={{ fontSize: '1.2rem' }}>search</span>
+                        <InputGroup className="flex-fill" style={{ minWidth: '220px', maxWidth: '350px' }}>
+                            <InputGroup.Text className="bg-light border-end-0">
+                                <span className="material-symbols-outlined text-muted fs-6">search</span>
                             </InputGroup.Text>
                             <Form.Control 
                                 placeholder="Mesa, Cliente, Pedido..."
-                                className="border-start-0 ps-0"
+                                className="border-start-0 ps-0 bg-light"
                                 style={{ boxShadow: 'none' }}
                                 value={filtroBusqueda}
                                 onChange={(e) => setFiltroBusqueda(e.target.value)}
                             />
                         </InputGroup>
-                        <Form.Check 
-                            type="switch"
-                            id="mis-pedidos-switch"
-                            label="Solo Mis Pedidos"
-                            checked={filtroMisPedidos}
-                            onChange={(e) => setFiltroMisPedidos(e.target.checked)}
-                            className="fw-bold text-primary m-0"
-                        />
+                        <div className="d-flex align-items-center border ps-3 pe-3 py-1 rounded-pill bg-light">
+                            <Form.Check 
+                                type="switch"
+                                id="mis-pedidos-switch"
+                                label="Solo Mis Pedidos"
+                                checked={filtroMisPedidos}
+                                onChange={(e) => setFiltroMisPedidos(e.target.checked)}
+                                className="fw-bold text-primary m-0"
+                            />
+                        </div>
                     </div>
                 </div>
                 {pedidosActivosFiltrados.length === 0 ? (
