@@ -23,68 +23,40 @@ const AdminReportes = () => {
                     </div>
                 </div>
 
-                <div className="w-100" style={{ paddingBottom: '4px' }}>
-                    <div className="admin-tabs d-flex flex-wrap gap-1" style={{ background: 'rgba(180,66,10,0.06)', padding: '5px', borderRadius: '12px', border: '1px solid rgba(180,66,10,0.12)' }}>
-                        <Button
-                            variant="link"
-                            className="text-decoration-none px-3 py-2 rounded d-flex align-items-center gap-2"
-                            style={{
-                                color: activeTab === 'generales' ? '#fff' : 'var(--text-muted)',
-                                background: activeTab === 'generales' ? 'var(--cafe-primary)' : 'transparent',
-                                fontWeight: activeTab === 'generales' ? 600 : 500,
-                                fontSize: '0.9rem',
-                                transition: 'all 0.2s ease'
-                            }}
+                <div className="w-100 mt-2">
+                    <div className="reportes-tabs-grid">
+                        <button
+                            type="button"
+                            className={`report-tab-btn ${activeTab === 'generales' ? 'active' : ''}`}
                             onClick={() => setActiveTab('generales')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>insights</span>
+                            <span className="material-symbols-outlined">insights</span>
                             <span>Ventas Generales</span>
-                        </Button>
-                        <Button
-                            variant="link"
-                            className="text-decoration-none px-3 py-2 rounded d-flex align-items-center gap-2"
-                            style={{
-                                color: activeTab === 'productos' ? '#fff' : 'var(--text-muted)',
-                                background: activeTab === 'productos' ? 'var(--cafe-primary)' : 'transparent',
-                                fontWeight: activeTab === 'productos' ? 600 : 500,
-                                fontSize: '0.9rem',
-                                transition: 'all 0.2s ease'
-                            }}
+                        </button>
+                        <button
+                            type="button"
+                            className={`report-tab-btn ${activeTab === 'productos' ? 'active' : ''}`}
                             onClick={() => setActiveTab('productos')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>local_cafe</span>
+                            <span className="material-symbols-outlined">local_cafe</span>
                             <span>Ventas por Producto</span>
-                        </Button>
-                        <Button
-                            variant="link"
-                            className="text-decoration-none px-3 py-2 rounded d-flex align-items-center gap-2"
-                            style={{
-                                color: activeTab === 'personal' ? '#fff' : 'var(--text-muted)',
-                                background: activeTab === 'personal' ? 'var(--cafe-primary)' : 'transparent',
-                                fontWeight: activeTab === 'personal' ? 600 : 500,
-                                fontSize: '0.9rem',
-                                transition: 'all 0.2s ease'
-                            }}
+                        </button>
+                        <button
+                            type="button"
+                            className={`report-tab-btn ${activeTab === 'personal' ? 'active' : ''}`}
                             onClick={() => setActiveTab('personal')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>badge</span>
-                            <span>Rendimiento del Personal</span>
-                        </Button>
-                        <Button
-                            variant="link"
-                            className="text-decoration-none px-3 py-2 rounded d-flex align-items-center gap-2"
-                            style={{
-                                color: activeTab === 'eliminados' ? '#fff' : 'var(--text-muted)',
-                                background: activeTab === 'eliminados' ? 'var(--cafe-primary)' : 'transparent',
-                                fontWeight: activeTab === 'eliminados' ? 600 : 500,
-                                fontSize: '0.9rem',
-                                transition: 'all 0.2s ease'
-                            }}
+                            <span className="material-symbols-outlined">badge</span>
+                            <span>Rendimiento Personal</span>
+                        </button>
+                        <button
+                            type="button"
+                            className={`report-tab-btn ${activeTab === 'eliminados' ? 'active' : ''}`}
                             onClick={() => setActiveTab('eliminados')}
                         >
-                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>delete_history</span>
+                            <span className="material-symbols-outlined">delete_history</span>
                             <span>Pedidos Eliminados</span>
-                        </Button>
+                        </button>
                     </div>
                 </div>
             </div>

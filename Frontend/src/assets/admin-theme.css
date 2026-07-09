@@ -672,4 +672,63 @@ body.admin-body {
     .custom-table td .material-symbols-outlined {
         font-size: 1.1rem !important;
     }
+}
+
+/* Pestañas del Centro de Reportes - Diseño limpio en escritorio y grid 2x2 en móvil */
+.reportes-tabs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.report-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid rgba(180, 66, 10, 0.18);
+    background: #ffffff;
+    color: var(--admin-text-main);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.report-tab-btn:hover {
+    background: rgba(180, 66, 10, 0.05);
+    border-color: rgba(180, 66, 10, 0.35);
+    color: var(--cafe-primary, #B4420A);
+}
+
+.report-tab-btn.active {
+    background: var(--cafe-primary, #B4420A) !important;
+    border-color: var(--cafe-primary, #B4420A) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(180, 66, 10, 0.28);
+}
+
+@media (max-width: 768px) {
+    .reportes-tabs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+    }
+
+    .report-tab-btn {
+        padding: 0.65rem 0.5rem;
+        font-size: 0.82rem;
+        justify-content: center;
+        text-align: center;
+        min-height: 46px;
+        line-height: 1.2;
+    }
+
+    .report-tab-btn .material-symbols-outlined {
+        font-size: 1.15rem;
+    }
 }
