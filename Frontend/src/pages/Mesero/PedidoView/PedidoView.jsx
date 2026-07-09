@@ -254,7 +254,7 @@ const PedidoView = () => {
                                                         </Button>
                                                         <Button variant="primary" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded fw-bold text-nowrap"
                                                             onClick={() => handleOpenAddItem(cuenta.id)}>
-                                                            <span className="material-symbols-outlined fs-6">add_circle</span> Añadir Productos
+                                                            <span className="material-symbols-outlined fs-6">add_circle</span> Añadir
                                                         </Button>
                                                         <Button variant="success" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded fw-bold text-white text-nowrap"
                                                             onClick={() => handleOpenPaymentModal(cuenta.id)}>
