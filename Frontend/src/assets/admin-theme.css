@@ -476,26 +476,14 @@ body.admin-body {
         border-radius: 12px;
     }
 
-    /* Botones de acción en tablas — apilados verticalmente */
-    .d-flex.gap-2.justify-content-end {
-        flex-direction: column;
-        gap: 0.5rem !important;
-        align-items: stretch;
-    }
-
-    .btn-admin-primary,
-    .btn-admin-secondary {
+    /* Botones dentro de formularios o modales en móvil */
+    .modal-footer .btn-admin-primary,
+    .modal-footer .btn-admin-secondary {
         width: 100%;
         text-align: center;
         justify-content: center;
-        font-size: 0.85rem;
-        padding: 0.5rem 0.75rem;
-    }
-
-    /* Ocultar columnas menos importantes en tablas */
-    .custom-table th:nth-child(4),
-    .custom-table td:nth-child(4) {
-        display: none;
+        font-size: 0.88rem;
+        padding: 0.6rem 0.75rem;
     }
 
     /* Formularios de crear/editar - una columna */
@@ -552,5 +540,223 @@ body.admin-body {
 
     .admin-search {
         width: 400px;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ESTILOS MINIMALISTAS Y PREMIUM PARA TABLAS, VISTAS Y MODALES ADMIN
+   (Paleta 100% Café Moderno: #B4420A, #2c1a0e, #78350F)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Contenedor de tablas con bordes suaves */
+.admin-card.overflow-hidden {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid rgba(180, 66, 10, 0.12) !important;
+    box-shadow: 0 4px 18px rgba(44, 26, 14, 0.05);
+}
+
+/* Cabeceras de tabla refinadas */
+.custom-table th {
+    font-size: 0.72rem !important;
+    text-transform: uppercase;
+    color: var(--text-muted) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em;
+    padding: 14px 18px !important;
+    background: rgba(180, 66, 10, 0.04) !important;
+    border-bottom: 2px solid rgba(180, 66, 10, 0.15) !important;
+}
+
+/* Celdas de tabla */
+.custom-table td {
+    padding: 14px 18px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.custom-table tbody tr {
+    transition: background-color 0.18s ease;
+}
+
+.custom-table tbody tr:hover td {
+    background: rgba(180, 66, 10, 0.035) !important;
+}
+
+/* Campos de Formulario y Selects en Administrador */
+.admin-form-group {
+    margin-bottom: 1.25rem;
+}
+
+.admin-form-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.4rem;
+    display: block;
+    letter-spacing: 0.02em;
+}
+
+.admin-form-control,
+.form-control,
+.form-select {
+    border: 1px solid rgba(44, 26, 14, 0.18);
+    border-radius: 10px;
+    padding: 0.65rem 0.95rem;
+    font-size: 0.92rem;
+    color: var(--text-main);
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-form-control:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--cafe-primary) !important;
+    box-shadow: 0 0 0 3px rgba(180, 66, 10, 0.14) !important;
+    outline: none;
+}
+
+/* Modales estilizados en Administrador */
+.admin-modal-backdrop {
+    background-color: rgba(44, 26, 14, 0.45) !important;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content.admin-card {
+    border-radius: 16px !important;
+    border: 1px solid rgba(180, 66, 10, 0.18) !important;
+    box-shadow: 0 16px 36px rgba(44, 26, 14, 0.12) !important;
+    overflow: hidden;
+}
+
+/* Optimización Responsive para Tablas en Modo Teléfono / Móvil */
+@media (max-width: 768px) {
+    .custom-table th,
+    .custom-table td {
+        padding: 8px 8px !important;
+        font-size: 0.82rem !important;
+        white-space: normal !important;
+    }
+
+    .custom-table th {
+        font-size: 0.73rem !important;
+        letter-spacing: 0.02em;
+    }
+
+    /* Reducir o eliminar min-width rígidos en pantallas pequeñas para que entren los datos */
+    .custom-table td[style*="min-width"],
+    .custom-table td[style*="minWidth"] {
+        min-width: auto !important;
+    }
+
+    .custom-table td .btn-admin-secondary,
+    .custom-table td .btn-admin-primary {
+        padding: 0.35rem 0.5rem !important;
+        font-size: 0.78rem !important;
+        border-radius: 6px !important;
+    }
+
+    .custom-table td .material-symbols-outlined {
+        font-size: 1.1rem !important;
+    }
+}
+
+/* Pestañas del Centro de Reportes - Diseño limpio en escritorio y grid 2x2 en móvil */
+/* Pestañas del Centro de Reportes - Una sola fila horizontal con scroll y estilo de botones elegante */
+.reportes-tabs-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.6rem;
+    width: 100%;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.report-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid rgba(180, 66, 10, 0.18);
+    background: #ffffff;
+    color: var(--admin-text-main);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.report-tab-btn:hover {
+    background: rgba(180, 66, 10, 0.05);
+    border-color: rgba(180, 66, 10, 0.35);
+    color: var(--cafe-primary, #B4420A);
+}
+
+.report-tab-btn.active {
+    background: var(--cafe-primary, #B4420A) !important;
+    border-color: var(--cafe-primary, #B4420A) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(180, 66, 10, 0.28);
+}
+
+@media (max-width: 768px) {
+    .report-tab-btn {
+        padding: 0.6rem 0.95rem;
+        font-size: 0.84rem;
+        min-height: 42px;
+    }
+
+    .report-tab-btn .material-symbols-outlined {
+        font-size: 1.15rem;
+    }
+}
+
+/* Botón Atrás / Volver Premium Minimalista - Tamaño Fijo y Sin Estirarse */
+.admin-back-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 42px !important;
+    height: 42px !important;
+    flex-shrink: 0 !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(180, 66, 10, 0.18) !important;
+    background: #ffffff !important;
+    color: var(--admin-text-main, #2C1A0E) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 6px rgba(44, 26, 14, 0.05) !important;
+    cursor: pointer;
+    text-decoration: none !important;
+    padding: 0 !important;
+}
+
+.admin-back-btn:hover {
+    background: rgba(180, 66, 10, 0.08) !important;
+    border-color: var(--cafe-primary, #B4420A) !important;
+    color: var(--cafe-primary, #B4420A) !important;
+    transform: translateX(-3px);
+    box-shadow: 0 4px 12px rgba(180, 66, 10, 0.15) !important;
+}
+
+.admin-back-btn .material-symbols-outlined {
+    font-size: 1.35rem !important;
+}
+
+@media (max-width: 768px) {
+    .admin-back-btn {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 10px !important;
+    }
+    .admin-back-btn .material-symbols-outlined {
+        font-size: 1.25rem !important;
     }
 }

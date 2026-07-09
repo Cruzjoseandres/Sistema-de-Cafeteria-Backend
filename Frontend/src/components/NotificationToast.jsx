@@ -2,10 +2,17 @@ import { Toast, ToastContainer } from 'react-bootstrap';
 
 const NotificationToast = ({ show, message, variant, onClose }) => {
     const icons = {
-        success: '✅',
-        danger: '❌',
-        warning: '⚠️',
-        info: 'ℹ️',
+        success: 'check_circle',
+        danger: 'error',
+        warning: 'warning',
+        info: 'info',
+    };
+
+    const iconColors = {
+        success: 'text-success',
+        danger: 'text-danger',
+        warning: 'text-warning',
+        info: 'text-info',
     };
 
     return (
@@ -15,12 +22,17 @@ const NotificationToast = ({ show, message, variant, onClose }) => {
                 onClose={onClose}
                 delay={4000}
                 autohide
-                className="shadow-lg border-0"
+                className="shadow border-0"
             >
                 <Toast.Header closeButton>
-                    <strong className="me-auto text-dark" style={{ fontSize: '1.1rem' }}>
-                        {icons[variant] || '📢'} {variant === 'success' ? 'Éxito' : variant === 'danger' ? 'Error' : 'Aviso'}
-                    </strong>
+                    <div className="d-flex align-items-center gap-2 me-auto">
+                        <span className={`material-symbols-outlined ${iconColors[variant] || 'text-dark'}`}>
+                            {icons[variant] || 'notifications'}
+                        </span>
+                        <strong className="text-dark">
+                            {variant === 'success' ? 'Éxito' : variant === 'danger' ? 'Error' : 'Aviso'}
+                        </strong>
+                    </div>
                 </Toast.Header>
                 <Toast.Body 
                     className="fw-bold" 

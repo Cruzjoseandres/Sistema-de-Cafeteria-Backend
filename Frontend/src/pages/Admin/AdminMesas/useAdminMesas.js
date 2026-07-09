@@ -16,6 +16,7 @@ export const useAdminMesas = () => {
         descripcion: '',
         es_juntada: false,
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { toast, confirm, showSuccess, showError, hideToast, showConfirm } = useNotification();
 
@@ -71,6 +72,8 @@ export const useAdminMesas = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         try {
             const payload = {
                 numero: parseInt(formData.numero),
@@ -91,6 +94,8 @@ export const useAdminMesas = () => {
         } catch (err) {
             console.error('Error:', err);
             showError(err.response?.data?.message || 'Error al guardar la mesa');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -109,7 +114,7 @@ export const useAdminMesas = () => {
     };
 
     return {
-        mesas, loading, error, showModal, modalType, formData,
+        mesas, loading, error, showModal, modalType, formData, isSubmitting,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast, pagination
     };

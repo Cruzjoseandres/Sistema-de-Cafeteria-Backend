@@ -16,7 +16,7 @@ const AdminProductos = () => {
         busqueda, setBusqueda,
         filtroCategoria, setFiltroCategoria,
         filtroDisponible, setFiltroDisponible,
-        pagination,
+        pagination, isSubmitting,
     } = useAdminProductos();
 
     const fileInputRef = useRef(null);
@@ -50,12 +50,22 @@ const AdminProductos = () => {
         return (
             <Container fluid className="px-0">
                 <NotificationToast show={toast.show} message={toast.message} variant={toast.variant} onClose={hideToast} />
-                <div className="mb-4">
-                    <h1 className="admin-title-lg">{modalType === 'editar' ? 'Editar Producto' : 'Crear Nuevo Producto'}</h1>
-                    <p className="admin-subtitle">Añade o edita un artículo en el sistema de inventario de la cafetería.</p>
+                <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                    <div className="d-flex align-items-center gap-3">
+                        <button type="button" className="admin-back-btn" onClick={handleCloseModal} title="Volver al listado">
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <div>
+                            <h1 className="admin-title-lg d-flex align-items-center gap-2 m-0">
+                                <span className="material-symbols-outlined text-primary">{modalType === 'editar' ? 'edit_square' : 'local_cafe'}</span>
+                                <span>{modalType === 'editar' ? 'Editar Producto' : 'Crear Nuevo Producto'}</span>
+                            </h1>
+                            <p className="admin-subtitle m-0">Añade o edita un artículo en el sistema de inventario de la cafetería.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="admin-card">
+                <div className="admin-card border-0 shadow-sm p-4">
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Row>
                             <Col md={7}>
@@ -142,7 +152,7 @@ const AdminProductos = () => {
 
                             <Col md={5}>
                                 <div className="admin-form-group">
-                                    <Form.Label className="admin-form-label">Imagen del Producto</Form.Label>
+                                    <Form.Label className="admin-form-label">Imagen del Producto (Opcional)</Form.Label>
 
                                     <div
                                         className="upload-area text-center"
@@ -150,7 +160,7 @@ const AdminProductos = () => {
                                         style={{
                                             border: '2px dashed var(--admin-border)',
                                             borderRadius: '12px',
-                                            padding: '3rem 1rem',
+                                            padding: '2rem 1rem',
                                             cursor: 'pointer',
                                             marginBottom: '1rem',
                                             transition: 'border-color 0.2s'
@@ -158,9 +168,9 @@ const AdminProductos = () => {
                                         onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--admin-accent)'}
                                         onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--admin-border)'}
                                     >
-                                        <div style={{ fontSize: '2rem', color: 'var(--admin-accent)', marginBottom: '0.5rem' }}>☁️</div>
-                                        <div style={{ fontWeight: 600 }}>Click to upload</div>
-                                        <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>SVG, PNG, JPG or GIF (max. 800x400px)</div>
+                                        <span className="material-symbols-outlined text-muted mb-1" style={{ fontSize: '2rem' }}>cloud_upload</span>
+                                        <div style={{ fontWeight: 600 }}>Haz clic para seleccionar imagen</div>
+                                        <div style={{ fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>Opcional (SVG, PNG, JPG, WEBP)</div>
                                     </div>
 
                                     <input
@@ -207,8 +217,8 @@ const AdminProductos = () => {
 
                         <div className="d-flex justify-content-end gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--admin-border)' }}>
                             <button type="button" className="btn-admin-secondary" onClick={handleCloseModal}>Cancelar</button>
-                            <button type="submit" className="btn-admin-primary">
-                                {modalType === 'editar' ? 'Guardar Cambios' : 'Guardar Producto'}
+                            <button type="submit" className="btn-admin-primary" disabled={isSubmitting}>
+                                {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Guardar Producto')}
                             </button>
                         </div>
                     </Form>
@@ -227,8 +237,9 @@ const AdminProductos = () => {
                     <h1 className="admin-title-lg">Gestión de Productos</h1>
                     <p className="admin-subtitle m-0">Administra el inventario de la cafetería.</p>
                 </div>
-                <button className="btn-admin-primary" onClick={() => handleOpenModal('crear')}>
-                    + Añadir Producto
+                <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
+                    <span className="material-symbols-outlined fs-5">add_circle</span>
+                    <span>Nuevo Producto</span>
                 </button>
             </div>
 
@@ -260,22 +271,22 @@ const AdminProductos = () => {
                 </Col>
             </Row>
 
-            <div className="admin-card p-0" style={{ overflow: 'hidden' }}>
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
                 <Table hover responsive className="custom-table m-0 align-middle">
-                    <thead>
+                    <thead className="bg-light text-nowrap">
                         <tr>
-                            <th>IMAGEN</th>
-                            <th>NOMBRE</th>
-                            <th>PRECIO</th>
-                            <th>CATEGORÍA</th>
-                            <th>ESTADO</th>
-                            <th className="text-end">ACCIONES</th>
+                            <th className="px-4 py-3">IMAGEN</th>
+                            <th className="py-3">NOMBRE</th>
+                            <th className="py-3">PRECIO</th>
+                            <th className="py-3">CATEGORÍA</th>
+                            <th className="py-3">ESTADO</th>
+                            <th className="text-end px-4 py-3">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pagination.paginatedData.map((producto) => (
                             <tr key={producto.id}>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="px-4 py-3">
                                     {producto.imagePaths && producto.imagePaths.length > 0 ? (
                                         <div className="d-flex align-items-center gap-1">
                                             <img
@@ -289,26 +300,30 @@ const AdminProductos = () => {
                                             )}
                                         </div>
                                     ) : (
-                                        <span className="text-muted" style={{ fontSize: '0.8rem' }}>Sin imagen</span>
+                                        <div className="d-flex align-items-center justify-content-center bg-light border rounded" style={{ width: '40px', height: '40px' }} title="Sin imagen">
+                                            <span className="material-symbols-outlined text-muted" style={{ fontSize: '1.2rem' }}>image_not_supported</span>
+                                        </div>
                                     )}
                                 </td>
-                                <td style={{ verticalAlign: 'middle', fontWeight: 600, color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
-                                <td style={{ verticalAlign: 'middle' }}>Bs. {parseFloat(producto.precio).toFixed(2)}</td>
-                                <td style={{ verticalAlign: 'middle' }}>{producto.categoria?.nombre || '-'}</td>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="py-3 fw-bold" style={{ minWidth: '120px', color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
+                                <td className="py-3 text-nowrap fw-medium text-success">Bs. {parseFloat(producto.precio).toFixed(2)}</td>
+                                <td className="py-3 text-nowrap">{producto.categoria?.nombre || '-'}</td>
+                                <td className="py-3 text-nowrap">
                                     {producto.disponible ? (
                                         <span className="admin-badge success">En Stock</span>
                                     ) : (
                                         <span className="admin-badge warning">Agotado</span>
                                     )}
                                 </td>
-                                <td className="text-end">
-                                    <div className="d-flex gap-2 justify-content-end">
-                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }} onClick={() => handleOpenModal('editar', producto)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                <td className="text-end px-2 py-3 text-nowrap">
+                                    <div className="d-flex gap-1 justify-content-end">
+                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px' }} onClick={() => handleOpenModal('editar', producto)} title="Editar producto">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>edit_square</span>
+                                            <span className="d-none d-lg-inline">Editar</span>
                                         </button>
-                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }} onClick={() => handleDelete(producto.id)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }} onClick={() => handleDelete(producto.id)} title="Eliminar producto">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>delete</span>
+                                            <span className="d-none d-lg-inline">Eliminar</span>
                                         </button>
                                     </div>
                                 </td>
@@ -316,7 +331,7 @@ const AdminProductos = () => {
                         ))}
                         {pagination.totalItems === 0 && (
                             <tr>
-                                <td colSpan="6" className="text-center py-4 text-muted">No se encontraron productos en el inventario.</td>
+                                <td colSpan="6" className="text-center py-5 text-muted">No se encontraron productos en el inventario.</td>
                             </tr>
                         )}
                     </tbody>

@@ -53,14 +53,14 @@ const RendimientoPersonal = () => {
                 </div>
             </div>
 
-            <Card className="content-card border-0">
+            <Card className="content-card border-0 shadow-sm overflow-hidden">
                 <Card.Body className="p-0">
-                    <Table responsive hover className="custom-table m-0">
-                        <thead>
+                    <Table responsive hover className="custom-table m-0 align-middle">
+                        <thead className="bg-light">
                             <tr className="text-nowrap">
-                                <th className="ps-4">MESERO</th>
-                                <th className="text-center">PEDIDOS ATENDIDOS</th>
-                                <th className="text-end pe-4">TOTAL RECAUDADO (Bs.)</th>
+                                <th className="ps-3 py-3">MESERO</th>
+                                <th className="text-center py-3">PEDIDOS</th>
+                                <th className="text-end pe-3 py-3">TOTAL (Bs.)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,21 +73,21 @@ const RendimientoPersonal = () => {
                                         className="row-hover-highlight"
                                         title="Click para ver pedidos"
                                     >
-                                        <td className="ps-4 fw-bold align-middle text-nowrap">
-                                            <div className="d-flex align-items-center gap-3">
+                                        <td className="ps-3 fw-bold align-middle py-3">
+                                            <div className="d-flex align-items-center gap-2">
                                                 <div className="personal-avatar flex-shrink-0">
                                                     <span className="material-symbols-outlined">person</span>
                                                 </div>
-                                                {item.mesero}
+                                                <span>{item.mesero}</span>
                                             </div>
                                         </td>
-                                        <td className="text-center align-middle">
+                                        <td className="text-center align-middle text-nowrap py-3">
                                             <span className="qty-badge d-inline-flex align-items-center gap-1">
                                                 <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>receipt_long</span>
                                                 {item.pedidos_atendidos}
                                             </span>
                                         </td>
-                                        <td className="text-end pe-4 align-middle fw-bold text-success">
+                                        <td className="text-end pe-3 align-middle fw-bold text-success text-nowrap py-3">
                                             Bs. {item.total_recaudado?.toFixed(2) || '0.00'}
                                         </td>
                                     </tr>
@@ -117,30 +117,30 @@ const RendimientoPersonal = () => {
                         </div>
                     ) : (
                         <Table responsive hover className="m-0 align-middle">
-                            <thead className="table-light">
+                            <thead className="table-light text-nowrap">
                                 <tr>
-                                    <th className="ps-4">ID Pedido</th>
-                                    <th>Fecha</th>
-                                    <th>Mesa</th>
-                                    <th>Estado</th>
-                                    <th className="text-end">Total Recaudado</th>
-                                    <th className="text-center pe-4">Acción</th>
+                                    <th className="ps-4 py-3">ID Pedido</th>
+                                    <th className="py-3">Fecha</th>
+                                    <th className="py-3">Mesa</th>
+                                    <th className="py-3">Estado</th>
+                                    <th className="text-end py-3">Total Recaudado</th>
+                                    <th className="text-center pe-4 py-3">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {pedidosMesero.length > 0 ? (
                                     pedidosMesero.map((p) => (
                                         <tr key={p.id}>
-                                            <td className="ps-4 fw-bold">#{p.id}</td>
-                                            <td>{new Date(p.fecha).toLocaleString()}</td>
-                                            <td>Mesa {p.mesa_numero}</td>
-                                            <td>
+                                            <td className="ps-4 fw-bold text-nowrap">#{p.id}</td>
+                                            <td className="text-nowrap">{new Date(p.fecha).toLocaleString()}</td>
+                                            <td className="text-nowrap">Mesa {p.mesa_numero}</td>
+                                            <td className="text-nowrap">
                                                 <Badge bg={p.estado_nombre === 'COMPLETADO' || p.estado_nombre === 'PAGADO' ? 'success' : 'secondary'}>
                                                     {p.estado_nombre}
                                                 </Badge>
                                             </td>
-                                            <td className="text-end fw-bold text-success">Bs. {p.total_recaudado.toFixed(2)}</td>
-                                            <td className="text-center pe-4">
+                                            <td className="text-end fw-bold text-success text-nowrap">Bs. {p.total_recaudado.toFixed(2)}</td>
+                                            <td className="text-center pe-4 text-nowrap">
                                                 <Button 
                                                     variant="outline-primary" 
                                                     size="sm"

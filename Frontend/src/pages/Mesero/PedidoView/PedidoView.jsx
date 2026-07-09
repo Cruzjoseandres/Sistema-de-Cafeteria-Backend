@@ -140,9 +140,9 @@ const PedidoView = () => {
             {/* HEADER */}
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 fade-in gap-3">
                 <div className="d-flex align-items-center gap-3">
-                    <Button variant="outline-secondary" onClick={navigateBack} className="d-flex align-items-center p-2 rounded-circle">
+                    <button type="button" onClick={navigateBack} className="admin-back-btn" title="Volver a mesas">
                         <span className="material-symbols-outlined">arrow_back</span>
-                    </Button>
+                    </button>
                     <div>
                         <h1 className="mb-0 d-flex align-items-center gap-2">
                             📋 Pedido #{pedido.id}
@@ -159,35 +159,34 @@ const PedidoView = () => {
                 </div>
                 
                 {(isEdit || isReadOnly) && (
-                    <div className="d-flex flex-row flex-nowrap gap-2 mx-auto ms-md-auto me-md-0 align-items-center action-buttons justify-content-center justify-content-md-end w-100 w-md-auto mt-3 mt-md-0">
-                        <Button variant="info" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-1 px-md-4 py-2" onClick={handleOpenWhatsappModal} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                            <span className="material-symbols-outlined mb-1 fs-5">share</span> Compartir
+                    <div className="d-flex flex-wrap gap-2 align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
+                        <Button variant="info" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-3 py-1 rounded" onClick={handleOpenWhatsappModal} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                            <span className="material-symbols-outlined fs-6">share</span> Compartir
                         </Button>
                         {isEdit && !isPedidoCompletado && (
                             <>
                                 {hasUnsavedChanges ? (
                                     <>
-                                        <Button variant="warning" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-1 px-md-4 py-2" onClick={handleCancelarCambios} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            <span className="material-symbols-outlined mb-1 fs-5">undo</span> Cancelar
+                                        <Button variant="warning" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-3 py-1 rounded" onClick={handleCancelarCambios} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined fs-6">undo</span> Cancelar
                                         </Button>
-                                        <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-1 px-md-4 py-2" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            {saving ? <Spinner size="sm" animation="border" className="mb-1" /> : <span className="material-symbols-outlined mb-1 fs-5">save</span>} 
+                                        <Button variant="primary" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-3 py-1 rounded" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            {saving ? <Spinner size="sm" animation="border" /> : <span className="material-symbols-outlined fs-6">save</span>} 
                                             Guardar
                                         </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleTerminarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            <span className="material-symbols-outlined mb-1 fs-5">check_circle</span> Terminar
+                                        <Button variant="success" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded" onClick={handleTerminarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined fs-6">check_circle</span> Terminar
                                         </Button>
-                                        <Button variant="danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 px-md-4 py-2" onClick={handleCancelarPedido} disabled={saving} style={{ minHeight: "45px", fontSize: "0.85rem" }}>
-                                            <span className="material-symbols-outlined mb-1 fs-5">delete_forever</span> Eliminar
+                                        <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded" onClick={handleCancelarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                            <span className="material-symbols-outlined fs-6">delete_forever</span> Eliminar
                                         </Button>
                                     </>
                                 )}
                             </>
                         )}
-
                     </div>
                 )}
             </div>
@@ -205,193 +204,271 @@ const PedidoView = () => {
                 </Alert>
             )}
 
-            {/* CUENTAS Y DETALLES */}
-            <Card className="glass-card shadow-lg mb-4">
-                <Card.Body>
-                    <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
-                        <h4 className="mb-0">Cuentas del Pedido</h4>
-                        <div className="d-flex gap-2 flex-wrap">
-                            {isEdit && !isPedidoCompletado && cuentas.filter(c => !c.estado || c.estado.id !== 3).length > 1 && (
-                                <Button variant="success" className="d-flex align-items-center gap-1 fw-bold shadow-sm text-white" onClick={() => handleOpenPaymentModal('ALL')}>
-                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
-                                    Cobrar Todo (Bs. {cuentas.filter(c => !c.estado || c.estado.id !== 3).reduce((sum, c) => sum + Number(c.total||0), 0).toFixed(2)})
-                                </Button>
-                            )}
-                            {isEdit && !isPedidoCompletado && (
-                                <Button variant="primary" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1">
-                                    <span className="material-symbols-outlined animate-spin-hover">person_add</span> Nueva Cuenta
-                                </Button>
-                            )}
-                        </div>
+            {/* CUENTAS Y DETALLES - Sin Card anidada para maximizar el ancho disponible */}
+            <div className="mb-4">
+                <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
+                    <h4 className="mb-0 fw-bold fs-5">Cuentas del Pedido</h4>
+                    <div className="d-flex gap-2 flex-wrap align-items-center">
+                        {isEdit && !isPedidoCompletado && cuentas.filter(c => !c.estado || c.estado.id !== 3).length > 1 && (
+                            <Button variant="success" size="sm" className="d-flex align-items-center gap-1 fw-bold shadow-sm rounded px-3 py-1 text-white" onClick={() => handleOpenPaymentModal('ALL')}>
+                                <span className="material-symbols-outlined fs-6">payments</span>
+                                Cobrar Todo (Bs. {cuentas.filter(c => !c.estado || c.estado.id !== 3).reduce((sum, c) => sum + Number(c.total||0), 0).toFixed(2)})
+                            </Button>
+                        )}
+                        {isEdit && !isPedidoCompletado && (
+                            <Button variant="primary" size="sm" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1 fw-bold rounded px-3 py-1">
+                                <span className="material-symbols-outlined fs-6">person_add</span> Nueva Cuenta
+                            </Button>
+                        )}
                     </div>
+                </div>
 
-                    {cuentas.length === 0 ? (
-                        <div className="py-5 text-center px-3">
-                            <span className="material-symbols-outlined text-muted mb-3" style={{ fontSize: '4rem', opacity: 0.5 }}>receipt_long</span>
-                            <h5 className="text-muted">No hay cuentas activas</h5>
-                            <p className="text-muted mb-0">Comienza creando una cuenta para agregar productos al pedido.</p>
-                        </div>
-                    ) : (
-                        <Accordion defaultActiveKey={cuentas.map((_, i) => String(i))} alwaysOpen className="custom-accordion">
-                            {cuentas.map((cuenta, index) => {
-                                const detalles = detallesPorCuenta[cuenta.id] || [];
-                                return (
-                                    <Accordion.Item eventKey={String(index)} key={cuenta.id} className="mb-3 border rounded shadow-sm">
-                                        <Accordion.Header>
-                                            <div className="d-flex justify-content-between w-100 me-3 align-items-center pe-2">
-                                                <span className="fs-5"><strong>👤 {cuenta.nombre_cliente}</strong></span>
-                                                <Badge bg="primary" className="fs-6 py-2 px-3">
-                                                    Bs. {Number(cuenta.total || 0).toFixed(2)}
-                                                </Badge>
+                {cuentas.length === 0 ? (
+                    <div className="py-5 text-center px-3 bg-white rounded border shadow-sm">
+                        <span className="material-symbols-outlined text-muted mb-3" style={{ fontSize: '4rem', opacity: 0.5 }}>receipt_long</span>
+                        <h5 className="text-muted">No hay cuentas activas</h5>
+                        <p className="text-muted mb-0">Comienza creando una cuenta para agregar productos al pedido.</p>
+                    </div>
+                ) : (
+                    <Accordion defaultActiveKey={cuentas.map((_, i) => String(i))} alwaysOpen className="custom-accordion">
+                        {cuentas.map((cuenta, index) => {
+                            const detalles = detallesPorCuenta[cuenta.id] || [];
+                            return (
+                                <Accordion.Item eventKey={String(index)} key={cuenta.id} className="mb-3 border rounded shadow-sm overflow-hidden">
+                                    <Accordion.Header>
+                                        <div className="d-flex justify-content-between w-100 me-3 align-items-center pe-2">
+                                            <span className="fs-5"><strong>👤 {cuenta.nombre_cliente}</strong></span>
+                                            <Badge bg="primary" className="fs-6 py-2 px-3">
+                                                Bs. {Number(cuenta.total || 0).toFixed(2)}
+                                            </Badge>
+                                        </div>
+                                    </Accordion.Header>
+                                    <Accordion.Body className="p-1 p-sm-3 bg-white">
+                                        {isEdit && (
+                                            <div className="d-flex flex-row flex-nowrap justify-content-end gap-2 p-2 mb-2 bg-light rounded border" style={{ overflowX: 'auto' }}>
+                                                {cuenta.estado?.id !== 3 ? (
+                                                    <>
+                                                        <Button variant="outline-danger" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded text-nowrap"
+                                                            onClick={() => handleDeleteCuenta(cuenta.id)}>
+                                                            <span className="material-symbols-outlined fs-6">delete</span> Eliminar
+                                                        </Button>
+                                                        <Button variant="primary" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded fw-bold text-nowrap"
+                                                            onClick={() => handleOpenAddItem(cuenta.id)}>
+                                                            <span className="material-symbols-outlined fs-6">add_circle</span> Añadir
+                                                        </Button>
+                                                        <Button variant="success" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded fw-bold text-white text-nowrap"
+                                                            onClick={() => handleOpenPaymentModal(cuenta.id)}>
+                                                            <span className="material-symbols-outlined fs-6">payments</span> Cobrar
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <Badge bg="success" className="py-2 px-3 d-flex align-items-center gap-1 justify-content-center">
+                                                        <span className="material-symbols-outlined fs-6">check_circle</span> Cuenta Pagada
+                                                    </Badge>
+                                                )}
                                             </div>
-                                        </Accordion.Header>
-                                        <Accordion.Body className="bg-light">
-                                            {isEdit && (
-                                                <div className="d-flex flex-row flex-nowrap justify-content-end gap-2 mb-3">
-                                                    {cuenta.estado?.id !== 3 ? (
-                                                        <>
-                                                            <Button variant="outline-danger" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm px-1 py-2" style={{ fontSize: '0.85rem' }}
-                                                                onClick={() => handleDeleteCuenta(cuenta.id)}>
-                                                                <span className="material-symbols-outlined fs-5">delete</span> <span className="d-none d-sm-inline">Eliminar</span>
-                                                            </Button>
-                                                            <Button variant="primary" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm px-1 py-2" style={{ fontSize: '0.85rem' }}
-                                                                onClick={() => handleOpenAddItem(cuenta.id)}>
-                                                                <span className="material-symbols-outlined fs-5">add_circle</span> <span className="d-none d-sm-inline">Añadir Prod.</span><span className="d-inline d-sm-none">Añadir</span>
-                                                            </Button>
-                                                            <Button variant="success" className="d-flex flex-fill align-items-center justify-content-center gap-1 shadow-sm fw-bold px-1 py-2 text-white" style={{ fontSize: '0.85rem' }}
-                                                                onClick={() => handleOpenPaymentModal(cuenta.id)}>
-                                                                <span className="material-symbols-outlined fs-5">payments</span> <span className="d-none d-sm-inline">Cobrar</span><span className="d-inline d-sm-none">Cobrar</span>
-                                                            </Button>
-                                                        </>
-                                                    ) : (
-                                                        <Badge bg="success" className="py-2 px-3 d-flex align-items-center gap-1 w-100 justify-content-center">
-                                                            <span className="material-symbols-outlined fs-6">check_circle</span> Cuenta Pagada
-                                                        </Badge>
-                                                    )}
-                                                </div>
-                                            )}
-                                            
-                                            {detalles.length === 0 ? (
-                                                <div className="text-center py-4 bg-white rounded border border-dashed">
-                                                    <span className="material-symbols-outlined text-muted" style={{ fontSize: '2rem', opacity: 0.5 }}>restaurant_menu</span>
-                                                    <p className="text-muted mt-2 mb-0">Sin productos en esta cuenta</p>
-                                                </div>
-                                            ) : (
-                                                <div className="bg-white rounded shadow-sm overflow-hidden">
-                                                    {/* Helper para renderizar tabla de detalles */}
-                                                    {[
-                                                        { titulo: 'Pedido Inicial', items: detalles.filter(d => getClasificacionDetalle(d) === 'Pedido Inicial') },
-                                                        { titulo: 'Extras', items: detalles.filter(d => getClasificacionDetalle(d) === 'Extras') }
-                                                    ].map((grupo, gIdx) => grupo.items.length > 0 && (
-                                                        <div key={gIdx} className="mb-0">
-                                                            <div className="bg-light border-bottom px-3 py-2 fw-bold text-secondary d-flex align-items-center gap-2">
-                                                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
-                                                                    {grupo.titulo === 'Extras' ? 'extension' : 'receipt'}
-                                                                </span>
-                                                                {grupo.titulo}
-                                                            </div>
-                                                            <div className="table-responsive w-100" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
-                                                                <Table hover className="mb-0 align-middle text-nowrap w-100">
-                                                                    <thead className="table-light">
-                                                                    <tr>
-                                                                        <th className="w-50">Producto</th>
-                                                                        <th className="text-center" style={{ width: '120px' }}>{isDeliver ? 'Entrega' : 'Cant.'}</th>
-                                                                        {isDeliver && <th className="text-center" style={{ width: '50px' }}>Todo</th>}
-                                                                        {!isDeliver && <th className="text-end" style={{ width: '80px' }}>Total</th>}
-                                                                        {isEdit && <th className="text-center" style={{ width: '40px' }}></th>}
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {grupo.items.map((det) => (
-                                                                         <tr key={det.id} style={isDeliver ? { background: 'transparent' } : {}}>
-                                                                            <td className="fw-medium text-wrap" style={{ minWidth: '120px' }}>
-                                                                                <div style={{ lineHeight: '1.2' }}>{det.producto?.nombre}</div>
-                                                                                {det.comentario && <small className="text-muted d-block mt-1 fst-italic text-wrap" style={{ fontSize: '0.75rem', lineHeight: '1.1' }}>Nota: {det.comentario}</small>}
-                                                                            </td>
-                                                                            <td>
-                                                                                {isDeliver ? (
-                                                                                    <div className="d-flex justify-content-center">
-                                                                                        <DeliveryCell
-                                                                                            det={det}
-                                                                                            onRegister={handleEntregarItem}
+                                        )}
+                                        
+                                        {detalles.length === 0 ? (
+                                            <div className="text-center py-4 rounded border border-dashed my-2">
+                                                <span className="material-symbols-outlined text-muted" style={{ fontSize: '2rem', opacity: 0.5 }}>restaurant_menu</span>
+                                                <p className="text-muted mt-2 mb-0">Sin productos en esta cuenta</p>
+                                            </div>
+                                        ) : (
+                                            <div className="d-flex flex-column">
+                                                {[
+                                                    { titulo: 'Pedido Inicial', items: detalles.filter(d => getClasificacionDetalle(d) === 'Pedido Inicial') },
+                                                    { titulo: 'Extras', items: detalles.filter(d => getClasificacionDetalle(d) === 'Extras') }
+                                                ].map((grupo, gIdx) => grupo.items.length > 0 && (
+                                                    <div key={gIdx} className="mb-2 border rounded overflow-hidden">
+                                                        <div className="bg-light border-bottom px-2 py-1 fw-bold text-secondary d-flex align-items-center gap-1" style={{ fontSize: '0.9rem' }}>
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
+                                                                {grupo.titulo === 'Extras' ? 'extension' : 'receipt'}
+                                                            </span>
+                                                            {grupo.titulo}
+                                                        </div>
+                                                        <div className="d-flex flex-column">
+                                                            {grupo.items.map((det) => {
+                                                                const isCompletado = det.cantidad_entregada === det.cantidad;
+                                                                return isDeliver ? (
+                                                                    <div
+                                                                        key={det.id}
+                                                                        className={`d-flex align-items-center justify-content-between py-2 px-2 border-bottom ${isCompletado ? 'bg-light' : 'bg-white'}`}
+                                                                        style={{ gap: '8px' }}
+                                                                    >
+                                                                        <div className="d-flex align-items-center gap-2 flex-grow-1" style={{ minWidth: 0 }}>
+                                                                            <button
+                                                                                type="button"
+                                                                                className="btn btn-link p-0 border-0 text-decoration-none d-flex align-items-center flex-shrink-0"
+                                                                                onClick={() => handleEntregarItem(det.id, isCompletado ? 0 : det.cantidad)}
+                                                                                title={isCompletado ? 'Marcar como pendiente' : 'Entregar todo'}
+                                                                            >
+                                                                                <span
+                                                                                    className="material-symbols-outlined"
+                                                                                    style={{
+                                                                                        fontSize: '1.5rem',
+                                                                                        color: isCompletado ? '#198754' : '#adb5bd',
+                                                                                        fontVariationSettings: isCompletado ? "'FILL' 1" : "'FILL' 0",
+                                                                                        cursor: 'pointer'
+                                                                                    }}
+                                                                                >
+                                                                                    {isCompletado ? 'check_circle' : 'radio_button_unchecked'}
+                                                                                </span>
+                                                                            </button>
+                                                                            <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+                                                                                <span
+                                                                                    className={`fw-bold ${isCompletado ? 'text-decoration-line-through text-muted' : 'text-dark'}`}
+                                                                                    style={{ fontSize: '0.95rem', wordBreak: 'normal', lineHeight: '1.25' }}
+                                                                                >
+                                                                                    {det.producto?.nombre}
+                                                                                </span>
+                                                                                {det.comentario && (
+                                                                                    <span className="text-muted small mt-1 d-flex align-items-center gap-1">
+                                                                                        <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>notes</span>
+                                                                                        {det.comentario}
+                                                                                    </span>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="d-flex align-items-center flex-shrink-0">
+                                                                            <Button
+                                                                                variant="outline-secondary"
+                                                                                size="sm"
+                                                                                className="btn-qty px-2 rounded-start d-flex align-items-center justify-content-center"
+                                                                                style={{ height: '32px', width: '30px' }}
+                                                                                disabled={det.cantidad_entregada <= 0}
+                                                                                onClick={() => handleEntregarItem(det.id, det.cantidad_entregada - 1)}
+                                                                            >
+                                                                                -
+                                                                            </Button>
+                                                                            <div
+                                                                                className="px-1 border-top border-bottom fw-bold bg-light d-flex align-items-center justify-content-center"
+                                                                                style={{ height: '32px', minWidth: '45px' }}
+                                                                            >
+                                                                                <Form.Control
+                                                                                    type="number"
+                                                                                    className={`p-0 text-center fw-bold border-0 bg-transparent ${isCompletado ? 'text-success' : 'text-primary'}`}
+                                                                                    style={{ width: '32px', boxShadow: 'none' }}
+                                                                                    value={det.cantidad_entregada ?? 0}
+                                                                                    onChange={(e) => {
+                                                                                        let val = parseInt(e.target.value);
+                                                                                        if (isNaN(val) || val < 0) val = 0;
+                                                                                        if (val > det.cantidad) val = det.cantidad;
+                                                                                        handleEntregarItem(det.id, val);
+                                                                                    }}
+                                                                                    onKeyDown={(e) => {
+                                                                                        if (e.key === 'Enter') e.target.blur();
+                                                                                    }}
+                                                                                />
+                                                                                <span className="text-muted small">/</span>
+                                                                                <span className="text-muted small">{det.cantidad}</span>
+                                                                            </div>
+                                                                            <Button
+                                                                                variant="outline-secondary"
+                                                                                size="sm"
+                                                                                className="btn-qty px-2 rounded-end d-flex align-items-center justify-content-center"
+                                                                                style={{ height: '32px', width: '30px' }}
+                                                                                disabled={det.cantidad_entregada >= det.cantidad}
+                                                                                onClick={() => handleEntregarItem(det.id, det.cantidad_entregada + 1)}
+                                                                            >
+                                                                                +
+                                                                            </Button>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div
+                                                                        key={det.id}
+                                                                        className="d-flex align-items-center justify-content-between py-2 px-2 border-bottom bg-white"
+                                                                        style={{ gap: '8px' }}
+                                                                    >
+                                                                        <div className="d-flex flex-column flex-grow-1" style={{ minWidth: 0 }}>
+                                                                            <span className="fw-bold text-dark" style={{ fontSize: '0.95rem', wordBreak: 'normal', lineHeight: '1.25' }}>
+                                                                                {det.producto?.nombre}
+                                                                            </span>
+                                                                            {det.comentario && (
+                                                                                <span className="text-muted small mt-1 d-flex align-items-center gap-1">
+                                                                                    <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>notes</span>
+                                                                                    {det.comentario}
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+
+                                                                        <div className="d-flex align-items-center gap-2 flex-shrink-0 ms-auto">
+                                                                            {(isEdit && cuenta.estado?.id !== 3) ? (
+                                                                                <div className="d-flex align-items-center">
+                                                                                    <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start"
+                                                                                        style={{ height: '32px', width: '28px' }}
+                                                                                        onClick={() => handleCambiarCantidadDetalle(det.id, det.cantidad - 1)}>
+                                                                                        -
+                                                                                    </Button>
+                                                                                    <div className="px-1 border-top border-bottom fw-bold bg-light d-flex align-items-center justify-content-center"
+                                                                                        style={{ height: '32px', minWidth: '38px' }}>
+                                                                                        <Form.Control
+                                                                                            type="number"
+                                                                                            className="p-0 text-center fw-bold border-0 bg-transparent"
+                                                                                            style={{ width: '34px', boxShadow: 'none' }}
+                                                                                            defaultValue={det.cantidad}
+                                                                                            key={`edit-${det.id}-${det.cantidad}`}
+                                                                                            onBlur={(e) => {
+                                                                                                let val = parseInt(e.target.value);
+                                                                                                if (isNaN(val) || val < 0) val = 0;
+                                                                                                e.target.value = val;
+                                                                                                if (val !== det.cantidad) {
+                                                                                                    handleCambiarCantidadDetalle(det.id, val);
+                                                                                                }
+                                                                                            }}
+                                                                                            onKeyDown={(e) => {
+                                                                                                if (e.key === 'Enter') e.target.blur();
+                                                                                            }}
                                                                                         />
                                                                                     </div>
-                                                                                ) : (isEdit && cuenta.estado?.id !== 3) ? (
-                                                                                    <div className="d-flex align-items-center justify-content-center">
-                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-start d-flex align-items-center justify-content-center"
-                                                                                            style={{ height: '32px', minWidth: '32px' }}
-                                                                                            onClick={() => handleCambiarCantidadDetalle(det.id, det.cantidad - 1)}>
-                                                                                            -
-                                                                                        </Button>
-                                                                                        <div className="px-1 border-top border-bottom py-1 fw-bold bg-light" style={{ height: '32px' }}>
-                                                                                            <Form.Control
-                                                                                                type="number"
-                                                                                                className="p-0 text-center fw-bold border-0 bg-transparent hide-arrows"
-                                                                                                style={{ width: '30px', boxShadow: 'none', height: '100%' }}
-                                                                                                defaultValue={det.cantidad}
-                                                                                                key={`edit-${det.id}-${det.cantidad}`}
-                                                                                                onBlur={(e) => {
-                                                                                                    let val = parseInt(e.target.value);
-                                                                                                    if (isNaN(val) || val < 0) val = 0;
-                                                                                                    e.target.value = val;
-                                                                                                    if (val !== det.cantidad) {
-                                                                                                        handleCambiarCantidadDetalle(det.id, val);
-                                                                                                    }
-                                                                                                }}
-                                                                                                onKeyDown={(e) => {
-                                                                                                    if (e.key === 'Enter') e.target.blur();
-                                                                                                }}
-                                                                                            />
-                                                                                        </div>
-                                                                                        <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-end d-flex align-items-center justify-content-center"
-                                                                                            style={{ height: '32px', minWidth: '32px' }}
-                                                                                            onClick={() => handleCambiarCantidadDetalle(det.id, det.cantidad + 1)}>
-                                                                                            +
-                                                                                        </Button>
-                                                                                    </div>
-                                                                                ) : (
-                                                                                    <div className="text-center fw-bold">
-                                                                                        <span className={`${det.cantidad_entregada === det.cantidad ? 'text-success' : 'text-primary'} fs-5`}>{det.cantidad_entregada}</span>
-                                                                                        <span className="text-muted mx-1">/</span>
-                                                                                        <span className="text-muted">{det.cantidad}</span>
-                                                                                    </div>
-                                                                                )}
-                                                                            </td>
-                                                                            {/* Checkbox Todo ya incluido dentro de DeliveryCell — rellenar celda en deliver para layout */}
-                                                                            {isDeliver && <td />}
-                                                                            {!isDeliver && <td className="text-end fw-bold text-success" style={{ fontSize: '0.9rem' }}>{Number(det.subtotal).toFixed(2)}</td>}
-                                                                            {isEdit && cuenta.estado?.id !== 3 && (
-                                                                                <td className="text-center pe-2">
-                                                                                    <Button variant="outline-danger" className="p-1 d-flex align-items-center justify-content-center mx-auto border-0"
-                                                                                        onClick={() => handleDeleteDetalle(det.id)}>
-                                                                                        <span className="material-symbols-outlined fs-5">close</span>
+                                                                                    <Button variant="outline-secondary" size="sm" className="btn-qty px-2 rounded-end"
+                                                                                        style={{ height: '32px', width: '28px' }}
+                                                                                        onClick={() => handleCambiarCantidadDetalle(det.id, det.cantidad + 1)}>
+                                                                                        +
                                                                                     </Button>
-                                                                                </td>
+                                                                                </div>
+                                                                            ) : (
+                                                                                <div className="text-center fw-bold bg-light px-2 py-1 rounded border small">
+                                                                                    <span className={`${det.cantidad_entregada === det.cantidad ? 'text-success' : 'text-primary'}`}>{det.cantidad_entregada}</span>
+                                                                                    <span className="text-muted mx-1">/</span>
+                                                                                    <span className="text-muted">{det.cantidad}</span>
+                                                                                </div>
                                                                             )}
-                                                                        </tr>
-                                                                    ))}
-                                                                </tbody>
-                                                            </Table>
+
+                                                                            <span className="fw-bold text-success text-end" style={{ minWidth: '70px', fontSize: '0.95rem' }}>
+                                                                                Bs. {Number(det.subtotal).toFixed(2)}
+                                                                            </span>
+
+                                                                            {isEdit && cuenta.estado?.id !== 3 && (
+                                                                                <Button variant="outline-danger" size="sm" className="p-1 d-flex align-items-center justify-content-center border-0"
+                                                                                    onClick={() => handleDeleteDetalle(det.id)}>
+                                                                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span>
+                                                                                </Button>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
                                                 ))}
-                                                </div>
-                                            )}
-                                        </Accordion.Body>
-                                    </Accordion.Item>
-                                );
-                            })}
-                        </Accordion>
-                    )}
+                                            </div>
+                                        )}
+                                    </Accordion.Body>
+                                </Accordion.Item>
+                            );
+                        })}
+                    </Accordion>
+                )}
 
-                    {cuentas.length > 0 && (
-                        <div className="total-pedido-container mt-4 p-4 rounded text-end shadow-sm d-flex justify-content-between align-items-center">
-                            <h4 className="mb-0 text-muted">Total del Pedido</h4>
-                            <h2 className="mb-0 fw-bold text-primary display-6">Bs. {totalPedido.toFixed(2)}</h2>
-                        </div>
-                    )}
-                </Card.Body>
-            </Card>
+                {cuentas.length > 0 && (
+                    <div className="total-pedido-container mt-4 p-3 p-md-4 rounded text-end shadow-sm d-flex justify-content-between align-items-center bg-white border">
+                        <h4 className="mb-0 text-muted">Total del Pedido</h4>
+                        <h2 className="mb-0 fw-bold text-primary display-6">Bs. {totalPedido.toFixed(2)}</h2>
+                    </div>
+                )}
+            </div>
 
             {/* ========== MODAL AGREGAR CUENTA ========== */}
             <Modal show={showAddCuentaModal} onHide={() => { setShowAddCuentaModal(false); setAsignarNombre(false); setNombreCliente(''); }}>
@@ -453,47 +530,56 @@ const PedidoView = () => {
             {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST) ========== */}
             <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" fullscreen="lg-down">
                 <Modal.Header closeButton className="border-bottom-0 pb-2 px-3 px-md-4">
-                    <Modal.Title className="d-flex align-items-center gap-1 gap-md-2 w-100 fs-5 fs-md-4 pe-2">
-                        <span className="material-symbols-outlined text-warning fs-4 fs-md-3">fastfood</span>
-                        <span className="fw-bold fs-5 fs-md-4">Menú</span>
-                        <Badge bg="primary" className="ms-auto fs-6" style={{ letterSpacing: '0.5px' }}>
-                            {Object.keys(productosSeleccionados).length} sel.
+                    <Modal.Title className="d-flex align-items-center gap-2 w-100 fs-5 pe-2">
+                        <span className="material-symbols-outlined text-dark fs-4">restaurant_menu</span>
+                        <span className="fw-bold fs-5">Seleccionar Productos</span>
+                        <Badge bg="dark" pill className="ms-auto fs-6 fw-normal px-3 py-1">
+                            {Object.keys(productosSeleccionados).length} seleccionados
                         </Badge>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-0 bg-light d-flex flex-column" style={{ overflow: 'hidden' }}>
-                    {/* FIxed Header Area */}
-                    <div className="p-2 p-md-3 bg-white border-bottom flex-shrink-0 shadow-sm">
-                        <Row className="g-2">
-                            <Col xs={12} md={8}>
-                                <InputGroup>
-                                    <InputGroup.Text className="bg-white"><span className="material-symbols-outlined fs-5">search</span></InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Buscar producto por nombre..."
-                                        value={busquedaProducto}
-                                        onChange={(e) => setBusquedaProducto(e.target.value)}
-                                        autoFocus
-                                    />
-                                    {busquedaProducto && (
-                                        <Button variant="outline-secondary" className="border-start-0 bg-white" onClick={() => setBusquedaProducto('')}>
-                                            <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
-                                        </Button>
-                                    )}
-                                </InputGroup>
-                            </Col>
-                            <Col md={4} xs={12}>
-                                <Form.Select
-                                    value={filtroCategoria}
-                                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                    {/* Fixed Header Area */}
+                    <div className="p-3 bg-white border-bottom flex-shrink-0">
+                        <div className="mb-3">
+                            <InputGroup>
+                                <InputGroup.Text className="bg-light border-end-0"><span className="material-symbols-outlined fs-5 text-muted">search</span></InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    className="bg-light border-start-0 shadow-none"
+                                    placeholder="Buscar por nombre, descripción o categoría..."
+                                    value={busquedaProducto}
+                                    onChange={(e) => setBusquedaProducto(e.target.value)}
+                                    autoFocus
+                                />
+                                {busquedaProducto && (
+                                    <Button variant="light" className="border" onClick={() => setBusquedaProducto('')}>
+                                        <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
+                                    </Button>
+                                )}
+                            </InputGroup>
+                        </div>
+                        <div className="d-flex align-items-center gap-2 overflow-auto pb-1" style={{ whiteSpace: 'nowrap' }}>
+                            <Button
+                                size="sm"
+                                variant={!filtroCategoria ? "dark" : "outline-secondary"}
+                                className="rounded-pill px-3 py-1 fw-medium"
+                                onClick={() => setFiltroCategoria('')}
+                            >
+                                Todas las categorías
+                            </Button>
+                            {categorias.map((cat) => (
+                                <Button
+                                    key={cat.id}
+                                    size="sm"
+                                    variant={parseInt(filtroCategoria) === cat.id ? "dark" : "outline-secondary"}
+                                    className="rounded-pill px-3 py-1 fw-medium"
+                                    onClick={() => setFiltroCategoria(parseInt(filtroCategoria) === cat.id ? '' : cat.id.toString())}
                                 >
-                                    <option value="">Todas las categorías</option>
-                                    {categorias.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                                    ))}
-                                </Form.Select>
-                            </Col>
-                        </Row>
+                                    {cat.nombre}
+                                </Button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Scrollable Content Area */}
@@ -511,36 +597,36 @@ const PedidoView = () => {
                                     
                                     return (
                                         <Col xs={12} lg={6} xl={4} key={p.id}>
-                                            <div className={`p-2 p-md-3 border rounded shadow-sm d-flex flex-column h-100 transition-all ${seleccionado ? 'border-primary bg-primary bg-opacity-10' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
+                                            <div className={`p-3 border rounded d-flex flex-column h-100 transition-all ${seleccionado ? 'border-dark bg-light' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
                                                 
-                                                <div className="d-flex align-items-center mb-2 mb-md-3 cursor-pointer" 
+                                                <div className="d-flex align-items-center mb-2 cursor-pointer" 
                                                      onClick={() => !isAgotado && toggleProductoChecklist(p.id)}
                                                 >
-                                                    <div className="me-2 me-md-3">
+                                                    <div className="me-3">
                                                         <Form.Check 
                                                             type="checkbox"
                                                             checked={!!seleccionado}
                                                             onChange={() => {}} // handled by parent div
-                                                            className="scale-15"
+                                                            className="scale-125"
                                                             disabled={isAgotado}
                                                         />
                                                     </div>
                                                     
                                                     {p.imagePaths && p.imagePaths.length > 0 ? (
-                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-2 me-md-3 shadow-sm" style={{ width: '50px', height: '50px', minWidth: '50px' }} />
+                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '48px', height: '48px', minWidth: '48px' }} />
                                                     ) : (
-                                                        <div className="bg-light rounded d-flex align-items-center justify-content-center me-2 me-md-3" style={{ width: '50px', height: '50px', minWidth: '50px' }}>
+                                                        <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '48px', height: '48px', minWidth: '48px' }}>
                                                             <span className="material-symbols-outlined text-muted">image</span>
                                                         </div>
                                                     )}
                                                     
                                                     <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                        <h6 className="mb-0 fw-bold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
+                                                        <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
                                                         <small className="text-muted text-truncate d-block" style={{ fontSize: '0.8rem' }}>{p.categoria?.nombre}</small>
-                                                        {isAgotado && <Badge bg="secondary" className="mt-1" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
+                                                        {isAgotado && <Badge bg="secondary" className="mt-1 fw-normal" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
                                                     </div>
                                                     
-                                                    <div className="fw-bold text-success text-end ms-1 ms-md-2 text-nowrap flex-shrink-0 fs-6 fs-md-5">
+                                                    <div className="fw-semibold text-dark text-end ms-2 text-nowrap flex-shrink-0 fs-6">
                                                         Bs. {parseFloat(p.precio).toFixed(2)}
                                                     </div>
                                                 </div>
@@ -587,11 +673,11 @@ const PedidoView = () => {
                         )}
                     </div>
                 </Modal.Body>
-                <Modal.Footer className="border-top-0 pt-0 mt-2 px-3 px-md-4">
-                    <Button variant="light" onClick={() => setShowAddItemModal(false)} className="px-3 px-md-4 py-2">Cancelar</Button>
-                    <Button variant="primary" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-3 px-md-4 py-2 d-flex align-items-center gap-1 gap-md-2 shadow-sm">
-                        <span className="material-symbols-outlined">add_task</span>
-                        Agregar {Object.keys(productosSeleccionados).length > 0 ? `(${Object.keys(productosSeleccionados).length})` : ''}
+                <Modal.Footer className="border-top bg-white px-4 py-3">
+                    <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="px-4 py-2">Cancelar</Button>
+                    <Button variant="dark" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-4 py-2 d-flex align-items-center gap-2">
+                        <span className="material-symbols-outlined fs-5">check</span>
+                        Agregar al Pedido {Object.keys(productosSeleccionados).length > 0 ? `(${Object.keys(productosSeleccionados).length})` : ''}
                     </Button>
                 </Modal.Footer>
             </Modal>

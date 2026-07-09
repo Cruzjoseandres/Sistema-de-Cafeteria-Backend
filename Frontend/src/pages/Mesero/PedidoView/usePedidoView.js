@@ -29,8 +29,8 @@ export const usePedidoView = () => {
     // Draft State
     const [draftCuentas, setDraftCuentas] = useState([]);
     // Mapa de cambios de entrega pendientes: { [detalleId]: cantidad_entregada }
-    // Se llena instantáneamente al tocar +/−/checkbox y se envía de una sola vez al salir
     const deliveryPendingMap = useRef({});
+    const deliveryFlushTimeout = useRef(null);
     const [draftDetallesPorCuenta, setDraftDetallesPorCuenta] = useState({});
     const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
@@ -499,14 +499,42 @@ export const usePedidoView = () => {
     // Solo se acumula en el mapa para el flush bulk al salir.
     // ------------------------------------
     const handleEntregarItem = (detalleId, nuevaCantidad) => {
-        // Solo registrar en el mapa pendiente — el estado visual lo maneja DeliveryRow
         if (detalleId > 0) {
             deliveryPendingMap.current[detalleId] = nuevaCantidad;
+
+            setDraftDetallesPorCuenta(prev => {
+                const next = { ...prev };
+                for (const cuentaId in next) {
+                    const detalles = next[cuentaId];
+                    const idx = detalles?.findIndex(d => d.id === detalleId);
+                    if (idx !== -1 && idx !== undefined) {
+                        const updated = [...detalles];
+                        updated[idx] = {
+                            ...updated[idx],
+                            cantidad_entregada: nuevaCantidad
+                        };
+                        next[cuentaId] = updated;
+                        break;
+                    }
+                }
+                return next;
+            });
+
+            if (deliveryFlushTimeout.current) {
+                clearTimeout(deliveryFlushTimeout.current);
+            }
+            deliveryFlushTimeout.current = setTimeout(() => {
+                flushDeliveryChanges();
+            }, 600);
         }
     };
 
     // Envía todos los cambios de entrega acumulados al servidor en una sola llamada
     const flushDeliveryChanges = async () => {
+        if (deliveryFlushTimeout.current) {
+            clearTimeout(deliveryFlushTimeout.current);
+            deliveryFlushTimeout.current = null;
+        }
         const pending = deliveryPendingMap.current;
         const items = Object.entries(pending).map(([id, cantidad_entregada]) => ({
             id: Number(id),
@@ -546,16 +574,26 @@ export const usePedidoView = () => {
 
     const totalPedido = draftCuentas.reduce((sum, c) => sum + Number(c.total || 0), 0);
 
-    const normalizeText = (text) => text ? text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
+    const normalizeText = (text) => text ? text.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
 
-    const productosFiltrados = productos.filter(p => {
-        const matchBusqueda = !busquedaProducto ||
-            normalizeText(p.nombre).includes(normalizeText(busquedaProducto)) ||
-            normalizeText(p.descripcion).includes(normalizeText(busquedaProducto));
-        const matchCategoria = !filtroCategoria || p.categoria?.id === parseInt(filtroCategoria);
-        const matchDisponible = p.disponible;
-        return matchBusqueda && matchCategoria && matchDisponible;
-    });
+    const productosFiltrados = productos
+        .filter(p => {
+            if (!busquedaProducto || !busquedaProducto.trim()) return true;
+            const terms = normalizeText(busquedaProducto.trim()).split(/\s+/);
+            const target = `${normalizeText(p.nombre)} ${normalizeText(p.descripcion)} ${normalizeText(p.categoria?.nombre)}`;
+            return terms.every(term => target.includes(term));
+        })
+        .filter(p => {
+            if (!filtroCategoria) return true;
+            return p.categoria?.id === parseInt(filtroCategoria);
+        })
+        .sort((a, b) => {
+            if (a.disponible !== b.disponible) return a.disponible ? -1 : 1;
+            const popA = Number(a.total_solicitado || 0);
+            const popB = Number(b.total_solicitado || 0);
+            if (popB !== popA) return popB - popA;
+            return (a.nombre || '').localeCompare(b.nombre || '');
+        });
 
     const getClasificacionDetalle = (detalle) => {
         const cuenta = draftCuentas.find(c => c.id === detalle.cuenta?.id) || cuentas.find(c => c.id === detalle.cuenta?.id);

@@ -20,6 +20,7 @@ export const useMeseroMesas = () => {
         return saved !== null ? JSON.parse(saved) : true;
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const { showSuccess, showError } = useNotification();
     const currentUser = getUserInfo();
 
@@ -46,7 +47,8 @@ export const useMeseroMesas = () => {
     }, [loadData]);
 
     const handleCrearPedido = async () => {
-        if (!mesaSeleccionada) return;
+        if (!mesaSeleccionada || isSubmitting) return;
+        setIsSubmitting(true);
         try {
             const userInfo = getUserInfo();
             const pedido = await createPedido({
@@ -60,6 +62,8 @@ export const useMeseroMesas = () => {
         } catch (err) {
             console.error(err);
             showError(err.response?.data?.message || 'Error al crear el pedido');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -98,7 +102,7 @@ export const useMeseroMesas = () => {
     });
 
     return {
-        mesas, pedidosActivos, pedidosActivosFiltrados, loading, error,
+        mesas, pedidosActivos, pedidosActivosFiltrados, loading, error, isSubmitting,
         showCrearPedidoModal, setShowCrearPedidoModal,
         mesaSeleccionada, setMesaSeleccionada, mesasDisponibles,
         filtroMisPedidos, setFiltroMisPedidos: setFiltroMisPedidosPersistent,

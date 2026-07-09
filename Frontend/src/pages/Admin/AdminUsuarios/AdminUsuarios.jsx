@@ -34,6 +34,7 @@ const AdminUsuarios = () => {
         hideToast,
         validated,
         pagination,
+        isSubmitting,
     } = useAdminUsuarios();
 
     if (loading) {
@@ -65,28 +66,29 @@ const AdminUsuarios = () => {
                     <h1 className="admin-title-lg">Gestión de Personal</h1>
                     <p className="admin-subtitle m-0">Administra los usuarios y roles del sistema.</p>
                 </div>
-                <button className="btn-admin-primary" onClick={() => handleOpenModal('crear')}>
-                    + Añadir Personal
+                <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
+                    <span className="material-symbols-outlined fs-5">person_add</span>
+                    <span>Añadir Personal</span>
                 </button>
             </div>
 
             {/* Table */}
-            <div className="admin-card p-0" style={{ overflow: 'hidden' }}>
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
                 <Table hover responsive className="custom-table m-0 align-middle">
-                    <thead>
+                    <thead className="bg-light text-nowrap">
                         <tr>
-                            <th>PERSONAL</th>
-                            <th>USUARIO</th>
-                            <th>ROL</th>
-                            <th>CORREO</th>
-                            <th>TELÉFONO</th>
-                            <th className="text-end">ACCIONES</th>
+                            <th className="px-4 py-3">PERSONAL</th>
+                            <th className="py-3">USUARIO</th>
+                            <th className="py-3">ROL</th>
+                            <th className="py-3">CORREO</th>
+                            <th className="py-3">TELÉFONO</th>
+                            <th className="text-end px-4 py-3">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pagination.paginatedData.map((usuario) => (
                             <tr key={usuario.id}>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="px-4 py-3 text-nowrap" style={{ verticalAlign: 'middle' }}>
                                     <div className="d-flex align-items-center gap-3">
                                         <div style={{
                                             width: '38px', height: '38px', borderRadius: '50%',
@@ -104,10 +106,10 @@ const AdminUsuarios = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td style={{ verticalAlign: 'middle', color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                                <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle', color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
                                     @{usuario.username}
                                 </td>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle' }}>
                                     <span style={{
                                         padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
                                         fontWeight: 700, letterSpacing: '0.03em',
@@ -118,27 +120,31 @@ const AdminUsuarios = () => {
                                         {usuario.rol?.nombre || '—'}
                                     </span>
                                 </td>
-                                <td style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
+                                <td className="py-3" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
                                     {usuario.persona?.email || '—'}
                                 </td>
-                                <td style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
+                                <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
                                     {usuario.persona?.telefono || '—'}
                                 </td>
-                                <td className="text-end">
-                                    <div className="d-flex gap-2 justify-content-end">
+                                <td className="text-end px-2 py-3 text-nowrap">
+                                    <div className="d-flex gap-1 justify-content-end">
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
-                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px' }}
                                             onClick={() => handleOpenModal('editar', usuario)}
+                                            title="Editar usuario"
                                         >
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>edit_square</span>
+                                            <span className="d-none d-lg-inline">Editar</span>
                                         </button>
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
-                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
+                                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
                                             onClick={() => handleDelete(usuario.id)}
+                                            title="Eliminar usuario"
                                         >
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>delete</span>
+                                            <span className="d-none d-lg-inline">Eliminar</span>
                                         </button>
                                     </div>
                                 </td>
@@ -146,7 +152,7 @@ const AdminUsuarios = () => {
                         ))}
                         {pagination.totalItems === 0 && (
                             <tr>
-                                <td colSpan="6" className="text-center py-4 text-muted">No hay personal registrado.</td>
+                                <td colSpan="6" className="text-center py-5 text-muted">No hay personal registrado.</td>
                             </tr>
                         )}
                     </tbody>
@@ -155,10 +161,11 @@ const AdminUsuarios = () => {
             <PaginationBar {...pagination} />
 
             {/* Create / Edit Modal */}
-            <Modal show={showModal} onHide={handleCloseModal} size="lg" contentClassName="admin-card" backdropClassName="admin-modal-backdrop">
-                <Modal.Header closeButton style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-panel-bg)' }}>
-                    <Modal.Title className="admin-title-lg" style={{ fontSize: '1.2rem' }}>
-                        {modalType === 'crear' ? '+ Registrar Nuevo Personal' : 'Editar Miembro de Personal'}
+            <Modal show={showModal} onHide={handleCloseModal} size="lg" contentClassName="admin-card border-0 shadow-lg" backdropClassName="admin-modal-backdrop" centered>
+                <Modal.Header closeButton style={{ borderBottom: '1px solid rgba(180,66,10,0.12)', background: 'var(--admin-panel-bg)', padding: '1.25rem 1.5rem' }}>
+                    <Modal.Title className="admin-title-lg d-flex align-items-center gap-2 m-0" style={{ fontSize: '1.2rem' }}>
+                        <span className="material-symbols-outlined text-primary">{modalType === 'crear' ? 'person_add' : 'manage_accounts'}</span>
+                        <span>{modalType === 'crear' ? 'Registrar Nuevo Personal' : 'Editar Miembro de Personal'}</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -252,11 +259,11 @@ const AdminUsuarios = () => {
                     </Modal.Body>
                     <Modal.Footer style={{ background: 'var(--admin-panel-bg)', borderTop: '1px solid var(--admin-border)' }}>
                         <button type="button" className="btn-admin-secondary" onClick={handleCloseModal}>Cancelar</button>
-                        <button type="submit" className="btn-admin-primary d-flex align-items-center gap-1">
+                        <button type="submit" className="btn-admin-primary d-flex align-items-center gap-1" disabled={isSubmitting}>
                             <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
                                 {modalType === 'editar' ? 'save' : 'person_add'}
                             </span>
-                            {modalType === 'editar' ? 'Guardar Cambios' : 'Crear Cuenta'}
+                            {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Crear Cuenta')}
                         </button>
                     </Modal.Footer>
                 </Form>

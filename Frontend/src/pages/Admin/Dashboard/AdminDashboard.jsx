@@ -164,39 +164,39 @@ const AdminDashboard = () => {
                 </Row>
 
                 {/* Quick Actions Grid */}
-                <div className="mb-5">
-                    <h3 className="section-title mb-3">Acciones Rápidas</h3>
+                <div className="mb-4">
+                    <h3 className="section-title mb-3 fs-5">Acciones Rápidas</h3>
                     <Row className="g-3">
-                        <Col xs={6} md={3}>
-                            <button className="quick-action-card w-100" onClick={() => {/* TODO: Enlace a POS si aplica */ }}>
-                                <div className="icon-wrapper">
-                                    <span className="material-symbols-outlined fs-4">point_of_sale</span>
+                        <Col xs={12} sm={6} md={3}>
+                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => {/* TODO: Enlace a POS si aplica */ }}>
+                                <div className="p-2 rounded bg-light text-primary d-flex align-items-center justify-content-center">
+                                    <span className="material-symbols-outlined fs-5">point_of_sale</span>
                                 </div>
-                                <span>Nueva Venta</span>
+                                <span className="fw-bold text-dark fs-6">Nueva Venta</span>
                             </button>
                         </Col>
-                        <Col xs={6} md={3}>
-                            <button className="quick-action-card w-100" onClick={() => navigate('/admin/productos')}>
-                                <div className="icon-wrapper">
-                                    <span className="material-symbols-outlined fs-4">add_box</span>
+                        <Col xs={12} sm={6} md={3}>
+                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/productos')}>
+                                <div className="p-2 rounded bg-light text-primary d-flex align-items-center justify-content-center">
+                                    <span className="material-symbols-outlined fs-5">add_box</span>
                                 </div>
-                                <span>Añadir Producto</span>
+                                <span className="fw-bold text-dark fs-6">Añadir Producto</span>
                             </button>
                         </Col>
-                        <Col xs={6} md={3}>
-                            <button className="quick-action-card w-100" onClick={() => navigate('/admin/usuarios')}>
-                                <div className="icon-wrapper">
-                                    <span className="material-symbols-outlined fs-4">person_add</span>
+                        <Col xs={12} sm={6} md={3}>
+                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/usuarios')}>
+                                <div className="p-2 rounded bg-light text-primary d-flex align-items-center justify-content-center">
+                                    <span className="material-symbols-outlined fs-5">person_add</span>
                                 </div>
-                                <span>Registrar Personal</span>
+                                <span className="fw-bold text-dark fs-6">Registrar Personal</span>
                             </button>
                         </Col>
-                        <Col xs={6} md={3}>
-                            <button className="quick-action-card w-100" onClick={() => navigate('/admin/reportes')}>
-                                <div className="icon-wrapper">
-                                    <span className="material-symbols-outlined fs-4">monitoring</span>
+                        <Col xs={12} sm={6} md={3}>
+                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/reportes')}>
+                                <div className="p-2 rounded bg-light text-primary d-flex align-items-center justify-content-center">
+                                    <span className="material-symbols-outlined fs-5">monitoring</span>
                                 </div>
-                                <span>Ver Reportes</span>
+                                <span className="fw-bold text-dark fs-6">Ver Reportes</span>
                             </button>
                         </Col>
                     </Row>
@@ -260,29 +260,31 @@ const AdminDashboard = () => {
                                 <Link to="/admin/actividad-reciente" className="link-primary fw-bold text-decoration-none">Ver Todo</Link>
                             </div>
                             <div className="table-responsive">
-                                <Table hover className="custom-table mb-0 align-middle">
-                                    <thead>
+                                <Table hover className="custom-table mb-0 align-middle table-sm">
+                                    <thead className="bg-light text-nowrap">
                                         <tr>
-                                            <th>ORDER ID</th>
-                                            <th>ARTÍCULOS</th>
-                                            <th className="text-end">MONTO</th>
-                                            <th className="text-end">ESTADO</th>
+                                            <th className="px-3 py-2 fs-7 text-muted">PEDIDO</th>
+                                            <th className="py-2 fs-7 text-muted">ARTÍCULOS</th>
+                                            <th className="text-end py-2 fs-7 text-muted">MONTO</th>
+                                            <th className="text-end px-3 py-2 fs-7 text-muted">ESTADO</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {kpis?.recent_orders && kpis.recent_orders.length > 0 ? (
                                             [...kpis.recent_orders].reverse().map((order, idx) => (
                                                 <tr key={order.id || idx}>
-                                                    <td className="fw-bold">{order.id}</td>
-                                                    <td className="text-muted">{order.items}</td>
-                                                    <td className="text-end fw-bold">Bs. {parseFloat(order.amount).toFixed(2)}</td>
-                                                    <td className="text-end">
+                                                    <td className="px-3 py-2 fw-bold text-dark text-nowrap">#{order.id}</td>
+                                                    <td className="py-2 text-muted" style={{ minWidth: '150px', maxWidth: '250px' }}>
+                                                        <div className="text-truncate">{order.items}</div>
+                                                    </td>
+                                                    <td className="text-end py-2 fw-bold text-success text-nowrap">Bs. {parseFloat(order.amount).toFixed(2)}</td>
+                                                    <td className="text-end px-3 py-2 text-nowrap">
                                                         <div className="d-flex flex-column align-items-end">
                                                             <span className={`status-badge ${order.status === 'Completado' ? 'success' : order.status === 'ELIMINADO' ? 'danger' : order.status === 'PENDIENTE' ? 'warning' : 'primary'}`}>
                                                                 {order.status}
                                                             </span>
                                                             {order.status === 'ELIMINADO' && order.justificativo && (
-                                                                <small className="text-danger fw-bold mt-1" style={{ fontSize: '0.7rem', maxWidth: '150px' }}>
+                                                                <small className="text-danger fw-bold mt-1 text-wrap" style={{ fontSize: '0.75rem', maxWidth: '160px' }}>
                                                                     Motivo: {order.justificativo}
                                                                 </small>
                                                             )}

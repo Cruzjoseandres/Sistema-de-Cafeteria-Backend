@@ -49,30 +49,30 @@ const VentasProducto = () => {
                     )}
                 </div>
             </div>
-            <Card className="admin-card">
-                <Card.Body>
-                    <Table responsive hover className="admin-table m-0">
-                        <thead>
+            <Card className="admin-card border-0 shadow-sm overflow-hidden">
+                <Card.Body className="p-0">
+                    <Table responsive hover className="admin-table m-0 align-middle">
+                        <thead className="bg-light">
                             <tr className="text-nowrap">
-                                <th>Producto</th>
-                                <th>Cantidad Vendida</th>
-                                <th className="text-end">Ingreso Generado</th>
+                                <th className="px-4 py-3">Producto</th>
+                                <th className="py-3">Cantidad Vendida</th>
+                                <th className="text-end px-4 py-3">Ingreso Generado</th>
                             </tr>
                         </thead>
                         <tbody>
                             {data.length > 0 ? (
                                 data.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="text-nowrap"><strong>{item.producto}</strong></td>
-                                        <td>
-                                            <Badge bg="info">{item.cantidad_vendida} ud.</Badge>
+                                        <td className="px-4 fw-bold" style={{ minWidth: '180px' }}>{item.producto}</td>
+                                        <td className="text-nowrap">
+                                            <Badge bg="info" className="px-3 py-2 fs-6">{item.cantidad_vendida} ud.</Badge>
                                         </td>
-                                        <td className="text-end font-weight-bold text-success">Bs. {item.ingreso_generado.toFixed(2)}</td>
+                                        <td className="text-end px-4 fw-bold text-success text-nowrap">Bs. {item.ingreso_generado.toFixed(2)}</td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="3" className="text-center text-muted">No hay productos vendidos{startDate || endDate ? ' en el rango seleccionado' : ' aún'}</td>
+                                    <td colSpan="3" className="text-center text-muted py-5">No hay productos vendidos{startDate || endDate ? ' en el rango seleccionado' : ' aún'}</td>
                                 </tr>
                             )}
                         </tbody>
