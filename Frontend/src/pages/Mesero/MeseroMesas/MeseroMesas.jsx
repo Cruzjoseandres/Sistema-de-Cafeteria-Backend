@@ -42,14 +42,13 @@ const MeseroMesas = () => {
         <Container className="mt-4">
             {/* Header con botón crear pedido */}
             <div className="d-flex justify-content-between align-items-center mb-4 fade-in">
-                <h2 className="d-flex align-items-center gap-2 mb-0 fw-bold" style={{ fontSize: '1.5rem' }}>
-                    <span className="material-symbols-outlined text-primary" style={{ fontSize: '2rem' }}>deck</span>
+                <h2 className="d-flex align-items-center gap-2 mb-0 fw-bold fs-3">
+                    <span className="material-symbols-outlined text-dark">table_restaurant</span>
                     Mesas y Pedidos
                 </h2>
-                <Button variant="primary" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-1 shadow-sm text-nowrap px-3 py-2 fw-bold">
-                    <span className="material-symbols-outlined fs-5">add_circle</span>
-                    <span className="d-none d-sm-inline">Crear Pedido</span>
-                    <span className="d-inline d-sm-none">Crear</span>
+                <Button variant="dark" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-3 py-2 fw-medium">
+                    <span className="material-symbols-outlined fs-5">add</span>
+                    Nuevo Pedido
                 </Button>
             </div>
 

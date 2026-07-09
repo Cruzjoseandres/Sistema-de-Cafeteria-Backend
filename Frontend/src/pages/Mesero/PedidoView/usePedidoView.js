@@ -574,16 +574,26 @@ export const usePedidoView = () => {
 
     const totalPedido = draftCuentas.reduce((sum, c) => sum + Number(c.total || 0), 0);
 
-    const normalizeText = (text) => text ? text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
+    const normalizeText = (text) => text ? text.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() : '';
 
-    const productosFiltrados = productos.filter(p => {
-        const matchBusqueda = !busquedaProducto ||
-            normalizeText(p.nombre).includes(normalizeText(busquedaProducto)) ||
-            normalizeText(p.descripcion).includes(normalizeText(busquedaProducto));
-        const matchCategoria = !filtroCategoria || p.categoria?.id === parseInt(filtroCategoria);
-        const matchDisponible = p.disponible;
-        return matchBusqueda && matchCategoria && matchDisponible;
-    });
+    const productosFiltrados = productos
+        .filter(p => {
+            if (!busquedaProducto || !busquedaProducto.trim()) return true;
+            const terms = normalizeText(busquedaProducto.trim()).split(/\s+/);
+            const target = `${normalizeText(p.nombre)} ${normalizeText(p.descripcion)} ${normalizeText(p.categoria?.nombre)}`;
+            return terms.every(term => target.includes(term));
+        })
+        .filter(p => {
+            if (!filtroCategoria) return true;
+            return p.categoria?.id === parseInt(filtroCategoria);
+        })
+        .sort((a, b) => {
+            if (a.disponible !== b.disponible) return a.disponible ? -1 : 1;
+            const popA = Number(a.total_solicitado || 0);
+            const popB = Number(b.total_solicitado || 0);
+            if (popB !== popA) return popB - popA;
+            return (a.nombre || '').localeCompare(b.nombre || '');
+        });
 
     const getClasificacionDetalle = (detalle) => {
         const cuenta = draftCuentas.find(c => c.id === detalle.cuenta?.id) || cuentas.find(c => c.id === detalle.cuenta?.id);

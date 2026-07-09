@@ -40,18 +40,34 @@ export class ProductoService {
   }
 
   async findAll() {
-    const productos = await this.productoRepository.find({
-      where: { D_E_L_E_T_E_D: false },
-      relations: ['categoria'],
-      order: { id: 'ASC' },
+    const qb = this.productoRepository
+      .createQueryBuilder('producto')
+      .leftJoinAndSelect('producto.categoria', 'categoria')
+      .leftJoin('detalle_pedido', 'dp', 'dp.id_producto = producto.id')
+      .where('producto.D_E_L_E_T_E_D = :deleted', { deleted: false })
+      .addSelect('COALESCE(SUM(dp.cantidad), 0)', 'total_solicitado')
+      .groupBy('producto.id')
+      .addGroupBy('categoria.id')
+      .orderBy('total_solicitado', 'DESC')
+      .addOrderBy('producto.nombre', 'ASC');
+
+    const { entities, raw } = await qb.getRawAndEntities();
+
+    const countsMap = new Map<number, number>();
+    raw.forEach(r => {
+      const pid = Number(r.producto_id || r.id);
+      countsMap.set(pid, Number(r.total_solicitado || 0));
     });
 
-    return productos.map(producto => ({
+    return entities.map(producto => ({
       ...producto,
-      categoria: producto.categoria ? {
-        id: producto.categoria.id,
-        nombre: producto.categoria.nombre
-      } : null,
+      total_solicitado: countsMap.get(producto.id) || 0,
+      categoria: producto.categoria
+        ? {
+            id: producto.categoria.id,
+            nombre: producto.categoria.nombre,
+          }
+        : null,
     }));
   }
 

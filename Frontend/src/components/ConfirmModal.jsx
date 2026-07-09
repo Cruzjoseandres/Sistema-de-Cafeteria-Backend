@@ -4,7 +4,10 @@ const ConfirmModal = ({ show, message, onConfirm, confirmText = 'Sí, eliminar',
     return (
         <Modal show={show} onHide={() => onConfirm(false)} centered>
             <Modal.Header closeButton>
-                <Modal.Title>⚠️ Confirmar acción</Modal.Title>
+                <Modal.Title className="d-flex align-items-center gap-2 fs-5">
+                    <span className="material-symbols-outlined text-warning">warning</span>
+                    <span>Confirmar acción</span>
+                </Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <p className="mb-0">{message}</p>

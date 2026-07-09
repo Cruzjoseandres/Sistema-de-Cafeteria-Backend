@@ -25,58 +25,63 @@ const MeseroProductos = () => {
 
     return (
         <Container className="mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-4 fade-in">
-                <h1 className="d-flex align-items-center gap-2 mb-0">
-                    <span className="material-symbols-outlined text-primary" style={{ fontSize: '2.5rem' }}>menu_book</span>
-                    Menú
-                </h1>
+            <div className="mb-4 fade-in">
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    <h1 className="d-flex align-items-center gap-2 mb-0 fs-3 fw-bold">
+                        <span className="material-symbols-outlined text-dark">restaurant_menu</span>
+                        Menú
+                    </h1>
+                </div>
 
-                <div className="d-flex align-items-center bg-white border rounded-3 px-3 py-1 shadow-sm">
-                    <span className="material-symbols-outlined text-muted-custom me-2">filter_list</span>
-                    <Form.Select
-                        className="border-0 shadow-none bg-transparent"
-                        style={{ width: '250px' }}
-                        value={categoriaFilter}
-                        onChange={(e) => setCategoriaFilter(e.target.value)}
+                <div className="d-flex align-items-center gap-2 overflow-auto pb-2" style={{ whiteSpace: 'nowrap' }}>
+                    <Button
+                        size="sm"
+                        variant={!categoriaFilter ? "dark" : "outline-secondary"}
+                        className="rounded-pill px-3 py-1 fw-medium"
+                        onClick={() => setCategoriaFilter('')}
                     >
-                        <option value="">Todas las categorías</option>
-                        {categorias.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                        ))}
-                    </Form.Select>
+                        Todas las categorías
+                    </Button>
+                    {categorias.map((cat) => (
+                        <Button
+                            key={cat.id}
+                            size="sm"
+                            variant={parseInt(categoriaFilter) === cat.id ? "dark" : "outline-secondary"}
+                            className="rounded-pill px-3 py-1 fw-medium"
+                            onClick={() => setCategoriaFilter(parseInt(categoriaFilter) === cat.id ? '' : cat.id.toString())}
+                        >
+                            {cat.nombre}
+                        </Button>
+                    ))}
                 </div>
             </div>
 
-            <Row>
+            <Row className="g-3">
                 {productos.map((producto) => (
-                    <Col key={producto.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-                        <Card className="producto-card h-100">
+                    <Col key={producto.id} xs={12} sm={6} md={4} lg={3}>
+                        <Card className="border rounded shadow-sm h-100">
                             {producto.imagePaths && producto.imagePaths.length > 0 && (
                                 <Card.Img
                                     variant="top"
                                     src={producto.imagePaths[0]}
                                     alt={producto.nombre}
-                                    className="producto-card-img"
+                                    style={{ height: '180px', objectFit: 'cover' }}
                                 />
                             )}
-                            <Card.Body>
-                                <div className="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 className="mb-0">{producto.nombre}</h5>
-                                    <Badge bg={producto.disponible ? 'success' : 'secondary'}>
-                                        {producto.disponible ? (
-                                            <span className="d-flex align-items-center gap-1"><span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>check_circle</span> Disponible</span>
-                                        ) : (
-                                            <span className="d-flex align-items-center gap-1"><span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>cancel</span> Agotado</span>
-                                        )}
+                            <Card.Body className="d-flex flex-column p-3">
+                                <div className="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 className="mb-0 fw-semibold">{producto.nombre}</h6>
+                                    <Badge bg={producto.disponible ? 'dark' : 'secondary'} className="fw-normal">
+                                        {producto.disponible ? 'Disponible' : 'Agotado'}
                                     </Badge>
                                 </div>
-                                <span className="producto-categoria mb-2">
+                                <small className="text-muted mb-2">
                                     {producto.categoria?.nombre || 'Sin categoría'}
-                                </span>
+                                </small>
                                 {producto.descripcion && (
-                                    <p className="producto-desc">{producto.descripcion}</p>
+                                    <p className="text-muted small mb-3 flex-grow-1">{producto.descripcion}</p>
                                 )}
-                                <div className="producto-precio">
+                                <div className="fw-semibold text-dark fs-6 mt-auto">
                                     Bs. {parseFloat(producto.precio).toFixed(2)}
                                 </div>
                             </Card.Body>

@@ -37,7 +37,7 @@ const MeseroMisPedidos = () => {
         <Container className="mis-pedidos-container py-4 fade-in">
             <div className="d-flex flex-column mb-4">
                 <h2 className="fw-bold d-flex align-items-center gap-2 m-0 text-dark">
-                    <span className="material-symbols-outlined fs-2 text-primary">receipt_long</span>
+                    <span className="material-symbols-outlined fs-2 text-dark">receipt_long</span>
                     Historial de Mis Pedidos
                 </h2>
                 <p className="text-muted mt-2">Revisa el estado de todos los pedidos creados en tu turno actual.</p>

@@ -531,47 +531,56 @@ const PedidoView = () => {
             {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST) ========== */}
             <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" fullscreen="lg-down">
                 <Modal.Header closeButton className="border-bottom-0 pb-2 px-3 px-md-4">
-                    <Modal.Title className="d-flex align-items-center gap-1 gap-md-2 w-100 fs-5 fs-md-4 pe-2">
-                        <span className="material-symbols-outlined text-warning fs-4 fs-md-3">fastfood</span>
-                        <span className="fw-bold fs-5 fs-md-4">Menú</span>
-                        <Badge bg="primary" className="ms-auto fs-6" style={{ letterSpacing: '0.5px' }}>
-                            {Object.keys(productosSeleccionados).length} sel.
+                    <Modal.Title className="d-flex align-items-center gap-2 w-100 fs-5 pe-2">
+                        <span className="material-symbols-outlined text-dark fs-4">restaurant_menu</span>
+                        <span className="fw-bold fs-5">Seleccionar Productos</span>
+                        <Badge bg="dark" pill className="ms-auto fs-6 fw-normal px-3 py-1">
+                            {Object.keys(productosSeleccionados).length} seleccionados
                         </Badge>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="p-0 bg-light d-flex flex-column" style={{ overflow: 'hidden' }}>
-                    {/* FIxed Header Area */}
-                    <div className="p-2 p-md-3 bg-white border-bottom flex-shrink-0 shadow-sm">
-                        <Row className="g-2">
-                            <Col xs={12} md={8}>
-                                <InputGroup>
-                                    <InputGroup.Text className="bg-white"><span className="material-symbols-outlined fs-5">search</span></InputGroup.Text>
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Buscar producto por nombre..."
-                                        value={busquedaProducto}
-                                        onChange={(e) => setBusquedaProducto(e.target.value)}
-                                        autoFocus
-                                    />
-                                    {busquedaProducto && (
-                                        <Button variant="outline-secondary" className="border-start-0 bg-white" onClick={() => setBusquedaProducto('')}>
-                                            <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
-                                        </Button>
-                                    )}
-                                </InputGroup>
-                            </Col>
-                            <Col md={4} xs={12}>
-                                <Form.Select
-                                    value={filtroCategoria}
-                                    onChange={(e) => setFiltroCategoria(e.target.value)}
+                    {/* Fixed Header Area */}
+                    <div className="p-3 bg-white border-bottom flex-shrink-0">
+                        <div className="mb-3">
+                            <InputGroup>
+                                <InputGroup.Text className="bg-light border-end-0"><span className="material-symbols-outlined fs-5 text-muted">search</span></InputGroup.Text>
+                                <Form.Control
+                                    type="text"
+                                    className="bg-light border-start-0 shadow-none"
+                                    placeholder="Buscar por nombre, descripción o categoría..."
+                                    value={busquedaProducto}
+                                    onChange={(e) => setBusquedaProducto(e.target.value)}
+                                    autoFocus
+                                />
+                                {busquedaProducto && (
+                                    <Button variant="light" className="border" onClick={() => setBusquedaProducto('')}>
+                                        <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
+                                    </Button>
+                                )}
+                            </InputGroup>
+                        </div>
+                        <div className="d-flex align-items-center gap-2 overflow-auto pb-1" style={{ whiteSpace: 'nowrap' }}>
+                            <Button
+                                size="sm"
+                                variant={!filtroCategoria ? "dark" : "outline-secondary"}
+                                className="rounded-pill px-3 py-1 fw-medium"
+                                onClick={() => setFiltroCategoria('')}
+                            >
+                                Todas las categorías
+                            </Button>
+                            {categorias.map((cat) => (
+                                <Button
+                                    key={cat.id}
+                                    size="sm"
+                                    variant={parseInt(filtroCategoria) === cat.id ? "dark" : "outline-secondary"}
+                                    className="rounded-pill px-3 py-1 fw-medium"
+                                    onClick={() => setFiltroCategoria(parseInt(filtroCategoria) === cat.id ? '' : cat.id.toString())}
                                 >
-                                    <option value="">Todas las categorías</option>
-                                    {categorias.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>{cat.nombre}</option>
-                                    ))}
-                                </Form.Select>
-                            </Col>
-                        </Row>
+                                    {cat.nombre}
+                                </Button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Scrollable Content Area */}
@@ -589,36 +598,36 @@ const PedidoView = () => {
                                     
                                     return (
                                         <Col xs={12} lg={6} xl={4} key={p.id}>
-                                            <div className={`p-2 p-md-3 border rounded shadow-sm d-flex flex-column h-100 transition-all ${seleccionado ? 'border-primary bg-primary bg-opacity-10' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
+                                            <div className={`p-3 border rounded d-flex flex-column h-100 transition-all ${seleccionado ? 'border-dark bg-light' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
                                                 
-                                                <div className="d-flex align-items-center mb-2 mb-md-3 cursor-pointer" 
+                                                <div className="d-flex align-items-center mb-2 cursor-pointer" 
                                                      onClick={() => !isAgotado && toggleProductoChecklist(p.id)}
                                                 >
-                                                    <div className="me-2 me-md-3">
+                                                    <div className="me-3">
                                                         <Form.Check 
                                                             type="checkbox"
                                                             checked={!!seleccionado}
                                                             onChange={() => {}} // handled by parent div
-                                                            className="scale-15"
+                                                            className="scale-125"
                                                             disabled={isAgotado}
                                                         />
                                                     </div>
                                                     
                                                     {p.imagePaths && p.imagePaths.length > 0 ? (
-                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-2 me-md-3 shadow-sm" style={{ width: '50px', height: '50px', minWidth: '50px' }} />
+                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '48px', height: '48px', minWidth: '48px' }} />
                                                     ) : (
-                                                        <div className="bg-light rounded d-flex align-items-center justify-content-center me-2 me-md-3" style={{ width: '50px', height: '50px', minWidth: '50px' }}>
+                                                        <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '48px', height: '48px', minWidth: '48px' }}>
                                                             <span className="material-symbols-outlined text-muted">image</span>
                                                         </div>
                                                     )}
                                                     
                                                     <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                        <h6 className="mb-0 fw-bold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
+                                                        <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
                                                         <small className="text-muted text-truncate d-block" style={{ fontSize: '0.8rem' }}>{p.categoria?.nombre}</small>
-                                                        {isAgotado && <Badge bg="secondary" className="mt-1" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
+                                                        {isAgotado && <Badge bg="secondary" className="mt-1 fw-normal" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
                                                     </div>
                                                     
-                                                    <div className="fw-bold text-success text-end ms-1 ms-md-2 text-nowrap flex-shrink-0 fs-6 fs-md-5">
+                                                    <div className="fw-semibold text-dark text-end ms-2 text-nowrap flex-shrink-0 fs-6">
                                                         Bs. {parseFloat(p.precio).toFixed(2)}
                                                     </div>
                                                 </div>
@@ -665,11 +674,11 @@ const PedidoView = () => {
                         )}
                     </div>
                 </Modal.Body>
-                <Modal.Footer className="border-top-0 pt-0 mt-2 px-3 px-md-4">
-                    <Button variant="light" onClick={() => setShowAddItemModal(false)} className="px-3 px-md-4 py-2">Cancelar</Button>
-                    <Button variant="primary" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-3 px-md-4 py-2 d-flex align-items-center gap-1 gap-md-2 shadow-sm">
-                        <span className="material-symbols-outlined">add_task</span>
-                        Agregar {Object.keys(productosSeleccionados).length > 0 ? `(${Object.keys(productosSeleccionados).length})` : ''}
+                <Modal.Footer className="border-top bg-white px-4 py-3">
+                    <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="px-4 py-2">Cancelar</Button>
+                    <Button variant="dark" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-4 py-2 d-flex align-items-center gap-2">
+                        <span className="material-symbols-outlined fs-5">check</span>
+                        Agregar al Pedido {Object.keys(productosSeleccionados).length > 0 ? `(${Object.keys(productosSeleccionados).length})` : ''}
                     </Button>
                 </Modal.Footer>
             </Modal>
