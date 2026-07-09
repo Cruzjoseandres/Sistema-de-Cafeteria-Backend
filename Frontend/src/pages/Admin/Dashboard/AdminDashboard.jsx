@@ -261,28 +261,28 @@ const AdminDashboard = () => {
                             </div>
                             <div className="table-responsive">
                                 <Table hover className="custom-table mb-0 align-middle">
-                                    <thead>
+                                    <thead className="bg-light text-nowrap">
                                         <tr>
-                                            <th>ORDER ID</th>
-                                            <th>ARTÍCULOS</th>
-                                            <th className="text-end">MONTO</th>
-                                            <th className="text-end">ESTADO</th>
+                                            <th className="px-3 py-3">ORDER ID</th>
+                                            <th className="py-3">ARTÍCULOS</th>
+                                            <th className="text-end py-3">MONTO</th>
+                                            <th className="text-end px-3 py-3">ESTADO</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {kpis?.recent_orders && kpis.recent_orders.length > 0 ? (
                                             [...kpis.recent_orders].reverse().map((order, idx) => (
                                                 <tr key={order.id || idx}>
-                                                    <td className="fw-bold">{order.id}</td>
-                                                    <td className="text-muted">{order.items}</td>
-                                                    <td className="text-end fw-bold">Bs. {parseFloat(order.amount).toFixed(2)}</td>
-                                                    <td className="text-end">
+                                                    <td className="px-3 py-3 fw-bold text-nowrap">#{order.id}</td>
+                                                    <td className="py-3 text-muted" style={{ minWidth: '160px' }}>{order.items}</td>
+                                                    <td className="text-end py-3 fw-bold text-success text-nowrap">Bs. {parseFloat(order.amount).toFixed(2)}</td>
+                                                    <td className="text-end px-3 py-3 text-nowrap">
                                                         <div className="d-flex flex-column align-items-end">
                                                             <span className={`status-badge ${order.status === 'Completado' ? 'success' : order.status === 'ELIMINADO' ? 'danger' : order.status === 'PENDIENTE' ? 'warning' : 'primary'}`}>
                                                                 {order.status}
                                                             </span>
                                                             {order.status === 'ELIMINADO' && order.justificativo && (
-                                                                <small className="text-danger fw-bold mt-1" style={{ fontSize: '0.7rem', maxWidth: '150px' }}>
+                                                                <small className="text-danger fw-bold mt-1 text-wrap" style={{ fontSize: '0.75rem', maxWidth: '180px' }}>
                                                                     Motivo: {order.justificativo}
                                                                 </small>
                                                             )}
@@ -292,7 +292,7 @@ const AdminDashboard = () => {
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan="4" className="text-center text-muted py-4">No hay actividad reciente</td>
+                                                <td colSpan="4" className="text-center text-muted py-5">No hay actividad reciente</td>
                                             </tr>
                                         )}
                                     </tbody>

@@ -260,22 +260,22 @@ const AdminProductos = () => {
                 </Col>
             </Row>
 
-            <div className="admin-card p-0" style={{ overflow: 'hidden' }}>
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
                 <Table hover responsive className="custom-table m-0 align-middle">
-                    <thead>
+                    <thead className="bg-light text-nowrap">
                         <tr>
-                            <th>IMAGEN</th>
-                            <th>NOMBRE</th>
-                            <th>PRECIO</th>
-                            <th>CATEGORÍA</th>
-                            <th>ESTADO</th>
-                            <th className="text-end">ACCIONES</th>
+                            <th className="px-4 py-3">IMAGEN</th>
+                            <th className="py-3">NOMBRE</th>
+                            <th className="py-3">PRECIO</th>
+                            <th className="py-3">CATEGORÍA</th>
+                            <th className="py-3">ESTADO</th>
+                            <th className="text-end px-4 py-3">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pagination.paginatedData.map((producto) => (
                             <tr key={producto.id}>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="px-4 py-3">
                                     {producto.imagePaths && producto.imagePaths.length > 0 ? (
                                         <div className="d-flex align-items-center gap-1">
                                             <img
@@ -289,20 +289,20 @@ const AdminProductos = () => {
                                             )}
                                         </div>
                                     ) : (
-                                        <span className="text-muted" style={{ fontSize: '0.8rem' }}>Sin imagen</span>
+                                        <span className="text-muted text-nowrap" style={{ fontSize: '0.8rem' }}>Sin imagen</span>
                                     )}
                                 </td>
-                                <td style={{ verticalAlign: 'middle', fontWeight: 600, color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
-                                <td style={{ verticalAlign: 'middle' }}>Bs. {parseFloat(producto.precio).toFixed(2)}</td>
-                                <td style={{ verticalAlign: 'middle' }}>{producto.categoria?.nombre || '-'}</td>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="py-3 fw-bold" style={{ minWidth: '180px', color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
+                                <td className="py-3 text-nowrap fw-medium text-success">Bs. {parseFloat(producto.precio).toFixed(2)}</td>
+                                <td className="py-3 text-nowrap">{producto.categoria?.nombre || '-'}</td>
+                                <td className="py-3 text-nowrap">
                                     {producto.disponible ? (
                                         <span className="admin-badge success">En Stock</span>
                                     ) : (
                                         <span className="admin-badge warning">Agotado</span>
                                     )}
                                 </td>
-                                <td className="text-end">
+                                <td className="text-end px-4 py-3 text-nowrap">
                                     <div className="d-flex gap-2 justify-content-end">
                                         <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }} onClick={() => handleOpenModal('editar', producto)}>
                                             <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
@@ -316,7 +316,7 @@ const AdminProductos = () => {
                         ))}
                         {pagination.totalItems === 0 && (
                             <tr>
-                                <td colSpan="6" className="text-center py-4 text-muted">No se encontraron productos en el inventario.</td>
+                                <td colSpan="6" className="text-center py-5 text-muted">No se encontraron productos en el inventario.</td>
                             </tr>
                         )}
                     </tbody>

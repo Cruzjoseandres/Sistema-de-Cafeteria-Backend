@@ -72,22 +72,22 @@ const AdminUsuarios = () => {
             </div>
 
             {/* Table */}
-            <div className="admin-card p-0" style={{ overflow: 'hidden' }}>
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
                 <Table hover responsive className="custom-table m-0 align-middle">
-                    <thead>
+                    <thead className="bg-light text-nowrap">
                         <tr>
-                            <th>PERSONAL</th>
-                            <th>USUARIO</th>
-                            <th>ROL</th>
-                            <th>CORREO</th>
-                            <th>TELÉFONO</th>
-                            <th className="text-end">ACCIONES</th>
+                            <th className="px-4 py-3">PERSONAL</th>
+                            <th className="py-3">USUARIO</th>
+                            <th className="py-3">ROL</th>
+                            <th className="py-3">CORREO</th>
+                            <th className="py-3">TELÉFONO</th>
+                            <th className="text-end px-4 py-3">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pagination.paginatedData.map((usuario) => (
                             <tr key={usuario.id}>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="px-4 py-3 text-nowrap" style={{ verticalAlign: 'middle' }}>
                                     <div className="d-flex align-items-center gap-3">
                                         <div style={{
                                             width: '38px', height: '38px', borderRadius: '50%',
@@ -105,10 +105,10 @@ const AdminUsuarios = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td style={{ verticalAlign: 'middle', color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
+                                <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle', color: 'var(--admin-text-muted)', fontFamily: 'monospace', fontSize: '0.9rem' }}>
                                     @{usuario.username}
                                 </td>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle' }}>
                                     <span style={{
                                         padding: '0.25rem 0.75rem', borderRadius: '999px', fontSize: '0.78rem',
                                         fontWeight: 700, letterSpacing: '0.03em',
@@ -119,13 +119,13 @@ const AdminUsuarios = () => {
                                         {usuario.rol?.nombre || '—'}
                                     </span>
                                 </td>
-                                <td style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
+                                <td className="py-3" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)', minWidth: '150px' }}>
                                     {usuario.persona?.email || '—'}
                                 </td>
-                                <td style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
+                                <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
                                     {usuario.persona?.telefono || '—'}
                                 </td>
-                                <td className="text-end">
+                                <td className="text-end px-4 py-3 text-nowrap">
                                     <div className="d-flex gap-2 justify-content-end">
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
@@ -147,7 +147,7 @@ const AdminUsuarios = () => {
                         ))}
                         {pagination.totalItems === 0 && (
                             <tr>
-                                <td colSpan="6" className="text-center py-4 text-muted">No hay personal registrado.</td>
+                                <td colSpan="6" className="text-center py-5 text-muted">No hay personal registrado.</td>
                             </tr>
                         )}
                     </tbody>

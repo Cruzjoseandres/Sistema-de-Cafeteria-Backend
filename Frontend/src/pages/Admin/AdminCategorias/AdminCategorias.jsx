@@ -47,26 +47,26 @@ const AdminCategorias = () => {
             </div>
 
             {/* Table */}
-            <div className="admin-card p-0" style={{ overflow: 'hidden' }}>
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
                 <Table hover responsive className="custom-table m-0 align-middle">
-                    <thead>
+                    <thead className="bg-light text-nowrap">
                         <tr>
-                            <th>NOMBRE CATEGORÍA</th>
-                            <th>FECHA CREACIÓN</th>
-                            <th className="text-end">ACCIONES</th>
+                            <th className="px-4 py-3">NOMBRE CATEGORÍA</th>
+                            <th className="py-3">FECHA CREACIÓN</th>
+                            <th className="text-end px-4 py-3">ACCIONES</th>
                         </tr>
                     </thead>
                     <tbody>
                         {pagination.paginatedData.map((cat) => (
                             <tr key={cat.id}>
-                                <td style={{ verticalAlign: 'middle', fontWeight: 600, color: 'var(--admin-text-main)' }}>
+                                <td className="px-4 py-3 fw-bold" style={{ minWidth: '180px', color: 'var(--admin-text-main)' }}>
                                     <span className="material-symbols-outlined align-middle" style={{ marginRight: '8px', color: 'var(--admin-accent)', fontSize: '1.2rem' }}>local_cafe</span>
                                     {cat.nombre}
                                 </td>
-                                <td style={{ verticalAlign: 'middle' }}>
+                                <td className="py-3 text-nowrap">
                                     {new Date(cat.created_at).toLocaleDateString()}
                                 </td>
-                                <td className="text-end">
+                                <td className="text-end px-4 py-3 text-nowrap">
                                     <div className="d-flex gap-2 justify-content-end">
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
@@ -88,7 +88,7 @@ const AdminCategorias = () => {
                         ))}
                         {pagination.totalItems === 0 && (
                             <tr>
-                                <td colSpan="3" className="text-center py-4 text-muted">
+                                <td colSpan="3" className="text-center py-5 text-muted">
                                     No hay categorías registradas.
                                 </td>
                             </tr>

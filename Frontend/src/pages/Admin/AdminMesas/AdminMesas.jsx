@@ -42,51 +42,61 @@ const AdminMesas = () => {
                 </Button>
             </div>
 
-            <Table striped bordered hover responsive>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nº Mesa</th>
-                        <th>Capacidad</th>
-                        <th>Estado</th>
-                        <th>Descripción</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {pagination.paginatedData.map((mesa) => (
-                        <tr key={mesa.id}>
-                            <td>{mesa.id}</td>
-                            <td><strong>Mesa {mesa.numero}</strong></td>
-                            <td>{mesa.capacidad} personas</td>
-                            <td>
-                                <Badge bg={mesa.estado?.nombre === 'DISPONIBLE' ? 'success' : mesa.estado?.nombre === 'OCUPADA' ? 'danger' : 'secondary'}>
-                                    {mesa.estado?.nombre || 'Sin estado'}
-                                </Badge>
-                                {mesa.es_juntada && (
-                                    <Badge bg="info" className="ms-2">
-                                        <span className="material-symbols-outlined" style={{ fontSize: '0.9rem', verticalAlign: 'text-bottom' }}>groups</span> Juntada
-                                    </Badge>
-                                )}
-                            </td>
-                            <td>{mesa.descripcion || '-'}</td>
-                            <td>
-                                <div className="d-flex gap-2">
-                                    <Button variant="warning" size="sm" onClick={() => handleOpenModal('editar', mesa)}>
-                                        Editar
-                                    </Button>
-                                    <Button variant="danger" size="sm" onClick={() => handleDelete(mesa.id)}>
-                                        Eliminar
-                                    </Button>
-                                </div>
-                            </td>
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
+                <Table hover responsive className="custom-table m-0 align-middle">
+                    <thead className="bg-light text-nowrap">
+                        <tr>
+                            <th className="px-4 py-3">ID</th>
+                            <th className="py-3">Nº Mesa</th>
+                            <th className="py-3">Capacidad</th>
+                            <th className="py-3">Estado</th>
+                            <th className="py-3">Descripción</th>
+                            <th className="text-end px-4 py-3">Acciones</th>
                         </tr>
-                    ))}
-                    {pagination.totalItems === 0 && (
-                        <tr><td colSpan="6" className="text-center text-muted">No hay mesas registradas.</td></tr>
-                    )}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {pagination.paginatedData.map((mesa) => (
+                            <tr key={mesa.id}>
+                                <td className="px-4 py-3 text-nowrap fw-bold">#{mesa.id}</td>
+                                <td className="py-3 text-nowrap"><strong className="fs-6">Mesa {mesa.numero}</strong></td>
+                                <td className="py-3 text-nowrap">{mesa.capacidad} personas</td>
+                                <td className="py-3 text-nowrap">
+                                    <Badge bg={mesa.estado?.nombre === 'DISPONIBLE' ? 'success' : mesa.estado?.nombre === 'OCUPADA' ? 'danger' : 'secondary'} className="px-3 py-2">
+                                        {mesa.estado?.nombre || 'Sin estado'}
+                                    </Badge>
+                                    {mesa.es_juntada && (
+                                        <Badge bg="info" className="ms-2 px-2 py-2">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '0.9rem', verticalAlign: 'text-bottom' }}>groups</span> Juntada
+                                        </Badge>
+                                    )}
+                                </td>
+                                <td className="py-3" style={{ minWidth: '160px' }}>{mesa.descripcion || '-'}</td>
+                                <td className="text-end px-4 py-3 text-nowrap">
+                                    <div className="d-flex gap-2 justify-content-end">
+                                        <button
+                                            className="btn-admin-secondary d-flex align-items-center gap-1"
+                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                                            onClick={() => handleOpenModal('editar', mesa)}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                        </button>
+                                        <button
+                                            className="btn-admin-secondary d-flex align-items-center gap-1"
+                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
+                                            onClick={() => handleDelete(mesa.id)}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        {pagination.totalItems === 0 && (
+                            <tr><td colSpan="6" className="text-center py-5 text-muted">No hay mesas registradas.</td></tr>
+                        )}
+                    </tbody>
+                </Table>
+            </div>
             <PaginationBar {...pagination} />
 
             <Modal show={showModal} onHide={handleCloseModal}>
