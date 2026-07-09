@@ -66,8 +66,9 @@ const AdminUsuarios = () => {
                     <h1 className="admin-title-lg">Gestión de Personal</h1>
                     <p className="admin-subtitle m-0">Administra los usuarios y roles del sistema.</p>
                 </div>
-                <button className="btn-admin-primary" onClick={() => handleOpenModal('crear')}>
-                    + Añadir Personal
+                <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
+                    <span className="material-symbols-outlined fs-5">person_add</span>
+                    <span>Añadir Personal</span>
                 </button>
             </div>
 
@@ -156,10 +157,11 @@ const AdminUsuarios = () => {
             <PaginationBar {...pagination} />
 
             {/* Create / Edit Modal */}
-            <Modal show={showModal} onHide={handleCloseModal} size="lg" contentClassName="admin-card" backdropClassName="admin-modal-backdrop">
-                <Modal.Header closeButton style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-panel-bg)' }}>
-                    <Modal.Title className="admin-title-lg" style={{ fontSize: '1.2rem' }}>
-                        {modalType === 'crear' ? '+ Registrar Nuevo Personal' : 'Editar Miembro de Personal'}
+            <Modal show={showModal} onHide={handleCloseModal} size="lg" contentClassName="admin-card border-0 shadow-lg" backdropClassName="admin-modal-backdrop" centered>
+                <Modal.Header closeButton style={{ borderBottom: '1px solid rgba(180,66,10,0.12)', background: 'var(--admin-panel-bg)', padding: '1.25rem 1.5rem' }}>
+                    <Modal.Title className="admin-title-lg d-flex align-items-center gap-2 m-0" style={{ fontSize: '1.2rem' }}>
+                        <span className="material-symbols-outlined text-primary">{modalType === 'crear' ? 'person_add' : 'manage_accounts'}</span>
+                        <span>{modalType === 'crear' ? 'Registrar Nuevo Personal' : 'Editar Miembro de Personal'}</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>

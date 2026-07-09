@@ -160,27 +160,27 @@ const PedidoView = () => {
                 
                 {(isEdit || isReadOnly) && (
                     <div className="d-flex flex-wrap gap-2 align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
-                        <Button variant="info" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-3 py-1 rounded-pill" onClick={handleOpenWhatsappModal} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                        <Button variant="info" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-white fw-bold px-3 py-1 rounded" onClick={handleOpenWhatsappModal} disabled={saving} style={{ fontSize: "0.85rem" }}>
                             <span className="material-symbols-outlined fs-6">share</span> Compartir
                         </Button>
                         {isEdit && !isPedidoCompletado && (
                             <>
                                 {hasUnsavedChanges ? (
                                     <>
-                                        <Button variant="warning" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-3 py-1 rounded-pill" onClick={handleCancelarCambios} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                        <Button variant="warning" className="d-flex align-items-center justify-content-center gap-1 shadow-sm text-dark fw-bold px-3 py-1 rounded" onClick={handleCancelarCambios} disabled={saving} style={{ fontSize: "0.85rem" }}>
                                             <span className="material-symbols-outlined fs-6">undo</span> Cancelar
                                         </Button>
-                                        <Button variant="primary" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-3 py-1 rounded-pill" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                        <Button variant="primary" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold heartbeat-btn px-3 py-1 rounded" onClick={() => handleGuardarCambios(false)} disabled={saving} style={{ fontSize: "0.85rem" }}>
                                             {saving ? <Spinner size="sm" animation="border" /> : <span className="material-symbols-outlined fs-6">save</span>} 
                                             Guardar
                                         </Button>
                                     </>
                                 ) : (
                                     <>
-                                        <Button variant="success" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded-pill" onClick={handleTerminarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                        <Button variant="success" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded" onClick={handleTerminarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
                                             <span className="material-symbols-outlined fs-6">check_circle</span> Terminar
                                         </Button>
-                                        <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded-pill" onClick={handleCancelarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
+                                        <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 shadow-sm fw-bold px-3 py-1 rounded" onClick={handleCancelarPedido} disabled={saving} style={{ fontSize: "0.85rem" }}>
                                             <span className="material-symbols-outlined fs-6">delete_forever</span> Eliminar
                                         </Button>
                                     </>
@@ -210,13 +210,13 @@ const PedidoView = () => {
                     <h4 className="mb-0 fw-bold fs-5">Cuentas del Pedido</h4>
                     <div className="d-flex gap-2 flex-wrap align-items-center">
                         {isEdit && !isPedidoCompletado && cuentas.filter(c => !c.estado || c.estado.id !== 3).length > 1 && (
-                            <Button variant="success" size="sm" className="d-flex align-items-center gap-1 fw-bold shadow-sm rounded-pill px-3 py-1 text-white" onClick={() => handleOpenPaymentModal('ALL')}>
+                            <Button variant="success" size="sm" className="d-flex align-items-center gap-1 fw-bold shadow-sm rounded px-3 py-1 text-white" onClick={() => handleOpenPaymentModal('ALL')}>
                                 <span className="material-symbols-outlined fs-6">payments</span>
                                 Cobrar Todo (Bs. {cuentas.filter(c => !c.estado || c.estado.id !== 3).reduce((sum, c) => sum + Number(c.total||0), 0).toFixed(2)})
                             </Button>
                         )}
                         {isEdit && !isPedidoCompletado && (
-                            <Button variant="primary" size="sm" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1 fw-bold rounded-pill px-3 py-1">
+                            <Button variant="primary" size="sm" onClick={() => setShowAddCuentaModal(true)} className="d-flex align-items-center gap-1 fw-bold rounded px-3 py-1">
                                 <span className="material-symbols-outlined fs-6">person_add</span> Nueva Cuenta
                             </Button>
                         )}
@@ -245,18 +245,18 @@ const PedidoView = () => {
                                     </Accordion.Header>
                                     <Accordion.Body className="p-1 p-sm-3 bg-white">
                                         {isEdit && (
-                                            <div className="d-flex flex-wrap justify-content-end gap-2 p-2 mb-2 bg-light rounded border">
+                                            <div className="d-flex flex-row flex-nowrap justify-content-end gap-2 p-2 mb-2 bg-light rounded border" style={{ overflowX: 'auto' }}>
                                                 {cuenta.estado?.id !== 3 ? (
                                                     <>
-                                                        <Button variant="outline-danger" size="sm" className="d-flex align-items-center gap-1 px-3 py-1 rounded-pill"
+                                                        <Button variant="outline-danger" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded text-nowrap"
                                                             onClick={() => handleDeleteCuenta(cuenta.id)}>
                                                             <span className="material-symbols-outlined fs-6">delete</span> Eliminar
                                                         </Button>
-                                                        <Button variant="primary" size="sm" className="d-flex align-items-center gap-1 px-3 py-1 rounded-pill fw-bold"
+                                                        <Button variant="primary" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded fw-bold text-nowrap"
                                                             onClick={() => handleOpenAddItem(cuenta.id)}>
                                                             <span className="material-symbols-outlined fs-6">add_circle</span> Añadir Productos
                                                         </Button>
-                                                        <Button variant="success" size="sm" className="d-flex align-items-center gap-1 px-3 py-1 rounded-pill fw-bold text-white"
+                                                        <Button variant="success" size="sm" className="d-flex align-items-center justify-content-center gap-1 px-3 py-1 rounded fw-bold text-white text-nowrap"
                                                             onClick={() => handleOpenPaymentModal(cuenta.id)}>
                                                             <span className="material-symbols-outlined fs-6">payments</span> Cobrar
                                                         </Button>

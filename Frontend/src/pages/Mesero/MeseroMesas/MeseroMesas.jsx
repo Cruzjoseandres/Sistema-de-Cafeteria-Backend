@@ -46,7 +46,7 @@ const MeseroMesas = () => {
                     <span className="material-symbols-outlined text-primary fs-2">table_restaurant</span>
                     Mesas y Pedidos
                 </h2>
-                <Button variant="primary" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-4 py-2 fw-bold rounded-pill">
+                <Button variant="primary" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-4 py-2 fw-bold rounded">
                     <span className="material-symbols-outlined fs-5">add_circle</span>
                     Nuevo Pedido
                 </Button>
@@ -72,7 +72,7 @@ const MeseroMesas = () => {
                                 onChange={(e) => setFiltroBusqueda(e.target.value)}
                             />
                         </InputGroup>
-                        <div className="d-flex align-items-center border ps-3 pe-3 py-1 rounded-pill bg-light">
+                        <div className="d-flex align-items-center border ps-3 pe-3 py-1 rounded bg-light">
                             <Form.Check 
                                 type="switch"
                                 id="mis-pedidos-switch"

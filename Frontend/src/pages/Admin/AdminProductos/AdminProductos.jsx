@@ -50,12 +50,22 @@ const AdminProductos = () => {
         return (
             <Container fluid className="px-0">
                 <NotificationToast show={toast.show} message={toast.message} variant={toast.variant} onClose={hideToast} />
-                <div className="mb-4">
-                    <h1 className="admin-title-lg">{modalType === 'editar' ? 'Editar Producto' : 'Crear Nuevo Producto'}</h1>
-                    <p className="admin-subtitle">Añade o edita un artículo en el sistema de inventario de la cafetería.</p>
+                <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+                    <div className="d-flex align-items-center gap-3">
+                        <button type="button" className="btn-admin-secondary d-flex align-items-center justify-content-center p-2 rounded-circle" onClick={handleCloseModal} title="Volver al listado">
+                            <span className="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <div>
+                            <h1 className="admin-title-lg d-flex align-items-center gap-2 m-0">
+                                <span className="material-symbols-outlined text-primary">{modalType === 'editar' ? 'edit_square' : 'local_cafe'}</span>
+                                <span>{modalType === 'editar' ? 'Editar Producto' : 'Crear Nuevo Producto'}</span>
+                            </h1>
+                            <p className="admin-subtitle m-0">Añade o edita un artículo en el sistema de inventario de la cafetería.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="admin-card">
+                <div className="admin-card border-0 shadow-sm p-4">
                     <Form noValidate validated={validated} onSubmit={handleSubmit}>
                         <Row>
                             <Col md={7}>
@@ -227,8 +237,9 @@ const AdminProductos = () => {
                     <h1 className="admin-title-lg">Gestión de Productos</h1>
                     <p className="admin-subtitle m-0">Administra el inventario de la cafetería.</p>
                 </div>
-                <button className="btn-admin-primary" onClick={() => handleOpenModal('crear')}>
-                    + Añadir Producto
+                <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
+                    <span className="material-symbols-outlined fs-5">add_circle</span>
+                    <span>Nuevo Producto</span>
                 </button>
             </div>
 

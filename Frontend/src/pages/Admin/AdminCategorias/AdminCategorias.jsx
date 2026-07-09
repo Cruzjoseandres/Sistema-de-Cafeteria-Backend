@@ -36,13 +36,14 @@ const AdminCategorias = () => {
             <ConfirmModal show={confirm.show} message={confirm.message} onConfirm={confirm.onConfirm} />
 
             {/* Header */}
-            <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
                 <div>
                     <h1 className="admin-title-lg">Gestión de Categorías</h1>
                     <p className="admin-subtitle m-0">Organiza la estructura del menú de tu cafetería.</p>
                 </div>
-                <button className="btn-admin-primary" onClick={() => handleOpenModal('crear')}>
-                    + Nueva Categoría
+                <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
+                    <span className="material-symbols-outlined fs-5">add_circle</span>
+                    <span>Nueva Categoría</span>
                 </button>
             </div>
 
@@ -99,32 +100,34 @@ const AdminCategorias = () => {
             <PaginationBar {...pagination} />
 
             {/* Create / Edit Modal */}
-            <Modal show={showModal} onHide={handleCloseModal} contentClassName="admin-card" backdropClassName="admin-modal-backdrop">
-                <Modal.Header closeButton style={{ borderBottom: '1px solid var(--admin-border)', background: 'var(--admin-panel-bg)' }}>
-                    <Modal.Title className="admin-title-lg" style={{ fontSize: '1.2rem' }}>
-                        {modalType === 'crear' ? '+ Nueva Categoría' : 'Editar Categoría'}
+            <Modal show={showModal} onHide={handleCloseModal} contentClassName="admin-card border-0 shadow-lg" backdropClassName="admin-modal-backdrop" centered>
+                <Modal.Header closeButton style={{ borderBottom: '1px solid rgba(180,66,10,0.12)', background: 'var(--admin-panel-bg)', padding: '1.25rem 1.5rem' }}>
+                    <Modal.Title className="admin-title-lg d-flex align-items-center gap-2 m-0" style={{ fontSize: '1.2rem' }}>
+                        <span className="material-symbols-outlined text-primary">{modalType === 'crear' ? 'add_circle' : 'edit_square'}</span>
+                        <span>{modalType === 'crear' ? 'Nueva Categoría' : 'Editar Categoría'}</span>
                     </Modal.Title>
                 </Modal.Header>
                 <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                    <Modal.Body style={{ background: 'var(--admin-panel-bg)' }}>
-                        <Form.Group className="admin-form-group mb-4">
-                            <Form.Label className="admin-form-label">Nombre *</Form.Label>
+                    <Modal.Body style={{ background: 'var(--admin-panel-bg)', padding: '1.5rem' }}>
+                        <Form.Group className="admin-form-group mb-0">
+                            <Form.Label className="admin-form-label">Nombre de la Categoría *</Form.Label>
                             <Form.Control
                                 type="text"
                                 name="nombre"
                                 value={formData.nombre}
                                 onChange={handleChange}
                                 className="admin-form-control"
-                                placeholder="e.g., Especiales de Temporada"
+                                placeholder="Ej. Especiales de Temporada"
                                 required
                             />
                             <Form.Control.Feedback type="invalid">El nombre de la categoría es obligatorio.</Form.Control.Feedback>
                         </Form.Group>
                     </Modal.Body>
-                    <Modal.Footer style={{ borderTop: '1px solid var(--admin-border)', background: 'var(--admin-panel-bg)' }}>
-                        <button type="button" className="btn-admin-secondary" onClick={handleCloseModal}>Cancelar</button>
-                        <button type="submit" className="btn-admin-primary" disabled={isSubmitting}>
-                            {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Crear Categoría')}
+                    <Modal.Footer style={{ borderTop: '1px solid rgba(180,66,10,0.12)', background: 'var(--admin-panel-bg)', padding: '1rem 1.5rem' }}>
+                        <button type="button" className="btn-admin-secondary px-4" onClick={handleCloseModal}>Cancelar</button>
+                        <button type="submit" className="btn-admin-primary px-4 d-flex align-items-center gap-2" disabled={isSubmitting}>
+                            <span className="material-symbols-outlined fs-6">save</span>
+                            <span>{isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Crear Categoría')}</span>
                         </button>
                     </Modal.Footer>
                 </Form>

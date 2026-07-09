@@ -553,4 +553,91 @@ body.admin-body {
     .admin-search {
         width: 400px;
     }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ESTILOS MINIMALISTAS Y PREMIUM PARA TABLAS, VISTAS Y MODALES ADMIN
+   (Paleta 100% Café Moderno: #B4420A, #2c1a0e, #78350F)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Contenedor de tablas con bordes suaves */
+.admin-card.overflow-hidden {
+    border-radius: var(--border-radius-lg);
+    border: 1px solid rgba(180, 66, 10, 0.12) !important;
+    box-shadow: 0 4px 18px rgba(44, 26, 14, 0.05);
+}
+
+/* Cabeceras de tabla refinadas */
+.custom-table th {
+    font-size: 0.72rem !important;
+    text-transform: uppercase;
+    color: var(--text-muted) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em;
+    padding: 14px 18px !important;
+    background: rgba(180, 66, 10, 0.04) !important;
+    border-bottom: 2px solid rgba(180, 66, 10, 0.15) !important;
+}
+
+/* Celdas de tabla */
+.custom-table td {
+    padding: 14px 18px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+    color: var(--text-main);
+    vertical-align: middle;
+}
+
+.custom-table tbody tr {
+    transition: background-color 0.18s ease;
+}
+
+.custom-table tbody tr:hover td {
+    background: rgba(180, 66, 10, 0.035) !important;
+}
+
+/* Campos de Formulario y Selects en Administrador */
+.admin-form-group {
+    margin-bottom: 1.25rem;
+}
+
+.admin-form-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.4rem;
+    display: block;
+    letter-spacing: 0.02em;
+}
+
+.admin-form-control,
+.form-control,
+.form-select {
+    border: 1px solid rgba(44, 26, 14, 0.18);
+    border-radius: 10px;
+    padding: 0.65rem 0.95rem;
+    font-size: 0.92rem;
+    color: var(--text-main);
+    background-color: #ffffff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-form-control:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--cafe-primary) !important;
+    box-shadow: 0 0 0 3px rgba(180, 66, 10, 0.14) !important;
+    outline: none;
+}
+
+/* Modales estilizados en Administrador */
+.admin-modal-backdrop {
+    background-color: rgba(44, 26, 14, 0.45) !important;
+    backdrop-filter: blur(3px);
+}
+
+.modal-content.admin-card {
+    border-radius: 16px !important;
+    border: 1px solid rgba(180, 66, 10, 0.18) !important;
+    box-shadow: 0 16px 36px rgba(44, 26, 14, 0.12) !important;
+    overflow: hidden;
 }
