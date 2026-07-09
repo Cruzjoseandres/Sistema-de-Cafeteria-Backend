@@ -353,16 +353,12 @@ const PedidoView = () => {
                                                                                             type="number"
                                                                                             className={`p-0 text-center fw-bold border-0 bg-transparent ${isCompletado ? 'text-success' : 'text-primary'}`}
                                                                                             style={{ width: '32px', boxShadow: 'none' }}
-                                                                                            defaultValue={det.cantidad_entregada}
-                                                                                            key={`deliv-${det.id}-${det.cantidad_entregada}`}
-                                                                                            onBlur={(e) => {
+                                                                                            value={det.cantidad_entregada ?? 0}
+                                                                                            onChange={(e) => {
                                                                                                 let val = parseInt(e.target.value);
                                                                                                 if (isNaN(val) || val < 0) val = 0;
                                                                                                 if (val > det.cantidad) val = det.cantidad;
-                                                                                                e.target.value = val;
-                                                                                                if (val !== det.cantidad_entregada) {
-                                                                                                    handleEntregarItem(det.id, val);
-                                                                                                }
+                                                                                                handleEntregarItem(det.id, val);
                                                                                             }}
                                                                                             onKeyDown={(e) => {
                                                                                                 if (e.key === 'Enter') e.target.blur();
