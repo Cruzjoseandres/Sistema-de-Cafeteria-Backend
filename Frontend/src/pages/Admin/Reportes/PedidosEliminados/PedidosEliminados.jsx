@@ -85,12 +85,12 @@ const PedidosEliminados = () => {
                 
                 <Card.Body className="p-0">
                     <Table hover responsive className="mb-0 align-middle">
-                        <thead className="bg-light">
+                        <thead className="bg-light text-nowrap">
                             <tr>
-                                <th className="px-4 py-3" style={{ width: '10%' }}>ID Pedido</th>
-                                <th className="py-3" style={{ width: '20%' }}>Fecha Eliminación</th>
-                                <th className="py-3" style={{ width: '25%' }}>Mesero / Responsable</th>
-                                <th className="px-4 py-3" style={{ width: '45%' }}>Justificativo</th>
+                                <th className="px-4 py-3">ID Pedido</th>
+                                <th className="py-3">Fecha Eliminación</th>
+                                <th className="py-3">Mesero / Responsable</th>
+                                <th className="px-4 py-3">Justificativo</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -106,20 +106,20 @@ const PedidosEliminados = () => {
                             ) : (
                                 filteredPedidos.map((pedido) => (
                                     <tr key={pedido.id}>
-                                        <td className="px-4 fw-bold">#{pedido.id}</td>
-                                        <td>
+                                        <td className="px-4 fw-bold text-nowrap">#{pedido.id}</td>
+                                        <td className="text-nowrap">
                                             <div className="d-flex align-items-center gap-2 text-muted">
                                                 <span className="material-symbols-outlined fs-6">calendar_today</span>
                                                 {new Date(pedido.fecha).toLocaleString()}
                                             </div>
                                         </td>
-                                        <td>
+                                        <td className="text-nowrap">
                                             <div className="d-flex align-items-center gap-2 fw-medium">
                                                 <span className="material-symbols-outlined fs-5 text-primary">person</span>
                                                 {pedido.responsable}
                                             </div>
                                         </td>
-                                        <td className="px-4">
+                                        <td className="px-4 py-3" style={{ minWidth: '220px' }}>
                                             <div className="px-3 py-2 bg-danger bg-opacity-10 text-danger rounded d-inline-block w-100">
                                                 <span className="fw-bold d-block mb-1" style={{ fontSize: '0.8rem' }}>Motivo Registrado:</span>
                                                 {pedido.justificativo}

@@ -78,7 +78,7 @@ const AdminReportes = () => {
                 </div>
             </div>
 
-            <div className="flex-grow-1 p-4" style={{ overflowY: 'auto' }}>
+            <div className="flex-grow-1 p-2 p-md-4" style={{ overflowY: 'auto' }}>
                 {activeTab === 'generales' && <VentasGenerales />}
                 {activeTab === 'productos' && <VentasProducto />}
                 {activeTab === 'personal' && <RendimientoPersonal />}
