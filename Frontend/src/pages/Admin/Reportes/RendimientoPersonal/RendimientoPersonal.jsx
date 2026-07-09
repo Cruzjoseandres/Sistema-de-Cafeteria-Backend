@@ -58,9 +58,9 @@ const RendimientoPersonal = () => {
                     <Table responsive hover className="custom-table m-0 align-middle">
                         <thead className="bg-light">
                             <tr className="text-nowrap">
-                                <th className="ps-4 py-3">MESERO</th>
-                                <th className="text-center py-3">PEDIDOS ATENDIDOS</th>
-                                <th className="text-end pe-4 py-3">TOTAL RECAUDADO (Bs.)</th>
+                                <th className="ps-3 py-3">MESERO</th>
+                                <th className="text-center py-3">PEDIDOS</th>
+                                <th className="text-end pe-3 py-3">TOTAL (Bs.)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,12 +73,12 @@ const RendimientoPersonal = () => {
                                         className="row-hover-highlight"
                                         title="Click para ver pedidos"
                                     >
-                                        <td className="ps-4 fw-bold align-middle text-nowrap py-3">
-                                            <div className="d-flex align-items-center gap-3">
+                                        <td className="ps-3 fw-bold align-middle py-3">
+                                            <div className="d-flex align-items-center gap-2">
                                                 <div className="personal-avatar flex-shrink-0">
                                                     <span className="material-symbols-outlined">person</span>
                                                 </div>
-                                                {item.mesero}
+                                                <span>{item.mesero}</span>
                                             </div>
                                         </td>
                                         <td className="text-center align-middle text-nowrap py-3">
@@ -87,7 +87,7 @@ const RendimientoPersonal = () => {
                                                 {item.pedidos_atendidos}
                                             </span>
                                         </td>
-                                        <td className="text-end pe-4 align-middle fw-bold text-success text-nowrap py-3">
+                                        <td className="text-end pe-3 align-middle fw-bold text-success text-nowrap py-3">
                                             Bs. {item.total_recaudado?.toFixed(2) || '0.00'}
                                         </td>
                                     </tr>

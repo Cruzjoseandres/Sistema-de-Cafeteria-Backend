@@ -60,28 +60,32 @@ const AdminCategorias = () => {
                     <tbody>
                         {pagination.paginatedData.map((cat) => (
                             <tr key={cat.id}>
-                                <td className="px-4 py-3 fw-bold" style={{ minWidth: '180px', color: 'var(--admin-text-main)' }}>
+                                <td className="px-3 py-3 fw-bold" style={{ minWidth: '110px', color: 'var(--admin-text-main)' }}>
                                     <span className="material-symbols-outlined align-middle" style={{ marginRight: '8px', color: 'var(--admin-accent)', fontSize: '1.2rem' }}>local_cafe</span>
                                     {cat.nombre}
                                 </td>
                                 <td className="py-3 text-nowrap">
                                     {new Date(cat.created_at).toLocaleDateString()}
                                 </td>
-                                <td className="text-end px-4 py-3 text-nowrap">
-                                    <div className="d-flex gap-2 justify-content-end">
+                                <td className="text-end px-2 py-3 text-nowrap">
+                                    <div className="d-flex gap-1 justify-content-end">
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
-                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px' }}
                                             onClick={() => handleOpenModal('editar', cat)}
+                                            title="Editar categoría"
                                         >
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>edit_square</span>
+                                            <span className="d-none d-lg-inline">Editar</span>
                                         </button>
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
-                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
+                                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
                                             onClick={() => handleDelete(cat.id)}
+                                            title="Eliminar categoría"
                                         >
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>delete</span>
+                                            <span className="d-none d-lg-inline">Eliminar</span>
                                         </button>
                                     </div>
                                 </td>

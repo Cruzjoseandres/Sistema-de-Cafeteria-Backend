@@ -23,8 +23,8 @@ const AdminReportes = () => {
                     </div>
                 </div>
 
-                <div style={{ overflowX: 'auto', whiteSpace: 'nowrap', paddingBottom: '4px', WebkitOverflowScrolling: 'touch', maxWidth: '100%' }}>
-                    <ButtonGroup className="admin-tabs" style={{ background: 'rgba(180,66,10,0.06)', padding: '5px', borderRadius: '12px', display: 'inline-flex', border: '1px solid rgba(180,66,10,0.12)' }}>
+                <div className="w-100" style={{ paddingBottom: '4px' }}>
+                    <div className="admin-tabs d-flex flex-wrap gap-1" style={{ background: 'rgba(180,66,10,0.06)', padding: '5px', borderRadius: '12px', border: '1px solid rgba(180,66,10,0.12)' }}>
                         <Button
                             variant="link"
                             className="text-decoration-none px-3 py-2 rounded d-flex align-items-center gap-2"
@@ -85,7 +85,7 @@ const AdminReportes = () => {
                             <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>delete_history</span>
                             <span>Pedidos Eliminados</span>
                         </Button>
-                    </ButtonGroup>
+                    </div>
                 </div>
             </div>
 

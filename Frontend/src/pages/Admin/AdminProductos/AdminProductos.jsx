@@ -305,7 +305,7 @@ const AdminProductos = () => {
                                         </div>
                                     )}
                                 </td>
-                                <td className="py-3 fw-bold" style={{ minWidth: '180px', color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
+                                <td className="py-3 fw-bold" style={{ minWidth: '120px', color: 'var(--admin-text-main)' }}>{producto.nombre}</td>
                                 <td className="py-3 text-nowrap fw-medium text-success">Bs. {parseFloat(producto.precio).toFixed(2)}</td>
                                 <td className="py-3 text-nowrap">{producto.categoria?.nombre || '-'}</td>
                                 <td className="py-3 text-nowrap">
@@ -315,13 +315,15 @@ const AdminProductos = () => {
                                         <span className="admin-badge warning">Agotado</span>
                                     )}
                                 </td>
-                                <td className="text-end px-4 py-3 text-nowrap">
-                                    <div className="d-flex gap-2 justify-content-end">
-                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }} onClick={() => handleOpenModal('editar', producto)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                <td className="text-end px-2 py-3 text-nowrap">
+                                    <div className="d-flex gap-1 justify-content-end">
+                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px' }} onClick={() => handleOpenModal('editar', producto)} title="Editar producto">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>edit_square</span>
+                                            <span className="d-none d-lg-inline">Editar</span>
                                         </button>
-                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }} onClick={() => handleDelete(producto.id)}>
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                        <button className="btn-admin-secondary d-flex align-items-center gap-1" style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }} onClick={() => handleDelete(producto.id)} title="Eliminar producto">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>delete</span>
+                                            <span className="d-none d-lg-inline">Eliminar</span>
                                         </button>
                                     </div>
                                 </td>

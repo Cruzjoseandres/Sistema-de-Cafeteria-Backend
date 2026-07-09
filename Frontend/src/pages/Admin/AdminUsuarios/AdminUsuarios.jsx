@@ -120,27 +120,31 @@ const AdminUsuarios = () => {
                                         {usuario.rol?.nombre || '—'}
                                     </span>
                                 </td>
-                                <td className="py-3" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)', minWidth: '150px' }}>
+                                <td className="py-3" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
                                     {usuario.persona?.email || '—'}
                                 </td>
                                 <td className="py-3 text-nowrap" style={{ verticalAlign: 'middle', fontSize: '0.88rem', color: 'var(--admin-text-muted)' }}>
                                     {usuario.persona?.telefono || '—'}
                                 </td>
-                                <td className="text-end px-4 py-3 text-nowrap">
-                                    <div className="d-flex gap-2 justify-content-end">
+                                <td className="text-end px-2 py-3 text-nowrap">
+                                    <div className="d-flex gap-1 justify-content-end">
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
-                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px' }}
                                             onClick={() => handleOpenModal('editar', usuario)}
+                                            title="Editar usuario"
                                         >
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>edit_square</span>
+                                            <span className="d-none d-lg-inline">Editar</span>
                                         </button>
                                         <button
                                             className="btn-admin-secondary d-flex align-items-center gap-1"
-                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
+                                            style={{ padding: '0.4rem 0.6rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
                                             onClick={() => handleDelete(usuario.id)}
+                                            title="Eliminar usuario"
                                         >
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.15rem' }}>delete</span>
+                                            <span className="d-none d-lg-inline">Eliminar</span>
                                         </button>
                                     </div>
                                 </td>
