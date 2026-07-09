@@ -52,7 +52,7 @@ const AdminProductos = () => {
                 <NotificationToast show={toast.show} message={toast.message} variant={toast.variant} onClose={hideToast} />
                 <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
                     <div className="d-flex align-items-center gap-3">
-                        <button type="button" className="btn-admin-secondary d-flex align-items-center justify-content-center p-2 rounded-circle" onClick={handleCloseModal} title="Volver al listado">
+                        <button type="button" className="admin-back-btn" onClick={handleCloseModal} title="Volver al listado">
                             <span className="material-symbols-outlined">arrow_back</span>
                         </button>
                         <div>

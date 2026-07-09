@@ -140,9 +140,9 @@ const PedidoView = () => {
             {/* HEADER */}
             <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 fade-in gap-3">
                 <div className="d-flex align-items-center gap-3">
-                    <Button variant="outline-secondary" onClick={navigateBack} className="d-flex align-items-center p-2 rounded-circle">
+                    <button type="button" onClick={navigateBack} className="admin-back-btn" title="Volver a mesas">
                         <span className="material-symbols-outlined">arrow_back</span>
-                    </Button>
+                    </button>
                     <div>
                         <h1 className="mb-0 d-flex align-items-center gap-2">
                             📋 Pedido #{pedido.id}
