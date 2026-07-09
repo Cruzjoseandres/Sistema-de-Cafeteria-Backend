@@ -16,7 +16,7 @@ const AdminProductos = () => {
         busqueda, setBusqueda,
         filtroCategoria, setFiltroCategoria,
         filtroDisponible, setFiltroDisponible,
-        pagination,
+        pagination, isSubmitting,
     } = useAdminProductos();
 
     const fileInputRef = useRef(null);
@@ -207,8 +207,8 @@ const AdminProductos = () => {
 
                         <div className="d-flex justify-content-end gap-3 mt-4 pt-3" style={{ borderTop: '1px solid var(--admin-border)' }}>
                             <button type="button" className="btn-admin-secondary" onClick={handleCloseModal}>Cancelar</button>
-                            <button type="submit" className="btn-admin-primary">
-                                {modalType === 'editar' ? 'Guardar Cambios' : 'Guardar Producto'}
+                            <button type="submit" className="btn-admin-primary" disabled={isSubmitting}>
+                                {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Guardar Producto')}
                             </button>
                         </div>
                     </Form>

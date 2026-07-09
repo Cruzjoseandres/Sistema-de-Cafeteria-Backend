@@ -12,6 +12,7 @@ export const useAdminCategorias = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [formData, setFormData] = useState({ nombre: '' });
     const [validated, setValidated] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { toast, confirm, showSuccess, showError, hideToast, showConfirm } = useNotification();
 
@@ -62,6 +63,7 @@ export const useAdminCategorias = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
 
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
@@ -71,6 +73,7 @@ export const useAdminCategorias = () => {
         }
 
         setValidated(true);
+        setIsSubmitting(true);
 
         try {
             if (modalType === 'editar') {
@@ -85,6 +88,8 @@ export const useAdminCategorias = () => {
         } catch (err) {
             console.error('Error:', err);
             showError(err.response?.data?.message || 'Error al guardar la categoría');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -103,7 +108,7 @@ export const useAdminCategorias = () => {
     };
 
     return {
-        categorias, loading, error, showModal, modalType, formData, validated,
+        categorias, loading, error, showModal, modalType, formData, validated, isSubmitting,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast, pagination
     };

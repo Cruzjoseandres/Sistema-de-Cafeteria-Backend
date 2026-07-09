@@ -34,6 +34,7 @@ const AdminUsuarios = () => {
         hideToast,
         validated,
         pagination,
+        isSubmitting,
     } = useAdminUsuarios();
 
     if (loading) {
@@ -252,11 +253,11 @@ const AdminUsuarios = () => {
                     </Modal.Body>
                     <Modal.Footer style={{ background: 'var(--admin-panel-bg)', borderTop: '1px solid var(--admin-border)' }}>
                         <button type="button" className="btn-admin-secondary" onClick={handleCloseModal}>Cancelar</button>
-                        <button type="submit" className="btn-admin-primary d-flex align-items-center gap-1">
+                        <button type="submit" className="btn-admin-primary d-flex align-items-center gap-1" disabled={isSubmitting}>
                             <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>
                                 {modalType === 'editar' ? 'save' : 'person_add'}
                             </span>
-                            {modalType === 'editar' ? 'Guardar Cambios' : 'Crear Cuenta'}
+                            {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Crear Cuenta')}
                         </button>
                     </Modal.Footer>
                 </Form>

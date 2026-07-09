@@ -7,7 +7,7 @@ import PaginationBar from '../../../components/PaginationBar';
 
 const AdminCategorias = () => {
     const {
-        categorias, loading, error, showModal, modalType, formData, validated,
+        categorias, loading, error, showModal, modalType, formData, validated, isSubmitting,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast, pagination
     } = useAdminCategorias();
@@ -123,8 +123,8 @@ const AdminCategorias = () => {
                     </Modal.Body>
                     <Modal.Footer style={{ borderTop: '1px solid var(--admin-border)', background: 'var(--admin-panel-bg)' }}>
                         <button type="button" className="btn-admin-secondary" onClick={handleCloseModal}>Cancelar</button>
-                        <button type="submit" className="btn-admin-primary">
-                            {modalType === 'editar' ? 'Guardar Cambios' : 'Crear Categoría'}
+                        <button type="submit" className="btn-admin-primary" disabled={isSubmitting}>
+                            {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Crear Categoría')}
                         </button>
                     </Modal.Footer>
                 </Form>

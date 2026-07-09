@@ -9,7 +9,7 @@ const MeseroMesas = () => {
         mesaSeleccionada, setMesaSeleccionada, mesasDisponibles,
         filtroMisPedidos, setFiltroMisPedidos,
         filtroBusqueda, setFiltroBusqueda,
-        handleCrearPedido, handleAbrirPedido
+        handleCrearPedido, handleAbrirPedido, isSubmitting
     } = useMeseroMesas();
 
     if (loading) {
@@ -228,8 +228,8 @@ const MeseroMesas = () => {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowCrearPedidoModal(false)}>Cancelar</Button>
-                    <Button variant="primary" onClick={handleCrearPedido} disabled={!mesaSeleccionada}>
-                        Crear Pedido
+                    <Button variant="primary" onClick={handleCrearPedido} disabled={!mesaSeleccionada || isSubmitting}>
+                        {isSubmitting ? 'Creando...' : 'Crear Pedido'}
                     </Button>
                 </Modal.Footer>
             </Modal>

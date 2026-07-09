@@ -23,6 +23,7 @@ export const useAdminProductos = () => {
         id_categoria: '',
     });
     const [validated, setValidated] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Inventory filters
     const [busqueda, setBusqueda] = useState('');
@@ -137,6 +138,7 @@ export const useAdminProductos = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
 
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
@@ -146,6 +148,7 @@ export const useAdminProductos = () => {
         }
 
         setValidated(true);
+        setIsSubmitting(true);
 
         try {
             const data = new FormData();
@@ -178,6 +181,8 @@ export const useAdminProductos = () => {
         } catch (err) {
             console.error('Error:', err);
             showError(err.response?.data?.message || 'Error al guardar el producto');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -196,7 +201,7 @@ export const useAdminProductos = () => {
     };
 
     return {
-        productos, categorias, loading, error, showModal, modalType, formData, validated,
+        productos, categorias, loading, error, showModal, modalType, formData, validated, isSubmitting,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast,
         existingImages, newImagePreviews, handleAddImages,

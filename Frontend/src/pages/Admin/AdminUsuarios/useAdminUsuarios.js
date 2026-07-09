@@ -22,6 +22,7 @@ export const useAdminUsuarios = () => {
         email: '',
         id_rol: '',
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { toast, confirm, showSuccess, showError, hideToast, showConfirm } = useNotification();
 
@@ -109,6 +110,7 @@ export const useAdminUsuarios = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (isSubmitting) return;
 
         const form = e.currentTarget;
         if (form.checkValidity() === false) {
@@ -118,6 +120,7 @@ export const useAdminUsuarios = () => {
         }
 
         setValidated(true);
+        setIsSubmitting(true);
 
         try {
             const payload = {
@@ -145,6 +148,8 @@ export const useAdminUsuarios = () => {
         } catch (err) {
             console.error('Error:', err);
             showError(err.response?.data?.message || 'Error al guardar el usuario');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -171,7 +176,7 @@ export const useAdminUsuarios = () => {
     };
 
     return {
-        usuarios, roles, loading, error, showModal, modalType, formData, selectedUser, validated,
+        usuarios, roles, loading, error, showModal, modalType, formData, selectedUser, validated, isSubmitting,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete, getRoleBadge,
         toast, confirm, hideToast, pagination
     };

@@ -7,7 +7,7 @@ import PaginationBar from '../../../components/PaginationBar';
 
 const AdminMesas = () => {
     const {
-        mesas, loading, error, showModal, modalType, formData,
+        mesas, loading, error, showModal, modalType, formData, isSubmitting,
         handleOpenModal, handleCloseModal, handleChange, handleSubmit, handleDelete,
         toast, confirm, hideToast, pagination
     } = useAdminMesas();
@@ -120,8 +120,8 @@ const AdminMesas = () => {
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={handleCloseModal}>Cancelar</Button>
-                        <Button variant="primary" type="submit">
-                            {modalType === 'editar' ? 'Guardar Cambios' : 'Crear Mesa'}
+                        <Button variant="primary" type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Guardando...' : (modalType === 'editar' ? 'Guardar Cambios' : 'Crear Mesa')}
                         </Button>
                     </Modal.Footer>
                 </Form>
