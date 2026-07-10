@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Table, Button, Modal, Form, Badge, Spinner, Alert } from 'react-bootstrap';
+import { Container, Table, Button, Modal, Form, Badge, Spinner, Alert, Row, Col } from 'react-bootstrap';
 import { useAdminMesas } from './useAdminMesas';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
