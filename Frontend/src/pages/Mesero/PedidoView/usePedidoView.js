@@ -149,7 +149,7 @@ export const usePedidoView = () => {
                 navigate('/mesero/mesas');
             } catch (err) {
                 console.error(err);
-                showError('Error al terminar el pedido');
+                showError(err, 'Error al terminar el pedido');
             }
         }
     };
@@ -180,7 +180,7 @@ export const usePedidoView = () => {
             navigate('/mesero/mesas');
         } catch (err) {
             console.error(err);
-            showError('Error al eliminar el pedido');
+            showError(err, 'Error al eliminar el pedido');
         } finally {
             setSaving(false);
         }
@@ -248,7 +248,7 @@ export const usePedidoView = () => {
             return true;
         } catch (error) {
             console.error('Error al guardar borrador:', error);
-            showError('Ocurrió un problema guardando tu pedido. Revisa tu conexión.');
+            showError(error, 'Ocurrió un problema guardando tu pedido. Revisa tu conexión.');
             return false;
         } finally {
             setSaving(false);
@@ -546,7 +546,7 @@ export const usePedidoView = () => {
             await bulkUpdateEntrega(items);
         } catch (err) {
             console.error('Error al sincronizar entregas:', err);
-            showError('Error al guardar entregas. Revisá tu conexión.');
+            showError(err, 'Error al guardar entregas. Revisá tu conexión.');
         }
     };
 
@@ -721,7 +721,7 @@ export const usePedidoView = () => {
             loadData(); // Reload to refresh statuses
         } catch (err) {
             console.error(err);
-            showError('Error al procesar el pago.');
+            showError(err, 'Error al procesar el pago. Revisa que el pedido y la cuenta estén guardados antes de cobrar.');
         } finally {
             setSaving(false);
         }
@@ -759,7 +759,7 @@ export const usePedidoView = () => {
             showSuccess('Redirigiendo a WhatsApp...');
         } catch (err) {
             console.error(err);
-            showError('Error al generar el PDF del pedido.');
+            showError(err, 'Error al generar el PDF del pedido.');
         } finally {
             setSaving(false);
         }

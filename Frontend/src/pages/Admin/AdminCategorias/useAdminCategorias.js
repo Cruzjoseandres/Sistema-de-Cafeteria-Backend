@@ -87,7 +87,7 @@ export const useAdminCategorias = () => {
             loadCategorias();
         } catch (err) {
             console.error('Error:', err);
-            showError(err.response?.data?.message || 'Error al guardar la categoría');
+            showError(err, 'Error al guardar la categoría');
         } finally {
             setIsSubmitting(false);
         }
@@ -102,7 +102,7 @@ export const useAdminCategorias = () => {
                 loadCategorias();
             } catch (err) {
                 console.error('Error al eliminar:', err);
-                showError('Error al eliminar la categoría');
+                showError(err, 'Error al eliminar la categoría');
             }
         }
     };

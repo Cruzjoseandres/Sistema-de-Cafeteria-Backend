@@ -147,7 +147,7 @@ export const useAdminUsuarios = () => {
             loadUsuarios();
         } catch (err) {
             console.error('Error:', err);
-            showError(err.response?.data?.message || 'Error al guardar el usuario');
+            showError(err, 'Error al guardar el usuario');
         } finally {
             setIsSubmitting(false);
         }
@@ -162,7 +162,7 @@ export const useAdminUsuarios = () => {
                 loadUsuarios();
             } catch (err) {
                 console.error('Error al eliminar:', err);
-                showError('Error al eliminar el usuario');
+                showError(err, 'Error al eliminar el usuario');
             }
         }
     };

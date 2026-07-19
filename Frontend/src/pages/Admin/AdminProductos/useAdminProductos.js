@@ -180,7 +180,7 @@ export const useAdminProductos = () => {
             loadProductos();
         } catch (err) {
             console.error('Error:', err);
-            showError(err.response?.data?.message || 'Error al guardar el producto');
+            showError(err, 'Error al guardar el producto');
         } finally {
             setIsSubmitting(false);
         }
@@ -195,7 +195,7 @@ export const useAdminProductos = () => {
                 loadProductos();
             } catch (err) {
                 console.error('Error al eliminar:', err);
-                showError('Error al eliminar el producto');
+                showError(err, 'Error al eliminar el producto');
             }
         }
     };

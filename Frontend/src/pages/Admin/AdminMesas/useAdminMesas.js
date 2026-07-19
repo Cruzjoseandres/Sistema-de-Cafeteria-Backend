@@ -93,7 +93,7 @@ export const useAdminMesas = () => {
             loadMesas();
         } catch (err) {
             console.error('Error:', err);
-            showError(err.response?.data?.message || 'Error al guardar la mesa');
+            showError(err, 'Error al guardar la mesa');
         } finally {
             setIsSubmitting(false);
         }
@@ -108,7 +108,7 @@ export const useAdminMesas = () => {
                 loadMesas();
             } catch (err) {
                 console.error('Error al eliminar:', err);
-                showError('Error al eliminar la mesa');
+                showError(err, 'Error al eliminar la mesa');
             }
         }
     };

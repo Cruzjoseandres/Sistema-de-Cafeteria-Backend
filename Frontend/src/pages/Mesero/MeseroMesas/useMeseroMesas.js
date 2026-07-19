@@ -61,7 +61,7 @@ export const useMeseroMesas = () => {
             navigate(`/mesero/pedido/${pedido.id}`);
         } catch (err) {
             console.error(err);
-            showError(err.response?.data?.message || 'Error al crear el pedido');
+            showError(err, 'Error al crear el pedido');
         } finally {
             setIsSubmitting(false);
         }

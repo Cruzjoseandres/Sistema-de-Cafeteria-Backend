@@ -48,7 +48,7 @@ const AdminDashboard = () => {
             showSuccess('QR actualizado con éxito');
         } catch (error) {
             console.error('Error al subir QR:', error);
-            showError('Error al actualizar QR');
+            showError(error, 'Error al actualizar QR');
             // Revertir a la URL anterior en caso de error
             setQrUrl(getQRUrl());
         } finally {
