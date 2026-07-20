@@ -1017,9 +1017,9 @@ const PedidoView = () => {
                                                     {seleccionado && (
                                                         <div className="mt-auto pt-2 border-top mt-2 fade-in">
                                                             <Row className="g-2 align-items-center">
-                                                                <Col xs={12} sm={5}>
+                                                                <Col xs={5}>
                                                                     <div className="d-flex align-items-center border bg-light rounded shadow-sm">
-                                                                        <Button variant="light" className="border-0 px-3 rounded-start fw-bold fs-6" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                                                        <Button variant="light" className="border-0 px-2 rounded-start fw-bold fs-6" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
                                                                         <Form.Control 
                                                                             type="number"
                                                                             className="border-0 text-center fw-bold p-1 hide-arrows rounded-0 bg-light"
@@ -1032,10 +1032,10 @@ const PedidoView = () => {
                                                                                 }
                                                                             }}
                                                                         />
-                                                                        <Button variant="light" className="border-0 px-3 rounded-end fw-bold fs-6" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                                        <Button variant="light" className="border-0 px-2 rounded-end fw-bold fs-6" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
                                                                     </div>
                                                                 </Col>
-                                                                <Col xs={12} sm={7}>
+                                                                <Col xs={7}>
                                                                     <Form.Control 
                                                                         type="text" 
                                                                         size="sm"
@@ -1055,20 +1055,6 @@ const PedidoView = () => {
                                 </Row>
                             )}
                         </div>
-
-                        {/* Barra inferior rápida cuando se está en pestaña menú (Solo Móvil d-lg-none) */}
-                        {listaSeleccionados.length > 0 && (
-                            <div className="p-3 bg-dark text-white border-top flex-shrink-0 d-flex d-lg-none justify-content-between align-items-center shadow-lg">
-                                <div className="d-flex flex-column">
-                                    <span className="fw-bold fs-6">{listaSeleccionados.length} {listaSeleccionados.length === 1 ? 'producto seleccionado' : 'productos seleccionados'}</span>
-                                    <span className="text-warning fw-bold fs-5">Bs. {totalSeleccionados.toFixed(2)}</span>
-                                </div>
-                                <Button variant="light" className="fw-bold px-3 py-2 d-flex align-items-center gap-1 shadow" onClick={() => setMobileTab('seleccionados')}>
-                                    Ver y Detallar
-                                    <span className="material-symbols-outlined fs-5">arrow_forward</span>
-                                </Button>
-                            </div>
-                        )}
                     </div>
 
                     {/* COLUMNA DERECHA: SECCIÓN DE PRODUCTOS SELECCIONADOS CON NOTAS (Visible en escritorio siempre, en móvil solo si mobileTab === 'seleccionados') */}
@@ -1124,9 +1110,9 @@ const PedidoView = () => {
                                             {/* Controles de cantidad y comentario detallados (Estilo imagen de referencia) */}
                                             <div className="pt-2 border-top">
                                                 <Row className="g-2 align-items-center">
-                                                    <Col xs={12} sm={5}>
+                                                    <Col xs={5}>
                                                         <div className="d-flex align-items-center border bg-light rounded shadow-sm">
-                                                            <Button variant="light" className="border-0 px-3 rounded-start fw-bold fs-6" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                                            <Button variant="light" className="border-0 px-2 rounded-start fw-bold fs-6" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
                                                             <Form.Control 
                                                                 type="number"
                                                                 className="border-0 text-center fw-bold p-1 hide-arrows rounded-0 bg-light"
@@ -1139,10 +1125,10 @@ const PedidoView = () => {
                                                                     }
                                                                 }}
                                                             />
-                                                            <Button variant="light" className="border-0 px-3 rounded-end fw-bold fs-6" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                            <Button variant="light" className="border-0 px-2 rounded-end fw-bold fs-6" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
                                                         </div>
                                                     </Col>
-                                                    <Col xs={12} sm={7}>
+                                                    <Col xs={7}>
                                                         <Form.Control 
                                                             type="text" 
                                                             size="sm"
@@ -1160,23 +1146,21 @@ const PedidoView = () => {
                                 })
                             )}
                         </div>
-
-                        {/* Footer con Total y Acción de Agregar */}
-                        <div className="p-3 bg-white border-top flex-shrink-0 shadow-sm">
-                            <div className="d-flex justify-content-between align-items-center mb-3 px-1">
-                                <span className="text-muted fw-semibold fs-6">Total a agregar:</span>
-                                <span className="fw-bold text-success fs-3">Bs. {totalSeleccionados.toFixed(2)}</span>
-                            </div>
-                            <div className="d-flex gap-2">
-                                <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="py-2 px-3 fw-semibold">Cancelar</Button>
-                                <Button variant="dark" onClick={handleAddMultipleItems} disabled={listaSeleccionados.length === 0} className="py-2 flex-fill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm fs-6">
-                                    <span className="material-symbols-outlined">check_circle</span>
-                                    Confirmar ({listaSeleccionados.length})
-                                </Button>
-                            </div>
-                        </div>
                     </div>
                 </Modal.Body>
+                <Modal.Footer className="border-top bg-white px-4 py-3 d-flex justify-content-between align-items-center">
+                    <div className="d-flex align-items-center gap-2">
+                        <span className="text-muted fw-semibold">Total a agregar:</span>
+                        <span className="fw-bold text-success fs-4">Bs. {totalSeleccionados.toFixed(2)}</span>
+                    </div>
+                    <div className="d-flex gap-2">
+                        <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="px-4 py-2 fw-semibold">Cancelar</Button>
+                        <Button variant="dark" onClick={handleAddMultipleItems} disabled={listaSeleccionados.length === 0} className="px-4 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                            <span className="material-symbols-outlined fs-5">check</span>
+                            Confirmar {listaSeleccionados.length > 0 ? `(${listaSeleccionados.length})` : ''}
+                        </Button>
+                    </div>
+                </Modal.Footer>
             </Modal>
 
             {/* MODAL PAGO DE CUENTA */}
