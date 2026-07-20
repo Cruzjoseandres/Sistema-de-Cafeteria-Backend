@@ -116,6 +116,197 @@ const PedidoView = () => {
     const isEdit = viewMode === 'edit';
     const isPedidoCompletado = pedido?.estado?.id === 3 || pedido?.estado?.nombre === 'INACTIVO' || pedido?.estado?.nombre === 'COMPLETADO' || pedido?.estado?.nombre === 'PAGADO';
 
+    const [subViewType, setSubViewType] = useState('cuentas'); // 'cuentas' | 'totales'
+
+    // Lógica para la agrupación por Totales de Productos
+    const todosLosDetalles = Object.values(detallesPorCuenta || {}).flat();
+    const inicialesTotales = todosLosDetalles.filter(d => getClasificacionDetalle(d) === 'Pedido Inicial');
+    const extrasTotales = todosLosDetalles.filter(d => getClasificacionDetalle(d) === 'Extras');
+
+    const agruparDetallesPorProducto = (lista) => {
+        const grupos = {};
+        lista.forEach(det => {
+            const key = det.producto?.id || det.producto?.nombre || 'sin-producto';
+            if (!grupos[key]) {
+                grupos[key] = {
+                    key: String(key),
+                    id_producto: det.producto?.id,
+                    producto: det.producto,
+                    cantidadTotal: 0,
+                    cantidadEntregada: 0,
+                    totalPrecio: 0,
+                    detalles: []
+                };
+            }
+            grupos[key].cantidadTotal += Number(det.cantidad || 0);
+            grupos[key].cantidadEntregada += Number(det.cantidad_entregada || 0);
+            const subtotal = Number(det.subtotal || det.total || (det.cantidad * (det.precio_unitario || det.producto?.precio || 0)) || 0);
+            grupos[key].totalPrecio += subtotal;
+            grupos[key].detalles.push(det);
+        });
+        return Object.values(grupos);
+    };
+
+    const handleEntregarGrupoToggle = (grupo) => {
+        const isCompletado = grupo.cantidadEntregada === grupo.cantidadTotal;
+        grupo.detalles.forEach(det => {
+            const currentEntregada = Number(det.cantidad_entregada ?? 0);
+            const targetEntregada = isCompletado ? 0 : Number(det.cantidad || 0);
+            if (currentEntregada !== targetEntregada) {
+                handleEntregarItem(det.id, targetEntregada);
+            }
+        });
+    };
+
+    const handleEntregarGrupoDelta = (grupo, delta) => {
+        if (delta > 0) {
+            const target = grupo.detalles.find(d => Number(d.cantidad_entregada ?? 0) < Number(d.cantidad || 0));
+            if (target) {
+                handleEntregarItem(target.id, Number(target.cantidad_entregada ?? 0) + 1);
+            }
+        } else if (delta < 0) {
+            for (let i = grupo.detalles.length - 1; i >= 0; i--) {
+                const target = grupo.detalles[i];
+                if (Number(target.cantidad_entregada ?? 0) > 0) {
+                    handleEntregarItem(target.id, Number(target.cantidad_entregada ?? 0) - 1);
+                    break;
+                }
+            }
+        }
+    };
+
+    const renderVistaTotales = () => (
+        <div className="fade-in">
+            {[
+                { titulo: 'Pedido Inicial', grupos: agruparDetallesPorProducto(inicialesTotales) },
+                { titulo: 'Extras', grupos: agruparDetallesPorProducto(extrasTotales) }
+            ].map((seccion, sIdx) => seccion.grupos.length > 0 && (
+                <div key={sIdx} className="mb-4 border rounded shadow-sm overflow-hidden bg-white">
+                    <div className="bg-light border-bottom px-3 py-2 fw-bold text-secondary d-flex align-items-center justify-content-between" style={{ fontSize: '0.95rem' }}>
+                        <span className="d-flex align-items-center gap-2 text-dark">
+                            <span className="material-symbols-outlined text-primary" style={{ fontSize: '1.3rem' }}>
+                                {seccion.titulo === 'Extras' ? 'extension' : 'receipt'}
+                            </span>
+                            {seccion.titulo}
+                        </span>
+                        <Badge bg="secondary" className="px-2 py-1 fs-6">
+                            {seccion.grupos.reduce((sum, g) => sum + g.cantidadTotal, 0)} unidades
+                        </Badge>
+                    </div>
+                    <div className="d-flex flex-column">
+                        {seccion.grupos.map((grupo) => {
+                            const isCompletado = grupo.cantidadEntregada === grupo.cantidadTotal;
+                            return isDeliver ? (
+                                <div
+                                    key={grupo.key}
+                                    className={`d-flex align-items-center justify-content-between py-3 px-3 border-bottom ${isCompletado ? 'bg-light' : 'bg-white'}`}
+                                    style={{ gap: '12px' }}
+                                >
+                                    <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ minWidth: 0 }}>
+                                        <button
+                                            type="button"
+                                            className="btn btn-link p-0 border-0 text-decoration-none d-flex align-items-center flex-shrink-0"
+                                            onClick={() => handleEntregarGrupoToggle(grupo)}
+                                            title={isCompletado ? 'Marcar como pendiente' : 'Entregar todo'}
+                                        >
+                                            <span
+                                                className="material-symbols-outlined"
+                                                style={{
+                                                    fontSize: '1.7rem',
+                                                    color: isCompletado ? '#198754' : '#adb5bd',
+                                                    fontVariationSettings: isCompletado ? "'FILL' 1" : "'FILL' 0",
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                {isCompletado ? 'check_circle' : 'radio_button_unchecked'}
+                                            </span>
+                                        </button>
+                                        <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+                                            <span
+                                                className={`fw-bold ${isCompletado ? 'text-decoration-line-through text-muted' : 'text-dark'}`}
+                                                style={{ fontSize: '1.05rem', wordBreak: 'normal', lineHeight: '1.25' }}
+                                            >
+                                                {grupo.producto?.nombre}
+                                            </span>
+                                            <span className="text-muted small mt-1 d-flex align-items-center gap-1">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>people</span>
+                                                En {grupo.detalles.length} {grupo.detalles.length === 1 ? 'cuenta/registro' : 'cuentas/registros'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center flex-shrink-0">
+                                        <Button
+                                            variant="outline-secondary"
+                                            size="sm"
+                                            className="btn-qty px-2 rounded-start d-flex align-items-center justify-content-center"
+                                            style={{ height: '36px', width: '34px', fontSize: '1.1rem' }}
+                                            disabled={grupo.cantidadEntregada <= 0}
+                                            onClick={() => handleEntregarGrupoDelta(grupo, -1)}
+                                        >
+                                            -
+                                        </Button>
+                                        <div
+                                            className="px-2 border-top border-bottom fw-bold bg-light d-flex align-items-center justify-content-center"
+                                            style={{ minWidth: '54px', height: '36px', fontSize: '1rem', userSelect: 'none' }}
+                                        >
+                                            <span className={`${isCompletado ? 'text-success' : 'text-primary'}`}>{grupo.cantidadEntregada}</span>
+                                            <span className="text-muted ms-1 fs-6">/ {grupo.cantidadTotal}</span>
+                                        </div>
+                                        <Button
+                                            variant="outline-primary"
+                                            size="sm"
+                                            className="btn-qty px-2 rounded-end d-flex align-items-center justify-content-center"
+                                            style={{ height: '36px', width: '34px', fontSize: '1.1rem' }}
+                                            disabled={grupo.cantidadEntregada >= grupo.cantidadTotal}
+                                            onClick={() => handleEntregarGrupoDelta(grupo, 1)}
+                                        >
+                                            +
+                                        </Button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div
+                                    key={grupo.key}
+                                    className={`d-flex align-items-center justify-content-between py-3 px-3 border-bottom ${isCompletado && isDeliver ? 'bg-light' : 'bg-white'}`}
+                                    style={{ gap: '12px' }}
+                                >
+                                    <div className="d-flex align-items-center gap-3 flex-grow-1" style={{ minWidth: 0 }}>
+                                        <div className="d-flex flex-column" style={{ minWidth: 0 }}>
+                                            <span
+                                                className="fw-bold text-dark"
+                                                style={{ fontSize: '1.05rem', wordBreak: 'normal', lineHeight: '1.25' }}
+                                            >
+                                                {grupo.producto?.nombre}
+                                            </span>
+                                            <span className="text-muted small mt-1 d-flex align-items-center gap-1">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>people</span>
+                                                En {grupo.detalles.length} {grupo.detalles.length === 1 ? 'cuenta/registro' : 'cuentas/registros'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex align-items-center gap-3 flex-shrink-0">
+                                        <Badge bg="primary" className="fs-6 px-3 py-2 rounded-pill">
+                                            {grupo.cantidadTotal} {grupo.cantidadTotal === 1 ? 'u.' : 'u.'}
+                                        </Badge>
+                                        <span className="fw-bold text-dark fs-6 d-none d-sm-inline">
+                                            Bs. {grupo.totalPrecio.toFixed(2)}
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            ))}
+            {inicialesTotales.length === 0 && extrasTotales.length === 0 && (
+                <div className="text-center py-5 rounded border border-dashed my-2 bg-white">
+                    <span className="material-symbols-outlined text-muted" style={{ fontSize: '3rem', opacity: 0.5 }}>restaurant_menu</span>
+                    <p className="text-muted mt-2 mb-0">Sin productos registrados en este pedido</p>
+                </div>
+            )}
+        </div>
+    );
+
     if (loading) {
         return (
             <Container className="mt-5 text-center">
@@ -299,7 +490,9 @@ const PedidoView = () => {
             {/* CUENTAS Y DETALLES - Sin Card anidada para maximizar el ancho disponible */}
             <div className="mb-4">
                 <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom flex-wrap gap-2">
-                    <h4 className="mb-0 fw-bold fs-5">Cuentas del Pedido</h4>
+                    <h4 className="mb-0 fw-bold fs-5">
+                        {isEdit || subViewType === 'cuentas' ? 'Cuentas del Pedido' : 'Totales por Productos'}
+                    </h4>
                     <div className="d-flex gap-2 flex-wrap align-items-center">
                         {isEdit && !isPedidoCompletado && cuentas.filter(c => !c.estado || c.estado.id !== 3).length > 1 && (
                             <Button variant="success" size="sm" className="d-flex align-items-center gap-1 fw-bold shadow-sm rounded px-3 py-1 text-white" onClick={() => handleOpenPaymentModal('ALL')}>
@@ -315,13 +508,36 @@ const PedidoView = () => {
                     </div>
                 </div>
 
+                {!isEdit && cuentas.length > 0 && (
+                    <div className="d-flex flex-wrap gap-2 mb-3">
+                        <Button
+                            variant={subViewType === 'cuentas' ? 'primary' : 'outline-primary'}
+                            size="sm"
+                            className="d-flex align-items-center gap-2 px-3 py-2 fw-bold shadow-sm rounded-pill"
+                            onClick={() => setSubViewType('cuentas')}
+                        >
+                            <span className="material-symbols-outlined fs-6">group</span>
+                            <span>Por Cuentas ({cuentas.length})</span>
+                        </Button>
+                        <Button
+                            variant={subViewType === 'totales' ? 'primary' : 'outline-primary'}
+                            size="sm"
+                            className="d-flex align-items-center gap-2 px-3 py-2 fw-bold shadow-sm rounded-pill"
+                            onClick={() => setSubViewType('totales')}
+                        >
+                            <span className="material-symbols-outlined fs-6">inventory_2</span>
+                            <span>Por Totales de Productos</span>
+                        </Button>
+                    </div>
+                )}
+
                 {cuentas.length === 0 ? (
                     <div className="py-5 text-center px-3 bg-white rounded border shadow-sm">
                         <span className="material-symbols-outlined text-muted mb-3" style={{ fontSize: '4rem', opacity: 0.5 }}>receipt_long</span>
                         <h5 className="text-muted">No hay cuentas activas</h5>
                         <p className="text-muted mb-0">Comienza creando una cuenta para agregar productos al pedido.</p>
                     </div>
-                ) : (
+                ) : (isEdit || subViewType === 'cuentas') ? (
                     <Accordion defaultActiveKey={cuentas.map((_, i) => String(i))} alwaysOpen className="custom-accordion">
                         {cuentas.map((cuenta, index) => {
                             const detalles = detallesPorCuenta[cuenta.id] || [];
@@ -555,6 +771,8 @@ const PedidoView = () => {
                             );
                         })}
                     </Accordion>
+                ) : (
+                    renderVistaTotales()
                 )}
 
                 {cuentas.length > 0 && (
