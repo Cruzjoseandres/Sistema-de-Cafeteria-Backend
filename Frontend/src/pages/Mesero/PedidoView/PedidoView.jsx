@@ -884,14 +884,14 @@ const PedidoView = () => {
                     <Modal.Title className="d-flex align-items-center gap-2 w-100 pe-2">
                         <span className="material-symbols-outlined text-primary fs-3">restaurant_menu</span>
                         <span className="fw-bold fs-5">Seleccionar Productos</span>
-                        <div className="ms-auto d-none d-sm-flex align-items-center gap-3">
-                            <Badge bg="dark" pill className="fs-6 fw-normal px-3 py-2">
+                        <div className="ms-auto d-none d-sm-flex align-items-center gap-2">
+                            <span className="badge rounded-2 fs-6 fw-medium px-3 py-2 border" style={{ backgroundColor: '#FCFAF8', color: 'var(--cafe-secondary)', borderColor: '#E6DCD3' }}>
                                 {listaSeleccionados.length} seleccionados
-                            </Badge>
+                            </span>
                             {listaSeleccionados.length > 0 && (
-                                <Badge bg="success" className="fs-6 fw-bold px-3 py-2 shadow-sm">
+                                <span className="badge rounded-2 fs-6 fw-bold px-3 py-2 shadow-sm" style={{ backgroundColor: 'var(--cafe-primary)', color: '#ffffff' }}>
                                     Bs. {totalSeleccionados.toFixed(2)}
-                                </Badge>
+                                </span>
                             )}
                         </div>
                     </Modal.Title>
@@ -903,7 +903,7 @@ const PedidoView = () => {
                         type="button"
                         className={`flex-fill py-2 px-3 fw-bold border-0 bg-transparent text-center d-flex align-items-center justify-content-center gap-2 border-bottom border-3 transition-all ${mobileTab === 'menu' ? 'border-primary text-primary' : 'border-transparent text-muted'}`}
                         onClick={() => setMobileTab('menu')}
-                        style={{ fontSize: '0.95rem' }}
+                        style={{ fontSize: '0.95rem', color: mobileTab === 'menu' ? 'var(--cafe-primary)' : 'var(--text-muted)', borderColor: mobileTab === 'menu' ? 'var(--cafe-primary)' : 'transparent' }}
                     >
                         <span className="material-symbols-outlined fs-5">menu_book</span>
                         Catálogo Menú
@@ -912,7 +912,7 @@ const PedidoView = () => {
                         type="button"
                         className={`flex-fill py-2 px-3 fw-bold border-0 bg-transparent text-center d-flex align-items-center justify-content-center gap-2 border-bottom border-3 transition-all ${mobileTab === 'seleccionados' ? 'border-primary text-primary' : 'border-transparent text-muted'}`}
                         onClick={() => setMobileTab('seleccionados')}
-                        style={{ fontSize: '0.95rem' }}
+                        style={{ fontSize: '0.95rem', color: mobileTab === 'seleccionados' ? 'var(--cafe-primary)' : 'var(--text-muted)', borderColor: mobileTab === 'seleccionados' ? 'var(--cafe-primary)' : 'transparent' }}
                     >
                         <span className="material-symbols-outlined fs-5">shopping_cart</span>
                         Seleccionados ({listaSeleccionados.length})
@@ -929,14 +929,14 @@ const PedidoView = () => {
                                     <InputGroup.Text className="bg-light border-end-0"><span className="material-symbols-outlined fs-5 text-muted">search</span></InputGroup.Text>
                                     <Form.Control
                                         type="text"
-                                        className="bg-light border-start-0 shadow-none"
+                                        className="bg-light border-start-0 shadow-none rounded-2"
                                         placeholder="Buscar por nombre, descripción o categoría..."
                                         value={busquedaProducto}
                                         onChange={(e) => setBusquedaProducto(e.target.value)}
                                         autoFocus
                                     />
                                     {busquedaProducto && (
-                                        <Button variant="light" className="border" onClick={() => setBusquedaProducto('')}>
+                                        <Button variant="light" className="border rounded-2" onClick={() => setBusquedaProducto('')}>
                                             <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
                                         </Button>
                                     )}
@@ -945,8 +945,16 @@ const PedidoView = () => {
                             <div className="d-flex align-items-center gap-2 overflow-auto pb-1" style={{ whiteSpace: 'nowrap' }}>
                                 <Button
                                     size="sm"
-                                    variant={!filtroCategoria ? "dark" : "outline-secondary"}
-                                    className="rounded-pill px-3 py-1 fw-medium"
+                                    className="rounded-2 px-3 py-1 fw-medium transition-all"
+                                    style={!filtroCategoria ? {
+                                        backgroundColor: 'var(--cafe-primary)',
+                                        borderColor: 'var(--cafe-primary)',
+                                        color: '#ffffff'
+                                    } : {
+                                        backgroundColor: '#FCFAF8',
+                                        borderColor: '#E6DCD3',
+                                        color: 'var(--cafe-secondary)'
+                                    }}
                                     onClick={() => setFiltroCategoria('')}
                                 >
                                     Todas las categorías
@@ -955,8 +963,16 @@ const PedidoView = () => {
                                     <Button
                                         key={cat.id}
                                         size="sm"
-                                        variant={parseInt(filtroCategoria) === cat.id ? "dark" : "outline-secondary"}
-                                        className="rounded-pill px-3 py-1 fw-medium"
+                                        className="rounded-2 px-3 py-1 fw-medium transition-all"
+                                        style={parseInt(filtroCategoria) === cat.id ? {
+                                            backgroundColor: 'var(--cafe-primary)',
+                                            borderColor: 'var(--cafe-primary)',
+                                            color: '#ffffff'
+                                        } : {
+                                            backgroundColor: '#FCFAF8',
+                                            borderColor: '#E6DCD3',
+                                            color: 'var(--cafe-secondary)'
+                                        }}
                                         onClick={() => setFiltroCategoria(parseInt(filtroCategoria) === cat.id ? '' : cat.id.toString())}
                                     >
                                         {cat.nombre}
@@ -1151,11 +1167,17 @@ const PedidoView = () => {
                 <Modal.Footer className="border-top bg-white px-4 py-3 d-flex justify-content-between align-items-center">
                     <div className="d-flex align-items-center gap-2">
                         <span className="text-muted fw-semibold">Total a agregar:</span>
-                        <span className="fw-bold text-success fs-4">Bs. {totalSeleccionados.toFixed(2)}</span>
+                        <span className="fw-bold fs-4" style={{ color: 'var(--cafe-primary)' }}>Bs. {totalSeleccionados.toFixed(2)}</span>
                     </div>
                     <div className="d-flex gap-2">
-                        <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="px-4 py-2 fw-semibold">Cancelar</Button>
-                        <Button variant="dark" onClick={handleAddMultipleItems} disabled={listaSeleccionados.length === 0} className="px-4 py-2 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                        <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="px-4 py-2 fw-semibold rounded-2">Cancelar</Button>
+                        <Button
+                            variant="primary"
+                            onClick={handleAddMultipleItems}
+                            disabled={listaSeleccionados.length === 0}
+                            className="px-4 py-2 fw-bold rounded-2 d-flex align-items-center justify-content-center gap-2 shadow-sm border-0"
+                            style={{ backgroundColor: 'var(--cafe-primary)', color: '#ffffff' }}
+                        >
                             <span className="material-symbols-outlined fs-5">check</span>
                             Confirmar {listaSeleccionados.length > 0 ? `(${listaSeleccionados.length})` : ''}
                         </Button>
