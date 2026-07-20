@@ -46,9 +46,9 @@ const MeseroMesas = () => {
                     <span className="material-symbols-outlined text-primary fs-2">table_restaurant</span>
                     Mesas y Pedidos
                 </h2>
-                <Button variant="primary" onClick={() => setShowCrearPedidoModal(true)} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-4 py-2 fw-bold rounded">
+                <Button variant="primary" onClick={handleCrearPedido} disabled={isSubmitting} className="d-flex align-items-center gap-2 shadow-sm text-nowrap px-4 py-2 fw-bold rounded">
                     <span className="material-symbols-outlined fs-5">add_circle</span>
-                    Nuevo Pedido
+                    {isSubmitting ? 'Abriendo...' : 'Nuevo Pedido'}
                 </Button>
             </div>
 
@@ -154,13 +154,14 @@ const MeseroMesas = () => {
                 {mesas.map((mesa) => {
                     const pedidosEnMesa = pedidosActivos.filter(p => p.mesa?.id === mesa.id);
                     const hasPedidos = pedidosEnMesa.length > 0;
+                    const isParaLlevar = mesa.numero === 0 || mesa.descripcion?.toUpperCase() === 'PARA LLEVAR';
                     
                     const handleClickMesa = () => {
                         if (mesa.es_juntada) {
-                            // Si es juntada y tiene múltiples, no abrimos uno directamente
-                            // porque el usuario debe elegirlos de la lista de arriba
                             if (pedidosEnMesa.length === 1) {
                                 handleAbrirPedido(pedidosEnMesa[0]);
+                            } else if (pedidosEnMesa.length > 1) {
+                                setFiltroBusqueda(isParaLlevar ? 'llevar' : mesa.numero.toString());
                             }
                         } else if (hasPedidos) {
                             handleAbrirPedido(pedidosEnMesa[0]);
@@ -170,21 +171,28 @@ const MeseroMesas = () => {
                     return (
                         <Col key={mesa.id} xs={6} sm={4} md={3} lg={2} className="mb-3">
                             <Card
-                                className={`mesa-card mesa-${mesa.estado?.nombre?.toLowerCase() || 'default'} ${hasPedidos ? 'mesa-con-pedido' : ''}`}
+                                className={`mesa-card mesa-${mesa.estado?.nombre?.toLowerCase() || 'default'} ${hasPedidos ? 'mesa-con-pedido' : ''} ${isParaLlevar ? 'border-primary' : ''}`}
                                 onClick={handleClickMesa}
-                                style={{ cursor: hasPedidos ? 'pointer' : 'default' }}
+                                style={{ cursor: (hasPedidos || isParaLlevar) ? 'pointer' : 'default' }}
                             >
                                 <Card.Body className="text-center p-3 d-flex flex-column align-items-center justify-content-center position-relative">
-                                    {mesa.es_juntada && (
+                                    {isParaLlevar ? (
+                                        <Badge bg="primary" className="position-absolute top-0 start-0 m-2" style={{ fontSize: '0.65rem' }}>
+                                            <span className="material-symbols-outlined pe-1" style={{ fontSize: '0.7rem', verticalAlign: 'text-bottom' }}>shopping_bag</span>
+                                            Para Llevar
+                                        </Badge>
+                                    ) : mesa.es_juntada && (
                                         <Badge bg="info" className="position-absolute top-0 start-0 m-2" style={{ fontSize: '0.65rem' }}>
                                             <span className="material-symbols-outlined pe-1" style={{ fontSize: '0.7rem', verticalAlign: 'text-bottom' }}>groups</span>
                                             Juntada
                                         </Badge>
                                     )}
-                                    <span className="material-symbols-outlined mb-2" style={{ fontSize: '2.5rem', opacity: 0.8 }}>table_restaurant</span>
-                                    <strong className="mb-1">Mesa {mesa.numero}</strong>
+                                    <span className="material-symbols-outlined mb-2" style={{ fontSize: '2.5rem', opacity: 0.8 }}>
+                                        {isParaLlevar ? 'takeout_dining' : 'table_restaurant'}
+                                    </span>
+                                    <strong className="mb-1">{isParaLlevar ? 'Para Llevar' : `Mesa ${mesa.numero}`}</strong>
                                     <Badge bg={getEstadoVariant(mesa.estado)} className="mt-1 px-3 py-1 bg-opacity-75" style={{ fontSize: '0.75rem' }}>
-                                        {mesa.estado?.nombre || 'N/A'}
+                                        {isParaLlevar ? 'Retiros' : (mesa.estado?.nombre || 'N/A')}
                                     </Badge>
                                     {hasPedidos && (
                                         <div className="mt-2 w-100">

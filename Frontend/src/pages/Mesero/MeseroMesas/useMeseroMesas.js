@@ -47,18 +47,18 @@ export const useMeseroMesas = () => {
     }, [loadData]);
 
     const handleCrearPedido = async () => {
-        if (!mesaSeleccionada || isSubmitting) return;
+        if (isSubmitting) return;
         setIsSubmitting(true);
         try {
             const userInfo = getUserInfo();
             const pedido = await createPedido({
-                id_mesa: parseInt(mesaSeleccionada),
+                id_mesa: null,
                 id_usuario: userInfo.id,
             });
             setShowCrearPedidoModal(false);
-            setMesaSeleccionada('');
-            showSuccess(`Pedido #${pedido.id} abierto en Mesa ${pedido.mesa?.numero}`);
-            navigate(`/mesero/pedido/${pedido.id}`);
+            showSuccess(`Pedido #${pedido.id} abierto (Sin mesa asignada)`);
+            const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
+            navigate(`${basePath}/pedido/${pedido.id}`);
         } catch (err) {
             console.error(err);
             showError(err, 'Error al crear el pedido');
@@ -76,7 +76,8 @@ export const useMeseroMesas = () => {
     };
 
     const handleAbrirPedido = (pedido, mode = 'edit') => {
-        navigate(`/mesero/pedido/${pedido.id}?mode=${mode}`);
+        const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
+        navigate(`${basePath}/pedido/${pedido.id}?mode=${mode}`);
     };
 
     const mesasDisponibles = mesas.filter(m => {

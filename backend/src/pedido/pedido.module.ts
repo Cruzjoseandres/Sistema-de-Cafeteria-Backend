@@ -5,9 +5,10 @@ import { PedidoController } from './pedido.controller';
 import { Pedido } from './entities/pedido.entity';
 import { Cuenta } from '../cuenta/entities/cuenta.entity';
 import { DetallePedido } from '../detalle-pedido/entities/detalle-pedido.entity';
+import { Mesa } from '../mesa/entities/mesa.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pedido, Cuenta, DetallePedido])],
+  imports: [TypeOrmModule.forFeature([Pedido, Cuenta, DetallePedido, Mesa])],
   controllers: [PedidoController],
   providers: [PedidoService],
   exports: [PedidoService],

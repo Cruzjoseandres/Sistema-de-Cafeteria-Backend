@@ -38,9 +38,9 @@ export class Pedido {
     @JoinColumn({ name: 'id_usuario' })
     usuario: Usuario;
 
-    @ManyToOne(() => Mesa, (mesa) => mesa.pedidos)
+    @ManyToOne(() => Mesa, (mesa) => mesa.pedidos, { nullable: true })
     @JoinColumn({ name: 'id_mesa' })
-    mesa: Mesa;
+    mesa: Mesa | null;
 
     @OneToMany(() => Cuenta, (cuenta) => cuenta.pedido)
     cuentas: Cuenta[];

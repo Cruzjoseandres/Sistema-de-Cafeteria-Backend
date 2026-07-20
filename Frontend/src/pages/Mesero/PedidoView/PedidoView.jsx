@@ -80,6 +80,7 @@ const DeliveryCell = memo(({ det, onRegister }) => {
 const PedidoView = () => {
     const {
         pedido, cuentas, detallesPorCuenta, productosFiltrados, categorias, totalPedido,
+        mesas, handleChangeMesa,
         viewMode, getClasificacionDetalle,
         loading, error, saving,
         hasUnsavedChanges, handleGuardarCambios, handleCancelarCambios,
@@ -144,9 +145,40 @@ const PedidoView = () => {
                         <span className="material-symbols-outlined">arrow_back</span>
                     </button>
                     <div>
-                        <h1 className="mb-0 d-flex align-items-center gap-2">
-                            📋 Pedido #{pedido.id}
-                            <Badge bg="info" className="ms-2">Mesa {pedido.mesa?.numero}</Badge>
+                        <h1 className="mb-0 d-flex align-items-center gap-2 flex-wrap">
+                            <span>📋 Pedido #{pedido.id}</span>
+                            {isEdit && !isPedidoCompletado ? (
+                                <div className="d-inline-flex align-items-center ms-md-2 mt-2 mt-md-0">
+                                    <span className="material-symbols-outlined text-primary me-1" style={{ fontSize: '1.4rem' }}>
+                                        {pedido.mesa?.numero === 0 || pedido.mesa?.descripcion?.toUpperCase() === 'PARA LLEVAR' || !pedido.mesa ? 'shopping_bag' : 'table_restaurant'}
+                                    </span>
+                                    <Form.Select
+                                        size="sm"
+                                        className="fw-bold border-primary shadow-sm rounded-pill px-3 py-1 bg-light text-dark"
+                                        style={{ width: 'auto', minWidth: '160px', cursor: 'pointer', fontSize: '0.9rem' }}
+                                        value={pedido.mesa?.id || ''}
+                                        onChange={(e) => handleChangeMesa(e.target.value)}
+                                        disabled={saving}
+                                    >
+                                        <option value="">🛍️ Sin mesa / Para Llevar</option>
+                                        {mesas && mesas.map((m) => {
+                                            const isParaLlevarMesa = m.numero === 0 || m.descripcion?.toUpperCase() === 'PARA LLEVAR';
+                                            return (
+                                                <option key={m.id} value={m.id}>
+                                                    {isParaLlevarMesa ? '🛍️ Para Llevar (Mesa virtual)' : m.es_juntada ? `👥 Mesa juntada (${m.capacidad} pers.)` : `🪑 Mesa ${m.numero} (${m.capacidad} pers.)`}
+                                                </option>
+                                            );
+                                        })}
+                                    </Form.Select>
+                                </div>
+                            ) : (
+                                <Badge bg={pedido.mesa?.numero === 0 || !pedido.mesa ? "primary" : "info"} className="ms-md-2 px-3 py-2 rounded-pill fs-6 d-inline-flex align-items-center gap-1 shadow-sm mt-2 mt-md-0">
+                                    <span className="material-symbols-outlined fs-6">
+                                        {pedido.mesa?.numero === 0 || !pedido.mesa ? 'shopping_bag' : 'table_restaurant'}
+                                    </span>
+                                    {pedido.mesa?.numero === 0 || !pedido.mesa ? 'Para Llevar / Retiro' : `Mesa ${pedido.mesa?.numero}`}
+                                </Badge>
+                            )}
                         </h1>
                         <small className="text-muted-custom mt-1 d-block">
                             👤 {pedido.usuario?.persona?.nombre} {pedido.usuario?.persona?.apellido}

@@ -5,6 +5,7 @@ import { createCuenta, getCuentasByPedido, deleteCuenta, updateCuenta, getQRUrl 
 import { createDetalle, createBulkDetalles, getDetallesByCuenta, updateDetalle, bulkUpdateEntrega, deleteDetalle } from '../../../../services/DetallePedidoService';
 import { getAllProductos } from '../../../../services/ProductoService';
 import { getAllCategorias } from '../../../../services/CategoriaService';
+import { getAllMesas } from '../../../../services/MesaService';
 import { useNotification } from '../../../../hooks/useNotification';
 
 const generateTempId = () => -Math.floor(Math.random() * 1000000000);
@@ -36,6 +37,7 @@ export const usePedidoView = () => {
 
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
+    const [mesas, setMesas] = useState([]);
     
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -50,7 +52,6 @@ export const usePedidoView = () => {
     
     const [busquedaProducto, setBusquedaProducto] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
-    // Se quitó filtroDisponible, por defecto solo usamos verdaderos
     const [productosSeleccionados, setProductosSeleccionados] = useState({}); 
 
     // Payment State
@@ -74,14 +75,16 @@ export const usePedidoView = () => {
     const loadData = useCallback(async () => {
         try {
             setLoading(true);
-            const [pedidoData, productosData, categoriasData] = await Promise.all([
+            const [pedidoData, productosData, categoriasData, mesasData] = await Promise.all([
                 getPedidoById(id),
                 getAllProductos(),
-                getAllCategorias()
+                getAllCategorias(),
+                getAllMesas()
             ]);
             setPedido(pedidoData);
             setProductos(productosData);
             setCategorias(categoriasData);
+            setMesas(mesasData);
             
             await loadCuentasYDetalles(pedidoData.id);
             setError(null);
@@ -122,6 +125,21 @@ export const usePedidoView = () => {
         }));
     };
 
+    const handleChangeMesa = async (idMesa) => {
+        try {
+            setSaving(true);
+            const targetMesaId = idMesa === '' || idMesa === null || idMesa === 'null' ? null : Number(idMesa);
+            const updated = await updatePedido(pedido.id, { id_mesa: targetMesaId });
+            setPedido(updated);
+            showSuccess(targetMesaId ? `Mesa asignada a Mesa ${updated.mesa?.numero}` : 'Pedido configurado sin mesa');
+        } catch (err) {
+            console.error(err);
+            showError(err, 'No se pudo asignar/cambiar la mesa. Verifica si ya está ocupada.');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     // --- TERMINAR Y CANCELAR PEDIDO (GLOBAL) ---
     const handleTerminarPedido = async () => {
         if (hasUnsavedChanges) {
@@ -146,7 +164,8 @@ export const usePedidoView = () => {
             try {
                 await updatePedido(pedido.id, { id_estado: 3 }); // 3 = Completado
                 showSuccess('Pedido finalizado exitosamente. Mesa liberada.');
-                navigate('/mesero/mesas');
+                const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
+                navigate(`${basePath}/mesas`);
             } catch (err) {
                 console.error(err);
                 showError(err, 'Error al terminar el pedido');
@@ -177,7 +196,8 @@ export const usePedidoView = () => {
             await deletePedido(pedido.id, justificativoText.trim());
             showSuccess('Pedido eliminado y guardado en auditoría');
             setShowJustificativoModal(false);
-            navigate('/mesero/mesas');
+            const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
+            navigate(`${basePath}/mesas`);
         } catch (err) {
             console.error(err);
             showError(err, 'Error al eliminar el pedido');
@@ -245,11 +265,11 @@ export const usePedidoView = () => {
 
             if (!silent) showSuccess('Cambios guardados exitosamente');
             await loadCuentasYDetalles(pedido.id);
-            return true;
+            return { success: true, cuentaIdMap };
         } catch (error) {
             console.error('Error al guardar borrador:', error);
             showError(error, 'Ocurrió un problema guardando tu pedido. Revisa tu conexión.');
-            return false;
+            return { success: false, cuentaIdMap: {} };
         } finally {
             setSaving(false);
         }
@@ -674,8 +694,20 @@ export const usePedidoView = () => {
     const handleProcessPayment = async () => {
         try {
             setSaving(true);
+            let targetCuentaId = paymentData.cuentaId;
+
+            if (hasUnsavedChanges) {
+                const saveRes = await handleGuardarCambios(true);
+                if (!saveRes || !saveRes.success) {
+                    showError('No se pudo guardar el pedido antes de procesar el cobro. Verifica los datos e intenta nuevamente.');
+                    return;
+                }
+                if (targetCuentaId !== 'ALL' && saveRes.cuentaIdMap && saveRes.cuentaIdMap[targetCuentaId]) {
+                    targetCuentaId = saveRes.cuentaIdMap[targetCuentaId];
+                }
+            }
             
-            if (paymentData.cuentaId === 'ALL') {
+            if (targetCuentaId === 'ALL') {
                 const unpaid = cuentas.filter(c => !c.estado || c.estado.id !== 3);
                 
                 // Compute breakdown for Mixto
@@ -713,7 +745,7 @@ export const usePedidoView = () => {
                     comprobantes: paymentData.comprobantes,
                     ...(isMixto && { monto_qr: qrAmt, monto_efectivo: efectivoReal })
                 };
-                await updateCuenta(paymentData.cuentaId, payload);
+                await updateCuenta(targetCuentaId, payload);
                 showSuccess('Pago registrado y cuenta cerrada correctamente.');
             }
 
@@ -770,6 +802,7 @@ export const usePedidoView = () => {
         cuentas: draftCuentas, 
         detallesPorCuenta: draftDetallesPorCuenta, 
         productosFiltrados, categorias, totalPedido,
+        mesas, handleChangeMesa,
         viewMode, getClasificacionDetalle,
         loading, error, saving,
         hasUnsavedChanges, handleGuardarCambios, handleCancelarCambios,

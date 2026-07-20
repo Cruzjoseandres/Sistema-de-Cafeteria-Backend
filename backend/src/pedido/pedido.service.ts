@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Pedido } from './entities/pedido.entity';
 import { Cuenta } from '../cuenta/entities/cuenta.entity';
 import { DetallePedido } from '../detalle-pedido/entities/detalle-pedido.entity';
+import { Mesa } from '../mesa/entities/mesa.entity';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
@@ -20,12 +21,14 @@ export class PedidoService {
     private readonly cuentaRepository: Repository<Cuenta>,
     @InjectRepository(DetallePedido)
     private readonly detallePedidoRepository: Repository<DetallePedido>,
+    @InjectRepository(Mesa)
+    private readonly mesaRepository: Repository<Mesa>,
     private readonly cloudinaryService: CloudinaryService,
   ) { }
 
   async create(createPedidoDto: CreatePedidoDto) {
     const nuevoPedido = this.pedidoRepository.create({
-      mesa: { id: createPedidoDto.id_mesa },
+      mesa: createPedidoDto.id_mesa ? { id: createPedidoDto.id_mesa } as any : null,
       usuario: { id: createPedidoDto.id_usuario },
       estado: { id: 1 }, // PENDIENTE por defecto
       fecha_apertura: new Date(),
@@ -80,12 +83,53 @@ export class PedidoService {
   }
 
   async update(id: number, updatePedidoDto: UpdatePedidoDto) {
-    const pedido = await this.findOne(id);
-    if (updatePedidoDto.id_estado) {
-      pedido.estado = { id: updatePedidoDto.id_estado } as any;
-    }
-    // Update other fields if necessary
-    return await this.pedidoRepository.save(pedido);
+    return await this.pedidoRepository.manager.transaction(async (manager) => {
+      const pedido = await manager.findOne(Pedido, {
+        where: { id, D_E_L_E_T_E_D: false },
+        relations: ['mesa', 'usuario', 'usuario.persona', 'estado']
+      });
+      if (!pedido) {
+        throw new NotFoundException(`Pedido con ID ${id} no encontrado`);
+      }
+
+      if (updatePedidoDto.id_estado) {
+        pedido.estado = { id: updatePedidoDto.id_estado } as any;
+      }
+
+      if (updatePedidoDto.id_mesa !== undefined) {
+        if (updatePedidoDto.id_mesa === null) {
+          pedido.mesa = null as any;
+        } else {
+          const mesa = await manager.findOne(Mesa, {
+            where: { id: updatePedidoDto.id_mesa, D_E_L_E_T_E_D: false },
+            lock: { mode: 'pessimistic_write' }
+          });
+          if (!mesa) {
+            throw new NotFoundException(`Mesa con ID ${updatePedidoDto.id_mesa} no encontrada`);
+          }
+
+          if (!mesa.es_juntada) {
+            const pedidosActivos = await manager.find(Pedido, {
+              where: [
+                { D_E_L_E_T_E_D: false, mesa: { id: mesa.id }, estado: { id: 1 } },
+                { D_E_L_E_T_E_D: false, mesa: { id: mesa.id }, estado: { id: 2 } }
+              ]
+            });
+            const otrosPedidos = pedidosActivos.filter(p => p.id !== id);
+            if (otrosPedidos.length > 0) {
+              throw new BadRequestException(`La Mesa ${mesa.numero} ya está ocupada por el Pedido #${otrosPedidos[0].id}`);
+            }
+          }
+          pedido.mesa = mesa;
+        }
+      }
+
+      await manager.save(pedido);
+      return await manager.findOne(Pedido, {
+        where: { id },
+        relations: ['mesa', 'usuario', 'usuario.persona', 'estado']
+      });
+    });
   }
 
   async remove(id: number, justificativo: string) {
