@@ -149,3 +149,32 @@
     transform: translateX(3px);
 }
 
+/* Soporte de scroll y dimensiones responsivas para el modal dual de selección de productos */
+.modal-split-body {
+    height: 78vh !important;
+    max-height: 850px !important;
+    overflow: hidden !important;
+}
+
+.panel-catalogo-modal,
+.panel-seleccionados-modal {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+@media (min-width: 992px) {
+    .panel-seleccionados-modal {
+        max-width: 460px !important;
+        min-width: 380px !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .panel-seleccionados-modal {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+}
+

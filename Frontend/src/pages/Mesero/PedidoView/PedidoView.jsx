@@ -919,9 +919,9 @@ const PedidoView = () => {
                     </button>
                 </div>
 
-                <Modal.Body className="p-0 bg-light d-flex flex-column flex-lg-row" style={{ height: '78vh', maxHeight: '850px', overflow: 'hidden' }}>
+                <Modal.Body className="p-0 bg-light d-flex flex-column flex-lg-row modal-split-body">
                     {/* COLUMNA IZQUIERDA: CATÁLOGO DEL MENÚ (Visible en escritorio, en móvil solo si mobileTab === 'menu') */}
-                    <div className={`d-flex flex-column flex-grow-1 bg-white border-end ${mobileTab === 'seleccionados' ? 'd-none d-lg-flex' : 'd-flex'}`} style={{ width: '100%', overflow: 'hidden' }}>
+                    <div className={`d-flex flex-column flex-grow-1 bg-white border-end panel-catalogo-modal ${mobileTab === 'seleccionados' ? 'd-none d-lg-flex' : 'd-flex'}`}>
                         {/* Fixed Header Area (Búsqueda y Categorías) */}
                         <div className="p-3 bg-white border-bottom flex-shrink-0">
                             <div className="mb-3">
@@ -966,7 +966,7 @@ const PedidoView = () => {
                         </div>
 
                         {/* Scrollable Content Area del Catálogo */}
-                        <div className="productos-lista checklist-container p-3 overflow-auto flex-grow-1 bg-light bg-opacity-50">
+                        <div className="productos-lista checklist-container p-3 overflow-auto flex-grow-1 bg-light bg-opacity-50" style={{ minHeight: 0 }}>
                             {productosFiltrados.length === 0 ? (
                                 <div className="text-center py-5 my-5">
                                     <span className="material-symbols-outlined text-muted" style={{ fontSize: '3.5rem', opacity: 0.5 }}>search_off</span>
@@ -1058,7 +1058,7 @@ const PedidoView = () => {
                     </div>
 
                     {/* COLUMNA DERECHA: SECCIÓN DE PRODUCTOS SELECCIONADOS CON NOTAS (Visible en escritorio siempre, en móvil solo si mobileTab === 'seleccionados') */}
-                    <div className={`d-flex flex-column bg-white flex-shrink-0 border-start shadow-sm ${mobileTab === 'menu' ? 'd-none d-lg-flex' : 'd-flex flex-grow-1'}`} style={{ width: '100%', maxWidth: '460px', minWidth: '380px', overflow: 'hidden' }}>
+                    <div className={`d-flex flex-column bg-white border-start shadow-sm panel-seleccionados-modal ${mobileTab === 'menu' ? 'd-none d-lg-flex' : 'd-flex flex-grow-1'}`}>
                         {/* Header de la sección */}
                         <div className="p-3 bg-light border-bottom d-flex justify-content-between align-items-center flex-shrink-0">
                             <h6 className="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
@@ -1073,7 +1073,7 @@ const PedidoView = () => {
                         </div>
 
                         {/* Lista detallada de ítems seleccionados con cantidad y NOTA */}
-                        <div className="p-3 overflow-auto flex-grow-1 d-flex flex-column gap-3 bg-light bg-opacity-50">
+                        <div className="p-3 overflow-auto flex-grow-1 d-flex flex-column gap-3 bg-light bg-opacity-50" style={{ minHeight: 0 }}>
                             {listaSeleccionados.length === 0 ? (
                                 <div className="text-center py-5 my-auto">
                                     <span className="material-symbols-outlined text-muted" style={{ fontSize: '4rem', opacity: 0.35 }}>shopping_cart_off</span>
