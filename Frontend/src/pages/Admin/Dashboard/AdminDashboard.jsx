@@ -168,7 +168,7 @@ const AdminDashboard = () => {
                     <h3 className="section-title mb-3 fs-5">Acciones Rápidas</h3>
                     <Row className="g-3">
                         <Col xs={12} sm={6} md={3}>
-                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/mesas?tab=pos')}>
+                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/ventas')}>
                                 <div className="p-2 rounded bg-light text-primary d-flex align-items-center justify-content-center">
                                     <span className="material-symbols-outlined fs-5">point_of_sale</span>
                                 </div>
