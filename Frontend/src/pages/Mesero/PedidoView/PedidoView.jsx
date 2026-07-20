@@ -564,7 +564,7 @@ const PedidoView = () => {
                             onClick={() => setSubViewType('totales')}
                         >
                             <span className="material-symbols-outlined fs-6">inventory_2</span>
-                            <span>Por Totales de Productos</span>
+                            <span>Por Totales</span>
                         </Button>
                     </div>
                 )}
