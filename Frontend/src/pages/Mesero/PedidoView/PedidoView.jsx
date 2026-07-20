@@ -1,5 +1,5 @@
 import { useState, memo } from 'react';
-import { Container, Card, Badge, Spinner, Alert, Row, Col, Button, Modal, Form, Table, Accordion, InputGroup } from 'react-bootstrap';
+import { Container, Card, Badge, Spinner, Alert, Row, Col, Button, Modal, Form, Table, Accordion, InputGroup, Dropdown } from 'react-bootstrap';
 import { usePedidoView } from './usePedidoView';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
@@ -151,29 +151,79 @@ const PedidoView = () => {
                                 <span>Pedido #{pedido.id}</span>
                             </span>
                             {isEdit && !isPedidoCompletado ? (
-                                <div className="d-inline-flex align-items-center ms-md-2 mt-2 mt-md-0">
-                                    <span className="material-symbols-outlined text-primary me-1" style={{ fontSize: '1.4rem' }}>
-                                        {pedido.mesa?.numero === 0 || pedido.mesa?.descripcion?.toUpperCase() === 'PARA LLEVAR' || !pedido.mesa ? 'shopping_bag' : 'table_restaurant'}
-                                    </span>
-                                    <Form.Select
+                                <Dropdown className="d-inline-block ms-md-2 mt-2 mt-md-0">
+                                    <Dropdown.Toggle
+                                        variant="light"
                                         size="sm"
-                                        className="fw-bold border-primary shadow-sm rounded-pill px-3 py-1 bg-light text-dark"
-                                        style={{ width: 'auto', minWidth: '180px', cursor: 'pointer', fontSize: '0.9rem' }}
-                                        value={pedido.mesa?.id || ''}
-                                        onChange={(e) => handleChangeMesa(e.target.value)}
                                         disabled={saving}
+                                        className="fw-bold border shadow-sm rounded-pill px-3 py-1 bg-white text-dark d-flex align-items-center gap-2 custom-table-dropdown-toggle"
+                                        style={{ cursor: 'pointer', fontSize: '0.9rem' }}
                                     >
-                                        <option value="">-- Sin mesa asignada --</option>
+                                        <span className="material-symbols-outlined text-primary" style={{ fontSize: '1.3rem' }}>
+                                            {pedido.mesa?.numero === 0 || pedido.mesa?.descripcion?.toUpperCase() === 'PARA LLEVAR' || !pedido.mesa ? 'shopping_bag' : 'table_restaurant'}
+                                        </span>
+                                        <span>
+                                            {!pedido.mesa ? '-- Sin mesa asignada --' : pedido.mesa?.numero === 0 || pedido.mesa?.descripcion?.toUpperCase() === 'PARA LLEVAR' ? 'Mesa 0 — Para Llevar' : pedido.mesa?.es_juntada ? `Mesa Juntada (${pedido.mesa?.capacidad} pers.)` : `Mesa ${pedido.mesa?.numero} (${pedido.mesa?.capacidad} pers.)`}
+                                        </span>
+                                    </Dropdown.Toggle>
+
+                                    <Dropdown.Menu className="shadow-lg border-0 rounded-3 p-2 custom-table-dropdown-menu" style={{ maxHeight: '380px', overflowY: 'auto', minWidth: '290px' }}>
+                                        <Dropdown.Header className="text-uppercase fw-bold text-muted px-2 py-1" style={{ fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+                                            Seleccionar Ubicación / Mesa
+                                        </Dropdown.Header>
+
+                                        <Dropdown.Item
+                                            onClick={() => handleChangeMesa("")}
+                                            className={`d-flex align-items-center gap-3 p-2 rounded mb-1 custom-table-dropdown-item ${!pedido.mesa ? 'bg-primary bg-opacity-10 text-primary fw-bold' : ''}`}
+                                        >
+                                            <div className="p-2 rounded bg-light text-secondary d-flex align-items-center justify-content-center border">
+                                                <span className="material-symbols-outlined fs-5">remove_selection</span>
+                                            </div>
+                                            <div className="d-flex flex-column">
+                                                <span className="fw-semibold">-- Sin mesa asignada --</span>
+                                                <small className="text-muted" style={{ fontSize: '0.75rem' }}>Pedido en mostrador / sin ubicar</small>
+                                            </div>
+                                            {!pedido.mesa && <span className="material-symbols-outlined text-primary ms-auto fs-5">check_circle</span>}
+                                        </Dropdown.Item>
+
+                                        <Dropdown.Divider />
+
                                         {mesas && mesas.map((m) => {
                                             const isParaLlevarMesa = m.numero === 0 || m.descripcion?.toUpperCase() === 'PARA LLEVAR';
+                                            const isSelected = pedido.mesa?.id === m.id;
+                                            const estadoName = m.estado?.nombre || 'DISPONIBLE';
+                                            const badgeBg = estadoName === 'DISPONIBLE' ? 'success' : estadoName === 'OCUPADA' ? 'danger' : 'warning';
+
                                             return (
-                                                <option key={m.id} value={m.id}>
-                                                    {isParaLlevarMesa ? 'Mesa 0 — Para Llevar / Mostrador' : m.es_juntada ? `Mesa Juntada (${m.capacidad} personas)` : `Mesa ${m.numero} (${m.capacidad} personas)`}
-                                                </option>
+                                                <Dropdown.Item
+                                                    key={m.id}
+                                                    onClick={() => handleChangeMesa(m.id)}
+                                                    className={`d-flex align-items-center gap-3 p-2 rounded mb-1 custom-table-dropdown-item ${isSelected ? 'bg-primary bg-opacity-10 text-primary fw-bold' : ''}`}
+                                                >
+                                                    <div className={`p-2 rounded d-flex align-items-center justify-content-center ${isParaLlevarMesa ? 'bg-primary text-white shadow-sm' : m.es_juntada ? 'bg-info text-white' : 'bg-light text-dark border'}`}>
+                                                        <span className="material-symbols-outlined fs-5">
+                                                            {isParaLlevarMesa ? 'takeout_dining' : m.es_juntada ? 'groups' : 'table_restaurant'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="d-flex flex-column flex-grow-1">
+                                                        <div className="d-flex align-items-center justify-content-between">
+                                                            <span className="fw-semibold">
+                                                                {isParaLlevarMesa ? 'Mesa 0 — Para Llevar' : m.es_juntada ? `Mesa Juntada` : `Mesa ${m.numero}`}
+                                                            </span>
+                                                            <span className={`badge bg-${isParaLlevarMesa ? 'primary' : badgeBg} bg-opacity-75`} style={{ fontSize: '0.7rem' }}>
+                                                                {isParaLlevarMesa ? 'Mostrador' : estadoName}
+                                                            </span>
+                                                        </div>
+                                                        <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                                            {isParaLlevarMesa ? 'Para pedidos de retiro o delivery' : `Capacidad: ${m.capacidad} personas`}
+                                                        </small>
+                                                    </div>
+                                                    {isSelected && <span className="material-symbols-outlined text-primary ms-2 fs-5">check_circle</span>}
+                                                </Dropdown.Item>
                                             );
                                         })}
-                                    </Form.Select>
-                                </div>
+                                    </Dropdown.Menu>
+                                </Dropdown>
                             ) : (
                                 <Badge bg={pedido.mesa?.numero === 0 || !pedido.mesa ? "primary" : "info"} className="ms-md-2 px-3 py-2 rounded-pill fs-6 d-inline-flex align-items-center gap-1 shadow-sm mt-2 mt-md-0">
                                     <span className="material-symbols-outlined fs-6">
