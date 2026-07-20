@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, useMemo, memo } from 'react';
 import { Container, Card, Badge, Spinner, Alert, Row, Col, Button, Modal, Form, Table, Accordion, InputGroup, Dropdown } from 'react-bootstrap';
 import { usePedidoView } from './usePedidoView';
 import NotificationToast from '../../../components/NotificationToast';
@@ -79,7 +79,7 @@ const DeliveryCell = memo(({ det, onRegister }) => {
 
 const PedidoView = () => {
     const {
-        pedido, cuentas, detallesPorCuenta, productosFiltrados, categorias, totalPedido,
+        pedido, cuentas, detallesPorCuenta, productos, productosFiltrados, categorias, totalPedido,
         mesas, handleChangeMesa,
         viewMode, getClasificacionDetalle,
         loading, error, saving,
@@ -90,7 +90,7 @@ const PedidoView = () => {
         asignarNombre, setAsignarNombre,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
-        productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
+        productosSeleccionados, toggleProductoChecklist, clearChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
         handleAddCuenta, handleDeleteCuenta,
         handleOpenAddItem, handleAddMultipleItems,
         handleCambiarCantidadDetalle, handleDeleteDetalle, handleEntregarItem,
@@ -117,6 +117,24 @@ const PedidoView = () => {
     const isPedidoCompletado = pedido?.estado?.id === 3 || pedido?.estado?.nombre === 'INACTIVO' || pedido?.estado?.nombre === 'COMPLETADO' || pedido?.estado?.nombre === 'PAGADO';
 
     const [subViewType, setSubViewType] = useState('cuentas'); // 'cuentas' | 'totales'
+
+    // Lista y totales de productos seleccionados en el modal de checklist
+    const listaSeleccionados = useMemo(() => {
+        if (!productos || !productosSeleccionados) return [];
+        return Object.entries(productosSeleccionados).map(([idStr, data]) => {
+            const prod = (productos || []).find(p => p.id === parseInt(idStr));
+            if (!prod) return null;
+            return {
+                producto: prod,
+                cantidad: parseInt(data.cantidad) || 1,
+                comentario: data.comentario || ''
+            };
+        }).filter(Boolean);
+    }, [productos, productosSeleccionados]);
+
+    const totalSeleccionados = useMemo(() => {
+        return listaSeleccionados.reduce((sum, item) => sum + (item.cantidad * parseFloat(item.producto?.precio || 0)), 0);
+    }, [listaSeleccionados]);
 
     // Lógica para la agrupación por Totales de Productos
     const todosLosDetalles = Object.values(detallesPorCuenta || {}).flat();
@@ -840,159 +858,272 @@ const PedidoView = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST) ========== */}
-            <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" fullscreen="lg-down">
-                <Modal.Header closeButton className="border-bottom-0 pb-2 px-3 px-md-4">
-                    <Modal.Title className="d-flex align-items-center gap-2 w-100 fs-5 pe-2">
-                        <span className="material-symbols-outlined text-dark fs-4">restaurant_menu</span>
+            {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST - VISTA DIVIDIDA) ========== */}
+            <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" fullscreen="lg-down" dialogClassName="modal-90w">
+                <Modal.Header closeButton className="border-bottom pb-3 px-3 px-md-4 bg-white">
+                    <Modal.Title className="d-flex align-items-center gap-2 w-100 pe-2">
+                        <span className="material-symbols-outlined text-primary fs-3">restaurant_menu</span>
                         <span className="fw-bold fs-5">Seleccionar Productos</span>
-                        <Badge bg="dark" pill className="ms-auto fs-6 fw-normal px-3 py-1">
-                            {Object.keys(productosSeleccionados).length} seleccionados
-                        </Badge>
+                        <div className="ms-auto d-flex align-items-center gap-3">
+                            <Badge bg="dark" pill className="fs-6 fw-normal px-3 py-2">
+                                {listaSeleccionados.length} seleccionados
+                            </Badge>
+                            {listaSeleccionados.length > 0 && (
+                                <Badge bg="success" className="fs-6 fw-bold px-3 py-2 shadow-sm">
+                                    Bs. {totalSeleccionados.toFixed(2)}
+                                </Badge>
+                            )}
+                        </div>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="p-0 bg-light d-flex flex-column" style={{ overflow: 'hidden' }}>
-                    {/* Fixed Header Area */}
-                    <div className="p-3 bg-white border-bottom flex-shrink-0">
-                        <div className="mb-3">
-                            <InputGroup>
-                                <InputGroup.Text className="bg-light border-end-0"><span className="material-symbols-outlined fs-5 text-muted">search</span></InputGroup.Text>
-                                <Form.Control
-                                    type="text"
-                                    className="bg-light border-start-0 shadow-none"
-                                    placeholder="Buscar por nombre, descripción o categoría..."
-                                    value={busquedaProducto}
-                                    onChange={(e) => setBusquedaProducto(e.target.value)}
-                                    autoFocus
-                                />
-                                {busquedaProducto && (
-                                    <Button variant="light" className="border" onClick={() => setBusquedaProducto('')}>
-                                        <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
-                                    </Button>
-                                )}
-                            </InputGroup>
-                        </div>
-                        <div className="d-flex align-items-center gap-2 overflow-auto pb-1" style={{ whiteSpace: 'nowrap' }}>
-                            <Button
-                                size="sm"
-                                variant={!filtroCategoria ? "dark" : "outline-secondary"}
-                                className="rounded-pill px-3 py-1 fw-medium"
-                                onClick={() => setFiltroCategoria('')}
-                            >
-                                Todas las categorías
-                            </Button>
-                            {categorias.map((cat) => (
-                                <Button
-                                    key={cat.id}
-                                    size="sm"
-                                    variant={parseInt(filtroCategoria) === cat.id ? "dark" : "outline-secondary"}
-                                    className="rounded-pill px-3 py-1 fw-medium"
-                                    onClick={() => setFiltroCategoria(parseInt(filtroCategoria) === cat.id ? '' : cat.id.toString())}
-                                >
-                                    {cat.nombre}
-                                </Button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Scrollable Content Area */}
-                    <div className="productos-lista checklist-container p-2 p-md-4 overflow-auto flex-grow-1" style={{ maxHeight: '65vh' }}>
-                        {productosFiltrados.length === 0 ? (
-                            <div className="text-center py-5">
-                                <span className="material-symbols-outlined text-muted" style={{ fontSize: '3rem', opacity: 0.5 }}>search_off</span>
-                                <h5 className="text-muted mt-3">No se encontraron productos</h5>
+                <Modal.Body className="p-0 bg-light d-flex flex-column flex-lg-row" style={{ height: '75vh', maxHeight: '800px', overflow: 'hidden' }}>
+                    {/* COLUMNA IZQUIERDA: CATÁLOGO */}
+                    <div className="d-flex flex-column flex-grow-1 bg-white border-end" style={{ width: '100%', overflow: 'hidden' }}>
+                        {/* Fixed Header Area (Búsqueda y Categorías) */}
+                        <div className="p-3 bg-white border-bottom flex-shrink-0">
+                            <div className="mb-3">
+                                <InputGroup>
+                                    <InputGroup.Text className="bg-light border-end-0"><span className="material-symbols-outlined fs-5 text-muted">search</span></InputGroup.Text>
+                                    <Form.Control
+                                        type="text"
+                                        className="bg-light border-start-0 shadow-none"
+                                        placeholder="Buscar por nombre, descripción o categoría..."
+                                        value={busquedaProducto}
+                                        onChange={(e) => setBusquedaProducto(e.target.value)}
+                                        autoFocus
+                                    />
+                                    {busquedaProducto && (
+                                        <Button variant="light" className="border" onClick={() => setBusquedaProducto('')}>
+                                            <span className="material-symbols-outlined fs-6 d-flex text-muted">close</span>
+                                        </Button>
+                                    )}
+                                </InputGroup>
                             </div>
-                        ) : (
-                            <Row className="g-2 g-md-3">
-                                {productosFiltrados.map((p) => {
-                                    const seleccionado = productosSeleccionados[p.id];
-                                    const isAgotado = !p.disponible;
-                                    
-                                    return (
-                                        <Col xs={12} lg={6} xl={4} key={p.id}>
-                                            <div className={`p-3 border rounded d-flex flex-column h-100 transition-all ${seleccionado ? 'border-dark bg-light' : 'bg-white'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
-                                                
-                                                <div className="d-flex align-items-center mb-2 cursor-pointer" 
-                                                     onClick={() => !isAgotado && toggleProductoChecklist(p.id)}
-                                                >
-                                                    <div className="me-3">
-                                                        <Form.Check 
-                                                            type="checkbox"
-                                                            checked={!!seleccionado}
-                                                            onChange={() => {}} // handled by parent div
-                                                            className="scale-125"
-                                                            disabled={isAgotado}
-                                                        />
+                            <div className="d-flex align-items-center gap-2 overflow-auto pb-1" style={{ whiteSpace: 'nowrap' }}>
+                                <Button
+                                    size="sm"
+                                    variant={!filtroCategoria ? "dark" : "outline-secondary"}
+                                    className="rounded-pill px-3 py-1 fw-medium"
+                                    onClick={() => setFiltroCategoria('')}
+                                >
+                                    Todas las categorías
+                                </Button>
+                                {categorias.map((cat) => (
+                                    <Button
+                                        key={cat.id}
+                                        size="sm"
+                                        variant={parseInt(filtroCategoria) === cat.id ? "dark" : "outline-secondary"}
+                                        className="rounded-pill px-3 py-1 fw-medium"
+                                        onClick={() => setFiltroCategoria(parseInt(filtroCategoria) === cat.id ? '' : cat.id.toString())}
+                                    >
+                                        {cat.nombre}
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Scrollable Content Area del Catálogo */}
+                        <div className="productos-lista checklist-container p-3 overflow-auto flex-grow-1 bg-light bg-opacity-50">
+                            {productosFiltrados.length === 0 ? (
+                                <div className="text-center py-5 my-5">
+                                    <span className="material-symbols-outlined text-muted" style={{ fontSize: '3.5rem', opacity: 0.5 }}>search_off</span>
+                                    <h6 className="text-muted mt-3 fw-semibold">No se encontraron productos</h6>
+                                </div>
+                            ) : (
+                                <Row className="g-2 g-md-3">
+                                    {productosFiltrados.map((p) => {
+                                        const seleccionado = productosSeleccionados[p.id];
+                                        const isAgotado = !p.disponible;
+                                        
+                                        return (
+                                            <Col xs={12} sm={6} xl={4} key={p.id}>
+                                                <div className={`p-3 border rounded d-flex flex-column h-100 transition-all ${seleccionado ? 'border-primary bg-primary bg-opacity-10 shadow-sm' : 'bg-white shadow-sm'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
+                                                    <div className="d-flex align-items-center cursor-pointer" 
+                                                         onClick={() => !isAgotado && toggleProductoChecklist(p.id)}
+                                                    >
+                                                        <div className="me-3">
+                                                            <Form.Check 
+                                                                type="checkbox"
+                                                                checked={!!seleccionado}
+                                                                onChange={() => {}} 
+                                                                className="scale-125 cursor-pointer"
+                                                                disabled={isAgotado}
+                                                            />
+                                                        </div>
+                                                        
+                                                        {p.imagePaths && p.imagePaths.length > 0 ? (
+                                                            <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '52px', height: '52px', minWidth: '52px' }} />
+                                                        ) : (
+                                                            <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '52px', height: '52px', minWidth: '52px' }}>
+                                                                <span className="material-symbols-outlined text-muted">image</span>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                            <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
+                                                            <small className="text-muted text-truncate d-block" style={{ fontSize: '0.8rem' }}>{p.categoria?.nombre}</small>
+                                                            {isAgotado && <Badge bg="secondary" className="mt-1 fw-normal" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
+                                                        </div>
+                                                        
+                                                        <div className="fw-bold text-dark text-end ms-2 text-nowrap flex-shrink-0 fs-6">
+                                                            Bs. {parseFloat(p.precio).toFixed(2)}
+                                                        </div>
                                                     </div>
-                                                    
-                                                    {p.imagePaths && p.imagePaths.length > 0 ? (
-                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '48px', height: '48px', minWidth: '48px' }} />
-                                                    ) : (
-                                                        <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '48px', height: '48px', minWidth: '48px' }}>
-                                                            <span className="material-symbols-outlined text-muted">image</span>
+
+                                                    {/* Opción rápida de controles dentro de la tarjeta del catálogo */}
+                                                    {seleccionado && (
+                                                        <div className="mt-auto pt-3 border-top mt-2 fade-in">
+                                                            <Row className="g-2">
+                                                                <Col xs={5}>
+                                                                    <div className="d-flex align-items-center border bg-white rounded shadow-sm">
+                                                                        <Button variant="light" className="border-0 px-2 rounded-start fw-bold" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                                                        <Form.Control 
+                                                                            type="number"
+                                                                            className="border-0 text-center fw-bold p-1 hide-arrows rounded-0"
+                                                                            style={{ width: '45px', minWidth: '45px', fontSize: '0.9rem' }}
+                                                                            value={seleccionado.cantidad}
+                                                                            onChange={(e) => setChecklistCount(p.id, e.target.value)}
+                                                                            onBlur={(e) => {
+                                                                                if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                                                                                    setChecklistCount(p.id, '1');
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <Button variant="light" className="border-0 px-2 rounded-end fw-bold" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                                    </div>
+                                                                </Col>
+                                                                <Col xs={7}>
+                                                                    <Form.Control 
+                                                                        type="text" 
+                                                                        size="sm"
+                                                                        className="shadow-sm"
+                                                                        placeholder="Nota: Ej. Sin hielo" 
+                                                                        value={seleccionado.comentario}
+                                                                        onChange={(e) => updateChecklistComment(p.id, e.target.value)}
+                                                                    />
+                                                                </Col>
+                                                            </Row>
                                                         </div>
                                                     )}
-                                                    
-                                                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                        <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
-                                                        <small className="text-muted text-truncate d-block" style={{ fontSize: '0.8rem' }}>{p.categoria?.nombre}</small>
-                                                        {isAgotado && <Badge bg="secondary" className="mt-1 fw-normal" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
-                                                    </div>
-                                                    
-                                                    <div className="fw-semibold text-dark text-end ms-2 text-nowrap flex-shrink-0 fs-6">
-                                                        Bs. {parseFloat(p.precio).toFixed(2)}
-                                                    </div>
                                                 </div>
+                                            </Col>
+                                        );
+                                    })}
+                                </Row>
+                            )}
+                        </div>
+                    </div>
 
-                                                {/* Expanded options for selected item */}
-                                                {seleccionado && (
-                                                    <div className="mt-auto pt-3 border-top mt-2 fade-in">
-                                                        <Row className="g-2">
-                                                            <Col xs={5}>
-                                                                <div className="d-flex align-items-center border bg-white rounded">
-                                                                    <Button variant="light" className="border-0 px-2 rounded-start" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
-                                                                    <Form.Control 
-                                                                        type="number"
-                                                                        className="border-0 text-center fw-bold p-1 hide-arrows rounded-0"
-                                                                        style={{ width: '45px', minWidth: '45px' }}
-                                                                        value={seleccionado.cantidad}
-                                                                        onChange={(e) => setChecklistCount(p.id, e.target.value)}
-                                                                        onBlur={(e) => {
-                                                                            if (e.target.value === '' || parseInt(e.target.value) < 1) {
-                                                                                setChecklistCount(p.id, '1');
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                    <Button variant="light" className="border-0 px-2 rounded-end" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
-                                                                </div>
-                                                            </Col>
-                                                            <Col xs={7}>
-                                                                <Form.Control 
-                                                                    type="text" 
-                                                                    size="sm"
-                                                                    placeholder="Nota: Ej. Sin hielo" 
-                                                                    value={seleccionado.comentario}
-                                                                    onChange={(e) => updateChecklistComment(p.id, e.target.value)}
-                                                                />
-                                                            </Col>
-                                                        </Row>
+                    {/* COLUMNA DERECHA: SECCIÓN DE PRODUCTOS SELECCIONADOS */}
+                    <div className="d-flex flex-column bg-white flex-shrink-0 border-start shadow-sm" style={{ width: '100%', maxWidth: '440px', minWidth: '350px', overflow: 'hidden' }}>
+                        {/* Header de la sección */}
+                        <div className="p-3 bg-light border-bottom d-flex justify-content-between align-items-center flex-shrink-0">
+                            <h6 className="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
+                                <span className="material-symbols-outlined text-primary fs-5">shopping_cart</span>
+                                Seleccionados ({listaSeleccionados.length})
+                            </h6>
+                            {listaSeleccionados.length > 0 && (
+                                <Button variant="link" size="sm" className="text-danger text-decoration-none p-0 fw-semibold" onClick={clearChecklist}>
+                                    Limpiar todo
+                                </Button>
+                            )}
+                        </div>
+
+                        {/* Lista de ítems seleccionados */}
+                        <div className="p-3 overflow-auto flex-grow-1 d-flex flex-column gap-3 bg-light bg-opacity-50">
+                            {listaSeleccionados.length === 0 ? (
+                                <div className="text-center py-5 my-auto">
+                                    <span className="material-symbols-outlined text-muted" style={{ fontSize: '3.5rem', opacity: 0.4 }}>shopping_cart_off</span>
+                                    <h6 className="text-muted mt-3 fw-semibold">Sin productos seleccionados</h6>
+                                    <p className="text-muted small mb-0 px-3">Haz clic o marca los productos del menú a la izquierda para sumarlos a tu orden.</p>
+                                </div>
+                            ) : (
+                                listaSeleccionados.map((item) => {
+                                    const p = item.producto;
+                                    return (
+                                        <div key={p.id} className="bg-white border rounded p-3 shadow-sm d-flex flex-column gap-2 fade-in">
+                                            <div className="d-flex align-items-center">
+                                                <div className="me-2">
+                                                    <Form.Check 
+                                                        type="checkbox"
+                                                        checked={true}
+                                                        onChange={() => toggleProductoChecklist(p.id)}
+                                                        className="scale-125 cursor-pointer"
+                                                    />
+                                                </div>
+                                                {p.imagePaths && p.imagePaths.length > 0 ? (
+                                                    <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-2 border" style={{ width: '44px', height: '44px', minWidth: '44px' }} />
+                                                ) : (
+                                                    <div className="bg-light border rounded d-flex align-items-center justify-content-center me-2" style={{ width: '44px', height: '44px', minWidth: '44px' }}>
+                                                        <span className="material-symbols-outlined text-muted small">image</span>
                                                     </div>
                                                 )}
+                                                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                    <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.9rem' }}>{p.nombre}</h6>
+                                                    <small className="text-muted text-truncate d-block" style={{ fontSize: '0.75rem' }}>Bs. {parseFloat(p.precio).toFixed(2)} c/u</small>
+                                                </div>
+                                                <div className="text-end ms-2 flex-shrink-0">
+                                                    <div className="fw-bold text-dark fs-6">Bs. {(item.cantidad * parseFloat(p.precio)).toFixed(2)}</div>
+                                                    <button type="button" className="btn btn-link text-danger p-0 border-0 small text-decoration-none d-flex align-items-center ms-auto mt-1" onClick={() => toggleProductoChecklist(p.id)}>
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span>
+                                                    </button>
+                                                </div>
                                             </div>
-                                        </Col>
+
+                                            {/* Controles de cantidad y comentario */}
+                                            <div className="pt-2 border-top mt-1">
+                                                <Row className="g-2">
+                                                    <Col xs={5}>
+                                                        <div className="d-flex align-items-center border bg-light rounded">
+                                                            <Button variant="light" className="border-0 px-2 rounded-start fw-bold" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                                            <Form.Control 
+                                                                type="number"
+                                                                className="border-0 text-center fw-bold p-1 hide-arrows rounded-0 bg-light"
+                                                                style={{ width: '40px', minWidth: '40px', fontSize: '0.9rem' }}
+                                                                value={item.cantidad}
+                                                                onChange={(e) => setChecklistCount(p.id, e.target.value)}
+                                                                onBlur={(e) => {
+                                                                    if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                                                                        setChecklistCount(p.id, '1');
+                                                                    }
+                                                                }}
+                                                            />
+                                                            <Button variant="light" className="border-0 px-2 rounded-end fw-bold" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                        </div>
+                                                    </Col>
+                                                    <Col xs={7}>
+                                                        <Form.Control 
+                                                            type="text" 
+                                                            size="sm"
+                                                            placeholder="Nota: Ej. Sin hielo" 
+                                                            value={item.comentario}
+                                                            onChange={(e) => updateChecklistComment(p.id, e.target.value)}
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        </div>
                                     );
-                                })}
-                            </Row>
-                        )}
+                                })
+                            )}
+                        </div>
+
+                        {/* Footer con Total y Acción de Agregar */}
+                        <div className="p-3 bg-white border-top flex-shrink-0 shadow-sm">
+                            <div className="d-flex justify-content-between align-items-center mb-3 px-1">
+                                <span className="text-muted fw-semibold">Total a agregar:</span>
+                                <span className="fw-bold text-success fs-4">Bs. {totalSeleccionados.toFixed(2)}</span>
+                            </div>
+                            <div className="d-flex gap-2">
+                                <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="py-2 flex-fill fw-semibold">Cancelar</Button>
+                                <Button variant="dark" onClick={handleAddMultipleItems} disabled={listaSeleccionados.length === 0} className="py-2 flex-fill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                                    <span className="material-symbols-outlined">check_circle</span>
+                                    Confirmar ({listaSeleccionados.length})
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </Modal.Body>
-                <Modal.Footer className="border-top bg-white px-4 py-3">
-                    <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="px-4 py-2">Cancelar</Button>
-                    <Button variant="dark" onClick={handleAddMultipleItems} disabled={Object.keys(productosSeleccionados).length === 0} className="px-4 py-2 d-flex align-items-center gap-2">
-                        <span className="material-symbols-outlined fs-5">check</span>
-                        Agregar al Pedido {Object.keys(productosSeleccionados).length > 0 ? `(${Object.keys(productosSeleccionados).length})` : ''}
-                    </Button>
-                </Modal.Footer>
             </Modal>
 
             {/* MODAL PAGO DE CUENTA */}

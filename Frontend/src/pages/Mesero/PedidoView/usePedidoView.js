@@ -346,6 +346,10 @@ export const usePedidoView = () => {
         });
     };
 
+    const clearChecklist = () => {
+        setProductosSeleccionados({});
+    };
+
     const updateChecklistCount = (id_producto, delta) => {
         setProductosSeleccionados(prev => {
             const current = { ...prev };
@@ -797,7 +801,7 @@ export const usePedidoView = () => {
         pedido, 
         cuentas: draftCuentas, 
         detallesPorCuenta: draftDetallesPorCuenta, 
-        productosFiltrados, categorias, totalPedido,
+        productos, productosFiltrados, categorias, totalPedido,
         mesas, handleChangeMesa,
         viewMode, getClasificacionDetalle,
         loading, error, saving,
@@ -808,7 +812,7 @@ export const usePedidoView = () => {
         asignarNombre, setAsignarNombre,
         busquedaProducto, setBusquedaProducto,
         filtroCategoria, setFiltroCategoria,
-        productosSeleccionados, toggleProductoChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
+        productosSeleccionados, toggleProductoChecklist, clearChecklist, updateChecklistCount, setChecklistCount, updateChecklistComment,
         handleAddCuenta, handleDeleteCuenta,
         handleOpenAddItem, handleAddMultipleItems,
         handleCambiarCantidadDetalle, handleDeleteDetalle, handleEntregarItem,
