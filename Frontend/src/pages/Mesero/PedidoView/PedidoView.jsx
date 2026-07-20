@@ -323,7 +323,7 @@ const PedidoView = () => {
                                         </div>
                                     </div>
                                     <div className="d-flex align-items-center gap-3 flex-shrink-0">
-                                        <Badge bg="primary" className="fs-6 px-3 py-2 rounded-pill">
+                                        <Badge bg="primary" className="fs-6 px-3 py-2 rounded-2">
                                             {grupo.cantidadTotal} {grupo.cantidadTotal === 1 ? 'u.' : 'u.'}
                                         </Badge>
                                         <span className="fw-bold text-dark fs-6 d-none d-sm-inline">
@@ -385,7 +385,7 @@ const PedidoView = () => {
                                         variant="light"
                                         size="sm"
                                         disabled={saving}
-                                        className="fw-bold border shadow-sm rounded-pill px-3 py-1 bg-white text-dark d-flex align-items-center gap-2 custom-table-dropdown-toggle"
+                                        className="fw-bold border shadow-sm rounded-2 px-3 py-1 bg-white text-dark d-flex align-items-center gap-2 custom-table-dropdown-toggle"
                                         style={{ cursor: 'pointer', fontSize: '0.9rem' }}
                                     >
                                         <span className="material-symbols-outlined text-primary" style={{ fontSize: '1.3rem' }}>
@@ -454,7 +454,7 @@ const PedidoView = () => {
                                     </Dropdown.Menu>
                                 </Dropdown>
                             ) : (
-                                <Badge bg={pedido.mesa?.numero === 0 || !pedido.mesa ? "primary" : "info"} className="ms-md-2 px-3 py-2 rounded-pill fs-6 d-inline-flex align-items-center gap-1 shadow-sm mt-2 mt-md-0">
+                                <Badge bg={pedido.mesa?.numero === 0 || !pedido.mesa ? "primary" : "info"} className="ms-md-2 px-3 py-2 rounded-2 fs-6 d-inline-flex align-items-center gap-1 shadow-sm mt-2 mt-md-0">
                                     <span className="material-symbols-outlined fs-6">
                                         {pedido.mesa?.numero === 0 || !pedido.mesa ? 'shopping_bag' : 'table_restaurant'}
                                     </span>
@@ -551,7 +551,7 @@ const PedidoView = () => {
                         <Button
                             variant={subViewType === 'cuentas' ? 'primary' : 'outline-primary'}
                             size="sm"
-                            className="d-flex align-items-center gap-2 px-3 py-2 fw-bold shadow-sm rounded-pill"
+                            className="d-flex align-items-center gap-2 px-3 py-2 fw-bold shadow-sm rounded-2"
                             onClick={() => setSubViewType('cuentas')}
                         >
                             <span className="material-symbols-outlined fs-6">group</span>
@@ -560,7 +560,7 @@ const PedidoView = () => {
                         <Button
                             variant={subViewType === 'totales' ? 'primary' : 'outline-primary'}
                             size="sm"
-                            className="d-flex align-items-center gap-2 px-3 py-2 fw-bold shadow-sm rounded-pill"
+                            className="d-flex align-items-center gap-2 px-3 py-2 fw-bold shadow-sm rounded-2"
                             onClick={() => setSubViewType('totales')}
                         >
                             <span className="material-symbols-outlined fs-6">inventory_2</span>
@@ -945,15 +945,16 @@ const PedidoView = () => {
                             <div className="d-flex align-items-center gap-2 overflow-auto pb-1" style={{ whiteSpace: 'nowrap' }}>
                                 <Button
                                     size="sm"
-                                    className="rounded-2 px-3 py-1 fw-medium transition-all"
+                                    variant={!filtroCategoria ? "primary" : "light"}
+                                    className="rounded-2 px-3 py-1 fw-medium transition-all border"
                                     style={!filtroCategoria ? {
                                         backgroundColor: 'var(--cafe-primary)',
                                         borderColor: 'var(--cafe-primary)',
                                         color: '#ffffff'
                                     } : {
-                                        backgroundColor: '#FCFAF8',
+                                        backgroundColor: '#ffffff',
                                         borderColor: '#E6DCD3',
-                                        color: 'var(--cafe-secondary)'
+                                        color: 'var(--text-main)'
                                     }}
                                     onClick={() => setFiltroCategoria('')}
                                 >
@@ -963,15 +964,16 @@ const PedidoView = () => {
                                     <Button
                                         key={cat.id}
                                         size="sm"
-                                        className="rounded-2 px-3 py-1 fw-medium transition-all"
+                                        variant={parseInt(filtroCategoria) === cat.id ? "primary" : "light"}
+                                        className="rounded-2 px-3 py-1 fw-medium transition-all border"
                                         style={parseInt(filtroCategoria) === cat.id ? {
                                             backgroundColor: 'var(--cafe-primary)',
                                             borderColor: 'var(--cafe-primary)',
                                             color: '#ffffff'
                                         } : {
-                                            backgroundColor: '#FCFAF8',
+                                            backgroundColor: '#ffffff',
                                             borderColor: '#E6DCD3',
-                                            color: 'var(--cafe-secondary)'
+                                            color: 'var(--text-main)'
                                         }}
                                         onClick={() => setFiltroCategoria(parseInt(filtroCategoria) === cat.id ? '' : cat.id.toString())}
                                     >
