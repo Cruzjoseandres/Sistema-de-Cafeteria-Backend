@@ -58,7 +58,7 @@ export const useMeseroMesas = () => {
             setShowCrearPedidoModal(false);
             showSuccess(`Pedido #${pedido.id} abierto (Sin mesa asignada)`);
             const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
-            navigate(`${basePath}/pedido/${pedido.id}`);
+            navigate(`${basePath}/pedido/${pedido.id}`, { state: { from: window.location.pathname } });
         } catch (err) {
             console.error(err);
             showError(err, 'Error al crear el pedido');
@@ -77,7 +77,7 @@ export const useMeseroMesas = () => {
 
     const handleAbrirPedido = (pedido, mode = 'edit') => {
         const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
-        navigate(`${basePath}/pedido/${pedido.id}?mode=${mode}`);
+        navigate(`${basePath}/pedido/${pedido.id}?mode=${mode}`, { state: { from: window.location.pathname } });
     };
 
     const mesasDisponibles = mesas.filter(m => {

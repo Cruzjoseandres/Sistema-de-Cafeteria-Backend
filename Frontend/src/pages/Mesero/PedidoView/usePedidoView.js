@@ -164,8 +164,8 @@ export const usePedidoView = () => {
             try {
                 await updatePedido(pedido.id, { id_estado: 3 }); // 3 = Completado
                 showSuccess('Pedido finalizado exitosamente. Mesa liberada.');
-                const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
-                navigate(`${basePath}/mesas`);
+                const returnPath = location.state?.from || (window.location.pathname.startsWith('/admin') ? '/admin/ventas' : '/mesero/mesas');
+                navigate(returnPath);
             } catch (err) {
                 console.error(err);
                 showError(err, 'Error al terminar el pedido');
@@ -196,8 +196,8 @@ export const usePedidoView = () => {
             await deletePedido(pedido.id, justificativoText.trim());
             showSuccess('Pedido eliminado y guardado en auditoría');
             setShowJustificativoModal(false);
-            const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
-            navigate(`${basePath}/mesas`);
+            const returnPath = location.state?.from || (window.location.pathname.startsWith('/admin') ? '/admin/ventas' : '/mesero/mesas');
+            navigate(returnPath);
         } catch (err) {
             console.error(err);
             showError(err, 'Error al eliminar el pedido');
@@ -584,12 +584,8 @@ export const usePedidoView = () => {
             if (!confirmed) return;
         }
 
-        const stateFrom = location.state?.from;
-        if (stateFrom) {
-            navigate(stateFrom);
-        } else {
-            navigate('/mesero/mesas');
-        }
+        const returnPath = location.state?.from || (window.location.pathname.startsWith('/admin') ? '/admin/ventas' : '/mesero/mesas');
+        navigate(returnPath);
     };
 
     const totalPedido = draftCuentas.reduce((sum, c) => sum + Number(c.total || 0), 0);
