@@ -117,6 +117,7 @@ const PedidoView = () => {
     const isPedidoCompletado = pedido?.estado?.id === 3 || pedido?.estado?.nombre === 'INACTIVO' || pedido?.estado?.nombre === 'COMPLETADO' || pedido?.estado?.nombre === 'PAGADO';
 
     const [subViewType, setSubViewType] = useState('cuentas'); // 'cuentas' | 'totales'
+    const [mobileTab, setMobileTab] = useState('menu'); // 'menu' | 'seleccionados'
 
     // Lista y totales de productos seleccionados en el modal de checklist
     const listaSeleccionados = useMemo(() => {
@@ -214,6 +215,7 @@ const PedidoView = () => {
                     <div className="d-flex flex-column">
                         {seccion.grupos.map((grupo) => {
                             const isCompletado = grupo.cantidadEntregada === grupo.cantidadTotal;
+                            const comentariosGrupo = Array.from(new Set(grupo.detalles.map(d => d.comentario).filter(Boolean)));
                             return isDeliver ? (
                                 <div
                                     key={grupo.key}
@@ -250,6 +252,15 @@ const PedidoView = () => {
                                                 <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>people</span>
                                                 En {grupo.detalles.length} {grupo.detalles.length === 1 ? 'cuenta/registro' : 'cuentas/registros'}
                                             </span>
+                                            {comentariosGrupo.length > 0 && (
+                                                <div className="mt-1 d-flex flex-wrap gap-1">
+                                                    {comentariosGrupo.map((c, idx) => (
+                                                        <Badge key={idx} bg="warning" text="dark" className="border border-warning bg-opacity-25 fw-normal px-2 py-1" style={{ fontSize: '0.78rem' }}>
+                                                            <span className="fw-semibold">Nota:</span> {c}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="d-flex align-items-center flex-shrink-0">
@@ -300,6 +311,15 @@ const PedidoView = () => {
                                                 <span className="material-symbols-outlined" style={{ fontSize: '0.85rem' }}>people</span>
                                                 En {grupo.detalles.length} {grupo.detalles.length === 1 ? 'cuenta/registro' : 'cuentas/registros'}
                                             </span>
+                                            {comentariosGrupo.length > 0 && (
+                                                <div className="mt-1 d-flex flex-wrap gap-1">
+                                                    {comentariosGrupo.map((c, idx) => (
+                                                        <Badge key={idx} bg="warning" text="dark" className="border border-warning bg-opacity-25 fw-normal px-2 py-1" style={{ fontSize: '0.78rem' }}>
+                                                            <span className="fw-semibold">Nota:</span> {c}
+                                                        </Badge>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                     <div className="d-flex align-items-center gap-3 flex-shrink-0">
@@ -858,13 +878,13 @@ const PedidoView = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST - VISTA DIVIDIDA) ========== */}
+            {/* ========== MODAL AGREGAR PRODUCTOS (CHECKLIST - VISTA DIVIDIDA / PESTAÑAS RESPONSIVAS) ========== */}
             <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)} size="xl" fullscreen="lg-down" dialogClassName="modal-90w">
                 <Modal.Header closeButton className="border-bottom pb-3 px-3 px-md-4 bg-white">
                     <Modal.Title className="d-flex align-items-center gap-2 w-100 pe-2">
                         <span className="material-symbols-outlined text-primary fs-3">restaurant_menu</span>
                         <span className="fw-bold fs-5">Seleccionar Productos</span>
-                        <div className="ms-auto d-flex align-items-center gap-3">
+                        <div className="ms-auto d-none d-sm-flex align-items-center gap-3">
                             <Badge bg="dark" pill className="fs-6 fw-normal px-3 py-2">
                                 {listaSeleccionados.length} seleccionados
                             </Badge>
@@ -876,9 +896,32 @@ const PedidoView = () => {
                         </div>
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="p-0 bg-light d-flex flex-column flex-lg-row" style={{ height: '75vh', maxHeight: '800px', overflow: 'hidden' }}>
-                    {/* COLUMNA IZQUIERDA: CATÁLOGO */}
-                    <div className="d-flex flex-column flex-grow-1 bg-white border-end" style={{ width: '100%', overflow: 'hidden' }}>
+
+                {/* BARRA DE PESTAÑAS SOLO EN MÓVIL (d-lg-none) PARA ALTERNAR CATÁLOGO Y SELECCIONADOS SIN AMONTONAR */}
+                <div className="d-flex d-lg-none border-bottom bg-white px-2 pt-2">
+                    <button
+                        type="button"
+                        className={`flex-fill py-2 px-3 fw-bold border-0 bg-transparent text-center d-flex align-items-center justify-content-center gap-2 border-bottom border-3 transition-all ${mobileTab === 'menu' ? 'border-primary text-primary' : 'border-transparent text-muted'}`}
+                        onClick={() => setMobileTab('menu')}
+                        style={{ fontSize: '0.95rem' }}
+                    >
+                        <span className="material-symbols-outlined fs-5">menu_book</span>
+                        Catálogo Menú
+                    </button>
+                    <button
+                        type="button"
+                        className={`flex-fill py-2 px-3 fw-bold border-0 bg-transparent text-center d-flex align-items-center justify-content-center gap-2 border-bottom border-3 transition-all ${mobileTab === 'seleccionados' ? 'border-primary text-primary' : 'border-transparent text-muted'}`}
+                        onClick={() => setMobileTab('seleccionados')}
+                        style={{ fontSize: '0.95rem' }}
+                    >
+                        <span className="material-symbols-outlined fs-5">shopping_cart</span>
+                        Seleccionados ({listaSeleccionados.length})
+                    </button>
+                </div>
+
+                <Modal.Body className="p-0 bg-light d-flex flex-column flex-lg-row" style={{ height: '78vh', maxHeight: '850px', overflow: 'hidden' }}>
+                    {/* COLUMNA IZQUIERDA: CATÁLOGO DEL MENÚ (Visible en escritorio, en móvil solo si mobileTab === 'menu') */}
+                    <div className={`d-flex flex-column flex-grow-1 bg-white border-end ${mobileTab === 'seleccionados' ? 'd-none d-lg-flex' : 'd-flex'}`} style={{ width: '100%', overflow: 'hidden' }}>
                         {/* Fixed Header Area (Búsqueda y Categorías) */}
                         <div className="p-3 bg-white border-bottom flex-shrink-0">
                             <div className="mb-3">
@@ -936,7 +979,7 @@ const PedidoView = () => {
                                         const isAgotado = !p.disponible;
                                         
                                         return (
-                                            <Col xs={12} sm={6} xl={4} key={p.id}>
+                                            <Col xs={12} sm={6} key={p.id}>
                                                 <div className={`p-3 border rounded d-flex flex-column h-100 transition-all ${seleccionado ? 'border-primary bg-primary bg-opacity-10 shadow-sm' : 'bg-white shadow-sm'} ${isAgotado ? 'opacity-50 grayscale' : ''}`}>
                                                     <div className="d-flex align-items-center cursor-pointer" 
                                                          onClick={() => !isAgotado && toggleProductoChecklist(p.id)}
@@ -952,16 +995,16 @@ const PedidoView = () => {
                                                         </div>
                                                         
                                                         {p.imagePaths && p.imagePaths.length > 0 ? (
-                                                            <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '52px', height: '52px', minWidth: '52px' }} />
+                                                            <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '56px', height: '56px', minWidth: '56px' }} />
                                                         ) : (
-                                                            <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '52px', height: '52px', minWidth: '52px' }}>
+                                                            <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '56px', height: '56px', minWidth: '56px' }}>
                                                                 <span className="material-symbols-outlined text-muted">image</span>
                                                             </div>
                                                         )}
                                                         
                                                         <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                            <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.95rem' }}>{p.nombre}</h6>
-                                                            <small className="text-muted text-truncate d-block" style={{ fontSize: '0.8rem' }}>{p.categoria?.nombre}</small>
+                                                            <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '1rem' }}>{p.nombre}</h6>
+                                                            <small className="text-muted text-truncate d-block" style={{ fontSize: '0.85rem' }}>{p.categoria?.nombre}</small>
                                                             {isAgotado && <Badge bg="secondary" className="mt-1 fw-normal" style={{ fontSize: '0.7rem' }}>Agotado</Badge>}
                                                         </div>
                                                         
@@ -970,39 +1013,32 @@ const PedidoView = () => {
                                                         </div>
                                                     </div>
 
-                                                    {/* Opción rápida de controles dentro de la tarjeta del catálogo */}
+                                                    {/* Opción rápida compacta de cantidad en catálogo */}
                                                     {seleccionado && (
-                                                        <div className="mt-auto pt-3 border-top mt-2 fade-in">
-                                                            <Row className="g-2">
-                                                                <Col xs={5}>
-                                                                    <div className="d-flex align-items-center border bg-white rounded shadow-sm">
-                                                                        <Button variant="light" className="border-0 px-2 rounded-start fw-bold" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
-                                                                        <Form.Control 
-                                                                            type="number"
-                                                                            className="border-0 text-center fw-bold p-1 hide-arrows rounded-0"
-                                                                            style={{ width: '45px', minWidth: '45px', fontSize: '0.9rem' }}
-                                                                            value={seleccionado.cantidad}
-                                                                            onChange={(e) => setChecklistCount(p.id, e.target.value)}
-                                                                            onBlur={(e) => {
-                                                                                if (e.target.value === '' || parseInt(e.target.value) < 1) {
-                                                                                    setChecklistCount(p.id, '1');
-                                                                                }
-                                                                            }}
-                                                                        />
-                                                                        <Button variant="light" className="border-0 px-2 rounded-end fw-bold" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
-                                                                    </div>
-                                                                </Col>
-                                                                <Col xs={7}>
-                                                                    <Form.Control 
-                                                                        type="text" 
-                                                                        size="sm"
-                                                                        className="shadow-sm"
-                                                                        placeholder="Nota: Ej. Sin hielo" 
-                                                                        value={seleccionado.comentario}
-                                                                        onChange={(e) => updateChecklistComment(p.id, e.target.value)}
-                                                                    />
-                                                                </Col>
-                                                            </Row>
+                                                        <div className="mt-auto pt-3 border-top mt-2 fade-in d-flex justify-content-between align-items-center">
+                                                            <div className="d-flex align-items-center border bg-white rounded shadow-sm">
+                                                                <Button variant="light" size="sm" className="border-0 px-2 rounded-start fw-bold" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                                                <Form.Control 
+                                                                    type="number"
+                                                                    size="sm"
+                                                                    className="border-0 text-center fw-bold p-1 hide-arrows rounded-0"
+                                                                    style={{ width: '42px', minWidth: '42px', fontSize: '0.9rem' }}
+                                                                    value={seleccionado.cantidad}
+                                                                    onChange={(e) => setChecklistCount(p.id, e.target.value)}
+                                                                    onBlur={(e) => {
+                                                                        if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                                                                            setChecklistCount(p.id, '1');
+                                                                        }
+                                                                    }}
+                                                                />
+                                                                <Button variant="light" size="sm" className="border-0 px-2 rounded-end fw-bold" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                            </div>
+                                                            <Badge bg="primary" pill className="px-3 py-2 fw-normal d-lg-none cursor-pointer" onClick={() => setMobileTab('seleccionados')}>
+                                                                Añadir nota / Ver ➔
+                                                            </Badge>
+                                                            <span className="text-primary small fw-semibold d-none d-lg-inline">
+                                                                ✓ en orden
+                                                            </span>
                                                         </div>
                                                     )}
                                                 </div>
@@ -1012,10 +1048,24 @@ const PedidoView = () => {
                                 </Row>
                             )}
                         </div>
+
+                        {/* Barra inferior rápida cuando se está en pestaña menú (Solo Móvil d-lg-none) */}
+                        {listaSeleccionados.length > 0 && (
+                            <div className="p-3 bg-dark text-white border-top flex-shrink-0 d-flex d-lg-none justify-content-between align-items-center shadow-lg">
+                                <div className="d-flex flex-column">
+                                    <span className="fw-bold fs-6">{listaSeleccionados.length} {listaSeleccionados.length === 1 ? 'producto seleccionado' : 'productos seleccionados'}</span>
+                                    <span className="text-warning fw-bold fs-5">Bs. {totalSeleccionados.toFixed(2)}</span>
+                                </div>
+                                <Button variant="light" className="fw-bold px-3 py-2 d-flex align-items-center gap-1 shadow" onClick={() => setMobileTab('seleccionados')}>
+                                    Ver y Detallar
+                                    <span className="material-symbols-outlined fs-5">arrow_forward</span>
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
-                    {/* COLUMNA DERECHA: SECCIÓN DE PRODUCTOS SELECCIONADOS */}
-                    <div className="d-flex flex-column bg-white flex-shrink-0 border-start shadow-sm" style={{ width: '100%', maxWidth: '440px', minWidth: '350px', overflow: 'hidden' }}>
+                    {/* COLUMNA DERECHA: SECCIÓN DE PRODUCTOS SELECCIONADOS CON NOTAS (Visible en escritorio siempre, en móvil solo si mobileTab === 'seleccionados') */}
+                    <div className={`d-flex flex-column bg-white flex-shrink-0 border-start shadow-sm ${mobileTab === 'menu' ? 'd-none d-lg-flex' : 'd-flex flex-grow-1'}`} style={{ width: '100%', maxWidth: '460px', minWidth: '380px', overflow: 'hidden' }}>
                         {/* Header de la sección */}
                         <div className="p-3 bg-light border-bottom d-flex justify-content-between align-items-center flex-shrink-0">
                             <h6 className="mb-0 fw-bold text-dark d-flex align-items-center gap-2">
@@ -1029,57 +1079,51 @@ const PedidoView = () => {
                             )}
                         </div>
 
-                        {/* Lista de ítems seleccionados */}
+                        {/* Lista detallada de ítems seleccionados con cantidad y NOTA */}
                         <div className="p-3 overflow-auto flex-grow-1 d-flex flex-column gap-3 bg-light bg-opacity-50">
                             {listaSeleccionados.length === 0 ? (
                                 <div className="text-center py-5 my-auto">
-                                    <span className="material-symbols-outlined text-muted" style={{ fontSize: '3.5rem', opacity: 0.4 }}>shopping_cart_off</span>
+                                    <span className="material-symbols-outlined text-muted" style={{ fontSize: '4rem', opacity: 0.35 }}>shopping_cart_off</span>
                                     <h6 className="text-muted mt-3 fw-semibold">Sin productos seleccionados</h6>
-                                    <p className="text-muted small mb-0 px-3">Haz clic o marca los productos del menú a la izquierda para sumarlos a tu orden.</p>
+                                    <p className="text-muted small mb-0 px-3">Selecciona productos del menú para agregar notas o detalles.</p>
                                 </div>
                             ) : (
                                 listaSeleccionados.map((item) => {
                                     const p = item.producto;
                                     return (
-                                        <div key={p.id} className="bg-white border rounded p-3 shadow-sm d-flex flex-column gap-2 fade-in">
-                                            <div className="d-flex align-items-center">
-                                                <div className="me-2">
-                                                    <Form.Check 
-                                                        type="checkbox"
-                                                        checked={true}
-                                                        onChange={() => toggleProductoChecklist(p.id)}
-                                                        className="scale-125 cursor-pointer"
-                                                    />
-                                                </div>
-                                                {p.imagePaths && p.imagePaths.length > 0 ? (
-                                                    <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-2 border" style={{ width: '44px', height: '44px', minWidth: '44px' }} />
-                                                ) : (
-                                                    <div className="bg-light border rounded d-flex align-items-center justify-content-center me-2" style={{ width: '44px', height: '44px', minWidth: '44px' }}>
-                                                        <span className="material-symbols-outlined text-muted small">image</span>
+                                        <div key={p.id} className="bg-white border rounded p-3 shadow-sm d-flex flex-column gap-3 fade-in">
+                                            <div className="d-flex align-items-center justify-content-between">
+                                                <div className="d-flex align-items-center flex-grow-1" style={{ minWidth: 0 }}>
+                                                    {p.imagePaths && p.imagePaths.length > 0 ? (
+                                                        <img src={p.imagePaths[0]} alt={p.nombre} className="rounded object-fit-cover me-3 border" style={{ width: '50px', height: '50px', minWidth: '50px' }} />
+                                                    ) : (
+                                                        <div className="bg-light border rounded d-flex align-items-center justify-content-center me-3" style={{ width: '50px', height: '50px', minWidth: '50px' }}>
+                                                            <span className="material-symbols-outlined text-muted small">image</span>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                        <h6 className="mb-0 fw-bold text-dark text-truncate" style={{ fontSize: '0.98rem' }}>{p.nombre}</h6>
+                                                        <small className="text-muted d-block" style={{ fontSize: '0.82rem' }}>Bs. {parseFloat(p.precio).toFixed(2)} c/u</small>
                                                     </div>
-                                                )}
-                                                <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                                                    <h6 className="mb-0 fw-semibold text-truncate" style={{ fontSize: '0.9rem' }}>{p.nombre}</h6>
-                                                    <small className="text-muted text-truncate d-block" style={{ fontSize: '0.75rem' }}>Bs. {parseFloat(p.precio).toFixed(2)} c/u</small>
                                                 </div>
-                                                <div className="text-end ms-2 flex-shrink-0">
+                                                <div className="text-end ms-2 flex-shrink-0 d-flex flex-column align-items-end">
                                                     <div className="fw-bold text-dark fs-6">Bs. {(item.cantidad * parseFloat(p.precio)).toFixed(2)}</div>
-                                                    <button type="button" className="btn btn-link text-danger p-0 border-0 small text-decoration-none d-flex align-items-center ms-auto mt-1" onClick={() => toggleProductoChecklist(p.id)}>
-                                                        <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span>
+                                                    <button type="button" className="btn btn-link text-danger p-0 border-0 small text-decoration-none d-flex align-items-center mt-1" onClick={() => toggleProductoChecklist(p.id)} title="Eliminar ítem">
+                                                        <span className="material-symbols-outlined" style={{ fontSize: '1.3rem' }}>delete</span>
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            {/* Controles de cantidad y comentario */}
-                                            <div className="pt-2 border-top mt-1">
-                                                <Row className="g-2">
-                                                    <Col xs={5}>
-                                                        <div className="d-flex align-items-center border bg-light rounded">
-                                                            <Button variant="light" className="border-0 px-2 rounded-start fw-bold" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                            {/* Controles de cantidad y comentario detallados (Estilo imagen de referencia) */}
+                                            <div className="pt-2 border-top">
+                                                <Row className="g-2 align-items-center">
+                                                    <Col xs={12} sm={5}>
+                                                        <div className="d-flex align-items-center border bg-light rounded shadow-sm">
+                                                            <Button variant="light" className="border-0 px-3 rounded-start fw-bold fs-6" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
                                                             <Form.Control 
                                                                 type="number"
                                                                 className="border-0 text-center fw-bold p-1 hide-arrows rounded-0 bg-light"
-                                                                style={{ width: '40px', minWidth: '40px', fontSize: '0.9rem' }}
+                                                                style={{ fontSize: '0.95rem' }}
                                                                 value={item.cantidad}
                                                                 onChange={(e) => setChecklistCount(p.id, e.target.value)}
                                                                 onBlur={(e) => {
@@ -1088,16 +1132,18 @@ const PedidoView = () => {
                                                                     }
                                                                 }}
                                                             />
-                                                            <Button variant="light" className="border-0 px-2 rounded-end fw-bold" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                            <Button variant="light" className="border-0 px-3 rounded-end fw-bold fs-6" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
                                                         </div>
                                                     </Col>
-                                                    <Col xs={7}>
+                                                    <Col xs={12} sm={7}>
                                                         <Form.Control 
                                                             type="text" 
                                                             size="sm"
-                                                            placeholder="Nota: Ej. Sin hielo" 
+                                                            className="py-2 px-3 shadow-sm border-secondary border-opacity-25"
+                                                            placeholder="Nota: Ej. Sin hielo, poco azúcar..." 
                                                             value={item.comentario}
                                                             onChange={(e) => updateChecklistComment(p.id, e.target.value)}
+                                                            style={{ fontSize: '0.88rem' }}
                                                         />
                                                     </Col>
                                                 </Row>
@@ -1111,12 +1157,12 @@ const PedidoView = () => {
                         {/* Footer con Total y Acción de Agregar */}
                         <div className="p-3 bg-white border-top flex-shrink-0 shadow-sm">
                             <div className="d-flex justify-content-between align-items-center mb-3 px-1">
-                                <span className="text-muted fw-semibold">Total a agregar:</span>
-                                <span className="fw-bold text-success fs-4">Bs. {totalSeleccionados.toFixed(2)}</span>
+                                <span className="text-muted fw-semibold fs-6">Total a agregar:</span>
+                                <span className="fw-bold text-success fs-3">Bs. {totalSeleccionados.toFixed(2)}</span>
                             </div>
                             <div className="d-flex gap-2">
-                                <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="py-2 flex-fill fw-semibold">Cancelar</Button>
-                                <Button variant="dark" onClick={handleAddMultipleItems} disabled={listaSeleccionados.length === 0} className="py-2 flex-fill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                                <Button variant="outline-secondary" onClick={() => setShowAddItemModal(false)} className="py-2 px-3 fw-semibold">Cancelar</Button>
+                                <Button variant="dark" onClick={handleAddMultipleItems} disabled={listaSeleccionados.length === 0} className="py-2 flex-fill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm fs-6">
                                     <span className="material-symbols-outlined">check_circle</span>
                                     Confirmar ({listaSeleccionados.length})
                                 </Button>
