@@ -39,6 +39,11 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <span className="material-symbols-outlined">dashboard</span>
                     Panel de Control
                 </NavLink>
+                <NavLink to="/admin/ventas" onClick={handleNavClick}
+                    className={({ isActive }) => isActive ? 'admin-nav-item active' : 'admin-nav-item'}>
+                    <span className="material-symbols-outlined">point_of_sale</span>
+                    Nueva Venta
+                </NavLink>
                 <NavLink to="/admin/productos" onClick={handleNavClick}
                     className={({ isActive }) => isActive ? 'admin-nav-item active' : 'admin-nav-item'}>
                     <span className="material-symbols-outlined">inventory_2</span>
@@ -77,7 +82,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                 </div>
                 <div className="user-info d-flex align-items-center justify-content-between w-100">
                     <span className="user-name text-truncate" style={{ maxWidth: '120px' }}>{userName}</span>
-                    <span role="img" aria-label="logout" style={{ opacity: 0.6 }}>🚪</span>
+                    <span className="material-symbols-outlined" style={{ opacity: 0.7 }}>logout</span>
                 </div>
             </div>
         </aside>

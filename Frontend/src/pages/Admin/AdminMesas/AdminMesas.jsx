@@ -176,7 +176,7 @@ const AdminMesas = () => {
                             <Form.Control as="textarea" rows={2} name="descripcion" value={formData.descripcion} onChange={handleChange} className="admin-form-control" placeholder="Ej. Terraza interior junto a la ventana" />
                         </Form.Group>
                         <Form.Group className="admin-form-group mb-0 p-3 rounded bg-light border">
-                            <Form.Check 
+                            <Form.Check
                                 type="switch"
                                 id="es_juntada-switch"
                                 name="es_juntada"

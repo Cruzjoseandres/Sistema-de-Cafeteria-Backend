@@ -17,6 +17,7 @@ import AdminUsuarios from './pages/Admin/AdminUsuarios/AdminUsuarios.jsx';
 import AdminProductos from './pages/Admin/AdminProductos/AdminProductos.jsx';
 import AdminCategorias from './pages/Admin/AdminCategorias/AdminCategorias.jsx';
 import AdminMesas from './pages/Admin/AdminMesas/AdminMesas.jsx';
+import AdminVentas from './pages/Admin/AdminVentas/AdminVentas.jsx';
 import AdminReportes from './pages/Admin/Reportes/AdminReportes.jsx';
 import AdminActividad from './pages/Admin/Actividad/AdminActividad.jsx';
 
@@ -116,6 +117,7 @@ const App = () => {
           <Route path="productos" element={<AdminProductos />} />
           <Route path="categorias" element={<AdminCategorias />} />
           <Route path="mesas" element={<AdminMesas />} />
+          <Route path="ventas" element={<AdminVentas />} />
           <Route path="reportes" element={<AdminReportes />} />
           <Route path="actividad-reciente" element={<AdminActividad />} />
           <Route path="pedido/:id" element={<PedidoView />} />

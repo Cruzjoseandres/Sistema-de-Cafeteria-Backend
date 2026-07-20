@@ -26,8 +26,8 @@ const Header = () => {
 
                 <div className="d-flex align-items-center ms-auto gap-2">
                     {isInstallable && (
-                        <button 
-                            className="btn btn-primary d-flex align-items-center gap-1 btn-sm font-weight-bold rounded-pill px-3 py-1 heartbeat-btn" 
+                        <button
+                            className="btn btn-primary d-flex align-items-center gap-1 btn-sm font-weight-bold rounded-pill px-3 py-1 heartbeat-btn"
                             onClick={installPWA}
                         >
                             <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>install_mobile</span>
@@ -85,7 +85,7 @@ const Header = () => {
                         <Nav>
                             <NavDropdown
                                 title={
-                                <span className="d-inline-flex align-items-center gap-2 font-weight-bold">
+                                    <span className="d-inline-flex align-items-center gap-2 font-weight-bold">
                                         <span className="material-symbols-outlined" style={{ color: 'var(--cafe-primary)' }}>account_circle</span>
                                         {userInfo?.persona ? `${userInfo.persona.nombre} ${userInfo.persona.apellido}` : userInfo?.username || "Usuario"}
                                     </span>
