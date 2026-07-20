@@ -1013,32 +1013,39 @@ const PedidoView = () => {
                                                         </div>
                                                     </div>
 
-                                                    {/* Opción rápida compacta de cantidad en catálogo */}
+                                                    {/* Controles de cantidad y comentario dentro del catálogo */}
                                                     {seleccionado && (
-                                                        <div className="mt-auto pt-3 border-top mt-2 fade-in d-flex justify-content-between align-items-center">
-                                                            <div className="d-flex align-items-center border bg-white rounded shadow-sm">
-                                                                <Button variant="light" size="sm" className="border-0 px-2 rounded-start fw-bold" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
-                                                                <Form.Control 
-                                                                    type="number"
-                                                                    size="sm"
-                                                                    className="border-0 text-center fw-bold p-1 hide-arrows rounded-0"
-                                                                    style={{ width: '42px', minWidth: '42px', fontSize: '0.9rem' }}
-                                                                    value={seleccionado.cantidad}
-                                                                    onChange={(e) => setChecklistCount(p.id, e.target.value)}
-                                                                    onBlur={(e) => {
-                                                                        if (e.target.value === '' || parseInt(e.target.value) < 1) {
-                                                                            setChecklistCount(p.id, '1');
-                                                                        }
-                                                                    }}
-                                                                />
-                                                                <Button variant="light" size="sm" className="border-0 px-2 rounded-end fw-bold" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
-                                                            </div>
-                                                            <Badge bg="primary" pill className="px-3 py-2 fw-normal d-lg-none cursor-pointer" onClick={() => setMobileTab('seleccionados')}>
-                                                                Añadir nota / Ver ➔
-                                                            </Badge>
-                                                            <span className="text-primary small fw-semibold d-none d-lg-inline">
-                                                                ✓ en orden
-                                                            </span>
+                                                        <div className="mt-auto pt-2 border-top mt-2 fade-in">
+                                                            <Row className="g-2 align-items-center">
+                                                                <Col xs={12} sm={5}>
+                                                                    <div className="d-flex align-items-center border bg-light rounded shadow-sm">
+                                                                        <Button variant="light" className="border-0 px-3 rounded-start fw-bold fs-6" onClick={() => updateChecklistCount(p.id, -1)}>-</Button>
+                                                                        <Form.Control 
+                                                                            type="number"
+                                                                            className="border-0 text-center fw-bold p-1 hide-arrows rounded-0 bg-light"
+                                                                            style={{ fontSize: '0.95rem' }}
+                                                                            value={seleccionado.cantidad}
+                                                                            onChange={(e) => setChecklistCount(p.id, e.target.value)}
+                                                                            onBlur={(e) => {
+                                                                                if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                                                                                    setChecklistCount(p.id, '1');
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                        <Button variant="light" className="border-0 px-3 rounded-end fw-bold fs-6" onClick={() => updateChecklistCount(p.id, 1)}>+</Button>
+                                                                    </div>
+                                                                </Col>
+                                                                <Col xs={12} sm={7}>
+                                                                    <Form.Control 
+                                                                        type="text" 
+                                                                        size="sm"
+                                                                        className="py-2 px-3 shadow-sm border-secondary border-opacity-25"
+                                                                        placeholder="Nota: Ej. Sin hielo, poco azúcar..." 
+                                                                        value={seleccionado.comentario}
+                                                                        onChange={(e) => updateChecklistComment(p.id, e.target.value)}
+                                                                    />
+                                                                </Col>
+                                                            </Row>
                                                         </div>
                                                     )}
                                                 </div>
