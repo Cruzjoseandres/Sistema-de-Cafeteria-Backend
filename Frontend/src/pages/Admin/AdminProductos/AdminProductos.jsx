@@ -206,7 +206,7 @@ const AdminProductos = () => {
                                                         }}
                                                         style={{ background: 'transparent', border: 'none', color: 'var(--admin-text-muted)', cursor: 'pointer', padding: '0.5rem' }}
                                                         title="Eliminar imagen"
-                                                    >🗑️</button>
+                                                    ><span className="material-symbols-outlined text-danger" style={{ fontSize: '1.2rem' }}>delete</span></button>
                                                 </div>
                                             ))}
                                         </div>

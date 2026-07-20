@@ -149,7 +149,10 @@ const MeseroMesas = () => {
             </div>
 
             {/* Grid de mesas */}
-            <h5 className="mb-3">🪑 Mesas</h5>
+            <h5 className="mb-3 d-flex align-items-center gap-2">
+                <span className="material-symbols-outlined text-primary">table_restaurant</span>
+                <span>Mesas y Salón</span>
+            </h5>
             <Row>
                 {mesas.map((mesa) => {
                     const pedidosEnMesa = pedidosActivos.filter(p => p.mesa?.id === mesa.id);
@@ -217,7 +220,10 @@ const MeseroMesas = () => {
             {/* ========== MODAL CREAR PEDIDO ========== */}
             <Modal show={showCrearPedidoModal} onHide={() => setShowCrearPedidoModal(false)} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>📝 Crear Nuevo Pedido</Modal.Title>
+                    <Modal.Title className="d-flex align-items-center gap-2">
+                        <span className="material-symbols-outlined text-primary">add_circle</span>
+                        <span>Crear Nuevo Pedido</span>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group>

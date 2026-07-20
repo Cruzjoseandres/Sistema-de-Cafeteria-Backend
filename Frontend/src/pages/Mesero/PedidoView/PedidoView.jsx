@@ -146,7 +146,10 @@ const PedidoView = () => {
                     </button>
                     <div>
                         <h1 className="mb-0 d-flex align-items-center gap-2 flex-wrap">
-                            <span>📋 Pedido #{pedido.id}</span>
+                            <span className="d-flex align-items-center gap-2">
+                                <span className="material-symbols-outlined text-primary" style={{ fontSize: '1.8rem' }}>receipt_long</span>
+                                <span>Pedido #{pedido.id}</span>
+                            </span>
                             {isEdit && !isPedidoCompletado ? (
                                 <div className="d-inline-flex align-items-center ms-md-2 mt-2 mt-md-0">
                                     <span className="material-symbols-outlined text-primary me-1" style={{ fontSize: '1.4rem' }}>
@@ -155,17 +158,17 @@ const PedidoView = () => {
                                     <Form.Select
                                         size="sm"
                                         className="fw-bold border-primary shadow-sm rounded-pill px-3 py-1 bg-light text-dark"
-                                        style={{ width: 'auto', minWidth: '160px', cursor: 'pointer', fontSize: '0.9rem' }}
+                                        style={{ width: 'auto', minWidth: '180px', cursor: 'pointer', fontSize: '0.9rem' }}
                                         value={pedido.mesa?.id || ''}
                                         onChange={(e) => handleChangeMesa(e.target.value)}
                                         disabled={saving}
                                     >
-                                        <option value="">🛍️ Sin mesa / Para Llevar</option>
+                                        <option value="">-- Sin mesa asignada --</option>
                                         {mesas && mesas.map((m) => {
                                             const isParaLlevarMesa = m.numero === 0 || m.descripcion?.toUpperCase() === 'PARA LLEVAR';
                                             return (
                                                 <option key={m.id} value={m.id}>
-                                                    {isParaLlevarMesa ? '🛍️ Para Llevar (Mesa virtual)' : m.es_juntada ? `👥 Mesa juntada (${m.capacidad} pers.)` : `🪑 Mesa ${m.numero} (${m.capacidad} pers.)`}
+                                                    {isParaLlevarMesa ? 'Mesa 0 — Para Llevar / Mostrador' : m.es_juntada ? `Mesa Juntada (${m.capacidad} personas)` : `Mesa ${m.numero} (${m.capacidad} personas)`}
                                                 </option>
                                             );
                                         })}
@@ -180,9 +183,16 @@ const PedidoView = () => {
                                 </Badge>
                             )}
                         </h1>
-                        <small className="text-muted-custom mt-1 d-block">
-                            👤 {pedido.usuario?.persona?.nombre} {pedido.usuario?.persona?.apellido}
-                            {' · '}🕐 {new Date(pedido.fecha_apertura).toLocaleString()}
+                        <small className="text-muted-custom mt-2 d-flex align-items-center flex-wrap gap-2">
+                            <span className="d-inline-flex align-items-center gap-1">
+                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>person</span>
+                                <span>{pedido.usuario?.persona?.nombre} {pedido.usuario?.persona?.apellido}</span>
+                            </span>
+                            <span>·</span>
+                            <span className="d-inline-flex align-items-center gap-1">
+                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>schedule</span>
+                                <span>{new Date(pedido.fecha_apertura).toLocaleString()}</span>
+                            </span>
                             <Badge bg={viewMode === 'deliver' ? 'success' : viewMode === 'view' ? 'secondary' : 'warning'} className="ms-2">
                                 Modo: {viewMode.toUpperCase()}
                             </Badge>
@@ -269,7 +279,10 @@ const PedidoView = () => {
                                 <Accordion.Item eventKey={String(index)} key={cuenta.id} className="mb-3 border rounded shadow-sm overflow-hidden">
                                     <Accordion.Header>
                                         <div className="d-flex justify-content-between w-100 me-3 align-items-center pe-2">
-                                            <span className="fs-5"><strong>👤 {cuenta.nombre_cliente}</strong></span>
+                                            <span className="fs-5 d-flex align-items-center gap-2">
+                                                <span className="material-symbols-outlined text-primary" style={{ fontSize: '1.4rem' }}>person</span>
+                                                <strong>{cuenta.nombre_cliente}</strong>
+                                            </span>
                                             <Badge bg="primary" className="fs-6 py-2 px-3">
                                                 Bs. {Number(cuenta.total || 0).toFixed(2)}
                                             </Badge>
