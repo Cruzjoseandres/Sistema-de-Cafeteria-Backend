@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Table, Button, Modal, Form, Badge, Spinner, Alert, Row, Col } from 'react-bootstrap';
-import { useSearchParams } from 'react-router-dom';
 import { useAdminMesas } from './useAdminMesas';
-import MeseroMesas from '../../Mesero/MeseroMesas/MeseroMesas';
 import NotificationToast from '../../../components/NotificationToast';
 import ConfirmModal from '../../../components/ConfirmModal';
 import PaginationBar from '../../../components/PaginationBar';
@@ -14,14 +12,7 @@ const AdminMesas = () => {
         toast, confirm, hideToast, pagination
     } = useAdminMesas();
 
-    const [searchParams, setSearchParams] = useSearchParams();
-    const activeTab = searchParams.get('tab') || 'pos'; // 'pos' o 'crud'
-
-    const setActiveTab = (tab) => {
-        setSearchParams({ tab });
-    };
-
-    if (loading && activeTab === 'crud') {
+    if (loading) {
         return (
             <Container className="mt-5 text-center">
                 <Spinner animation="border" role="status">
@@ -31,7 +22,7 @@ const AdminMesas = () => {
         );
     }
 
-    if (error && activeTab === 'crud') {
+    if (error) {
         return (
             <Container className="mt-5">
                 <Alert variant="danger">{error}</Alert>
@@ -46,107 +37,78 @@ const AdminMesas = () => {
 
             <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <h1 className="admin-title-lg mb-1">Mesas & Salón POS</h1>
-                    <p className="admin-subtitle m-0">Administra pedidos activos, cobros directos o configura la distribución del salón.</p>
+                    <h1 className="admin-title-lg mb-1">Gestión de Mesas</h1>
+                    <p className="admin-subtitle m-0">Configura el número, capacidad, descripción y uniones de las mesas físicas del local.</p>
                 </div>
-                <div className="d-flex gap-2 bg-white p-1 rounded-pill shadow-sm border flex-wrap">
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('pos')}
-                        className={`btn d-flex align-items-center gap-2 rounded-pill px-4 py-2 fw-bold transition-all ${activeTab === 'pos' ? 'btn-primary text-white shadow-sm' : 'btn-light text-dark'}`}
-                        style={{ border: 'none' }}
-                    >
-                        <span className="material-symbols-outlined fs-5">point_of_sale</span>
-                        <span>Salón & POS (Ventas)</span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('crud')}
-                        className={`btn d-flex align-items-center gap-2 rounded-pill px-4 py-2 fw-bold transition-all ${activeTab === 'crud' ? 'btn-primary text-white shadow-sm' : 'btn-light text-dark'}`}
-                        style={{ border: 'none' }}
-                    >
-                        <span className="material-symbols-outlined fs-5">settings</span>
-                        <span>Configurar Mesas</span>
+                <div>
+                    <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm px-4 py-2" onClick={() => handleOpenModal('crear')}>
+                        <span className="material-symbols-outlined fs-5">add_circle</span>
+                        <span>Nueva Mesa</span>
                     </button>
                 </div>
             </div>
 
-            {activeTab === 'pos' ? (
-                <div className="admin-card border-0 shadow-sm p-2 p-md-3 bg-white rounded">
-                    <MeseroMesas />
-                </div>
-            ) : (
-                <>
-                    <div className="d-flex justify-content-end mb-3">
-                        <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
-                            <span className="material-symbols-outlined fs-5">add_circle</span>
-                            <span>Nueva Mesa</span>
-                        </button>
-                    </div>
-
-                    <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
-                        <Table hover responsive className="custom-table m-0 align-middle">
-                            <thead className="bg-light text-nowrap">
-                                <tr>
-                                    <th className="px-4 py-3">ID</th>
-                                    <th className="py-3">Nº MESA</th>
-                                    <th className="py-3">CAPACIDAD</th>
-                                    <th className="py-3">ESTADO</th>
-                                    <th className="py-3">DESCRIPCIÓN</th>
-                                    <th className="text-end px-4 py-3">ACCIONES</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {pagination.paginatedData.map((mesa) => (
-                                    <tr key={mesa.id}>
-                                        <td className="px-4 py-3 text-nowrap fw-bold text-muted">#{mesa.id}</td>
-                                        <td className="py-3 text-nowrap">
-                                            <div className="d-flex align-items-center gap-2">
-                                                <span className="material-symbols-outlined text-primary">table_restaurant</span>
-                                                <strong className="fs-6 text-dark">Mesa {mesa.numero}</strong>
-                                            </div>
-                                        </td>
-                                        <td className="py-3 text-nowrap">{mesa.capacidad} personas</td>
-                                        <td className="py-3 text-nowrap">
-                                            <span className={`admin-badge ${mesa.estado?.nombre === 'DISPONIBLE' ? 'success' : mesa.estado?.nombre === 'OCUPADA' ? 'danger' : 'warning'}`}>
-                                                {mesa.estado?.nombre || 'Sin estado'}
-                                            </span>
-                                            {mesa.es_juntada && (
-                                                <span className="admin-badge primary ms-2 d-inline-flex align-items-center gap-1">
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>groups</span> Juntada
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="py-3 text-muted" style={{ minWidth: '160px' }}>{mesa.descripcion || '-'}</td>
-                                        <td className="text-end px-4 py-3 text-nowrap">
-                                            <div className="d-flex gap-2 justify-content-end">
-                                                <button
-                                                    className="btn-admin-secondary d-flex align-items-center gap-1"
-                                                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }}
-                                                    onClick={() => handleOpenModal('editar', mesa)}
-                                                >
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
-                                                </button>
-                                                <button
-                                                    className="btn-admin-secondary d-flex align-items-center gap-1"
-                                                    style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
-                                                    onClick={() => handleDelete(mesa.id)}
-                                                >
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {pagination.totalItems === 0 && (
-                                    <tr><td colSpan="6" className="text-center py-5 text-muted">No hay mesas registradas.</td></tr>
-                                )}
-                            </tbody>
-                        </Table>
-                    </div>
-                    <PaginationBar {...pagination} />
-                </>
-            )}
+            <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
+                <Table hover responsive className="custom-table m-0 align-middle">
+                    <thead className="bg-light text-nowrap">
+                        <tr>
+                            <th className="px-4 py-3">ID</th>
+                            <th className="py-3">Nº MESA</th>
+                            <th className="py-3">CAPACIDAD</th>
+                            <th className="py-3">ESTADO</th>
+                            <th className="py-3">DESCRIPCIÓN</th>
+                            <th className="text-end px-4 py-3">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {pagination.paginatedData.map((mesa) => (
+                            <tr key={mesa.id}>
+                                <td className="px-4 py-3 text-nowrap fw-bold text-muted">#{mesa.id}</td>
+                                <td className="py-3 text-nowrap">
+                                    <div className="d-flex align-items-center gap-2">
+                                        <span className="material-symbols-outlined text-primary">table_restaurant</span>
+                                        <strong className="fs-6 text-dark">Mesa {mesa.numero}</strong>
+                                    </div>
+                                </td>
+                                <td className="py-3 text-nowrap">{mesa.capacidad} personas</td>
+                                <td className="py-3 text-nowrap">
+                                    <span className={`admin-badge ${mesa.estado?.nombre === 'DISPONIBLE' ? 'success' : mesa.estado?.nombre === 'OCUPADA' ? 'danger' : 'warning'}`}>
+                                        {mesa.estado?.nombre || 'Sin estado'}
+                                    </span>
+                                    {mesa.es_juntada && (
+                                        <span className="admin-badge primary ms-2 d-inline-flex align-items-center gap-1">
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>groups</span> Juntada
+                                        </span>
+                                    )}
+                                </td>
+                                <td className="py-3 text-muted" style={{ minWidth: '160px' }}>{mesa.descripcion || '-'}</td>
+                                <td className="text-end px-4 py-3 text-nowrap">
+                                    <div className="d-flex gap-2 justify-content-end">
+                                        <button
+                                            className="btn-admin-secondary d-flex align-items-center gap-1"
+                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px' }}
+                                            onClick={() => handleOpenModal('editar', mesa)}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>edit_square</span> Editar
+                                        </button>
+                                        <button
+                                            className="btn-admin-secondary d-flex align-items-center gap-1"
+                                            style={{ padding: '0.4rem 0.75rem', fontSize: '0.85rem', borderRadius: '8px', color: 'var(--neon-danger)', borderColor: 'rgba(220,53,69,0.2)' }}
+                                            onClick={() => handleDelete(mesa.id)}
+                                        >
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>delete</span> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        {pagination.totalItems === 0 && (
+                            <tr><td colSpan="6" className="text-center py-5 text-muted">No hay mesas registradas.</td></tr>
+                        )}
+                    </tbody>
+                </Table>
+            </div>
+            <PaginationBar {...pagination} />
 
             <Modal show={showModal} onHide={handleCloseModal} contentClassName="admin-card border-0 shadow-lg" backdropClassName="admin-modal-backdrop" centered>
                 <Modal.Header closeButton style={{ borderBottom: '1px solid rgba(180,66,10,0.12)', background: 'var(--admin-panel-bg)', padding: '1.25rem 1.5rem' }}>
