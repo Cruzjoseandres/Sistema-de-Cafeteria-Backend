@@ -34,9 +34,12 @@ export const useMeseroMisPedidos = () => {
 
     const filteredPedidos = pedidos.filter(pedido => {
         // Filtro por Búsqueda (ID o Mesa)
+        const query = searchTerm.toLowerCase();
         const matchesSearch = 
-            pedido.id.toString().includes(searchTerm) || 
-            pedido.mesa?.numero.toString().includes(searchTerm);
+            pedido.id?.toString().includes(query) || 
+            ((!pedido.mesa || pedido.mesa?.numero === null || pedido.mesa?.numero === undefined)
+                ? ('sin mesa'.includes(query) || 'sin'.includes(query))
+                : pedido.mesa?.numero?.toString().includes(query) || (pedido.mesa?.es_juntada && 'juntada'.includes(query)));
         
         // Filtro por Estado
         // 3 = Completado / Inactivo en algunos contextos de la UI

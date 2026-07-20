@@ -90,7 +90,9 @@ export const useMeseroMesas = () => {
         
         if (filtroBusqueda.trim() !== '') {
             const query = filtroBusqueda.toLowerCase();
-            const esMesa = p.mesa?.numero?.toString().includes(query) || (p.mesa?.es_juntada && 'juntada'.includes(query));
+            const esMesa = (!p.mesa || p.mesa?.numero === null || p.mesa?.numero === undefined)
+                ? ('sin mesa'.includes(query) || 'sin'.includes(query))
+                : p.mesa?.numero?.toString().includes(query) || (p.mesa?.es_juntada && 'juntada'.includes(query));
             const esPedido = p.id?.toString().includes(query);
             // Search multiple accounts if they exist
             const coincidenciaCuenta = p.cuentas?.some(c => c.nombre_cliente?.toLowerCase().includes(query));

@@ -94,8 +94,12 @@ const MeseroMesas = () => {
                                     <Card.Body className="pb-2">
                                         <div className="d-flex justify-content-between align-items-center mb-2">
                                             <Badge bg="success" className="px-2 py-1 fs-6">Pedido #{pedido.id}</Badge>
-                                            <Badge bg="primary" className="px-2 py-1 fs-6 text-uppercase">
-                                                {pedido.mesa?.es_juntada ? 'Mesa Juntada' : `Mesa ${pedido.mesa?.numero}`}
+                                            <Badge bg={!pedido.mesa || pedido.mesa?.numero === null || pedido.mesa?.numero === undefined ? "secondary" : pedido.mesa?.es_juntada ? "info" : "primary"} className="px-2 py-1 fs-6 text-uppercase">
+                                                {!pedido.mesa || pedido.mesa?.numero === null || pedido.mesa?.numero === undefined
+                                                    ? 'Sin Mesa'
+                                                    : pedido.mesa?.es_juntada
+                                                        ? 'Mesa Juntada'
+                                                        : `Mesa ${pedido.mesa?.numero}`}
                                             </Badge>
                                         </div>
                                         <div className="d-flex align-items-center gap-2 mb-1">
@@ -114,10 +118,18 @@ const MeseroMesas = () => {
                                                 {pedido.cuentas && pedido.cuentas.length > 0 ? pedido.cuentas[0].nombre_cliente : 'Sin Cliente'}
                                             </span>
                                         </div>
-                                        <small className="text-muted d-flex align-items-center gap-2 mt-2">
-                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>schedule</span>
-                                            {new Date(pedido.fecha_apertura).toLocaleTimeString()}
-                                        </small>
+                                        <div className="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                                            <small className="text-muted d-flex align-items-center gap-1 m-0">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '1.1rem' }}>schedule</span>
+                                                {new Date(pedido.fecha_apertura).toLocaleTimeString()}
+                                            </small>
+                                            <div className="text-end">
+                                                <span className="text-muted d-block" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>Total Pedido</span>
+                                                <strong className="text-primary fs-5 fw-bold">
+                                                    Bs. {(pedido.cuentas ? pedido.cuentas.reduce((acc, c) => acc + Number(c.total || 0), 0) : 0).toFixed(2)}
+                                                </strong>
+                                            </div>
+                                        </div>
                                     </Card.Body>
                                     <Card.Footer className="bg-transparent border-top-0 pt-0 pb-3">
                                         <Row className="g-2">
