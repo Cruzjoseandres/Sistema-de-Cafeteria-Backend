@@ -93,8 +93,11 @@ export class CuentaService {
         if (ef < 0 || qr < 0) {
           throw new HttpException('En pago Mixto, los montos no pueden ser negativos.', HttpStatus.BAD_REQUEST);
         }
-        if ((ef + qr + 0.001) < totalReq) {
-          throw new HttpException(`En pago Mixto, la suma de efectivo (Bs. ${ef.toFixed(2)}) y QR (Bs. ${qr.toFixed(2)}) es menor al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`, HttpStatus.BAD_REQUEST);
+        if (qr > (totalReq + 0.001)) {
+          throw new HttpException('En pago Mixto, el monto transferido por QR no puede ser mayor al total de la cuenta.', HttpStatus.BAD_REQUEST);
+        }
+        if (Math.abs((ef + qr) - totalReq) > 0.01) {
+          throw new HttpException(`En pago Mixto, la suma de efectivo neto (Bs. ${ef.toFixed(2)}) y QR (Bs. ${qr.toFixed(2)}) debe ser exactamente igual al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`, HttpStatus.BAD_REQUEST);
         }
         cuenta.monto_efectivo = ef;
         cuenta.monto_qr = qr;

@@ -23,20 +23,15 @@ export class ReporteService {
             .addSelect('SUM(cuenta.total)', 'total_ventas')
             .addSelect(
                 `SUM(CASE 
-                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'EFECTIVO' OR cuenta.tipo_pago IS NULL OR TRIM(cuenta.tipo_pago) = '' THEN cuenta.total 
-                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'MIXTO' THEN (
-                        CASE WHEN (COALESCE(cuenta.monto_efectivo, 0) + COALESCE(cuenta.monto_qr, 0)) < cuenta.total 
-                             THEN cuenta.total - COALESCE(cuenta.monto_qr, 0)
-                             ELSE COALESCE(cuenta.monto_efectivo, 0)
-                        END
-                    )
+                    WHEN cuenta.tipo_pago = 'Efectivo' THEN cuenta.total 
+                    WHEN cuenta.tipo_pago = 'Mixto' THEN COALESCE(cuenta.monto_efectivo, 0) 
                     ELSE 0 END)`,
                 'total_efectivo'
             )
             .addSelect(
                 `SUM(CASE 
-                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'QR' THEN cuenta.total 
-                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'MIXTO' THEN COALESCE(cuenta.monto_qr, 0) 
+                    WHEN cuenta.tipo_pago = 'QR' THEN cuenta.total 
+                    WHEN cuenta.tipo_pago = 'Mixto' THEN COALESCE(cuenta.monto_qr, 0) 
                     ELSE 0 END)`,
                 'total_qr'
             )
@@ -183,11 +178,11 @@ export class ReporteService {
             // Obtenemos la fecha local (UTC-4 para Bolivia)
             const localNow = new Date(new Date().getTime() - (4 * 60 * 60 * 1000));
             const todayStr = localNow.toISOString().split('T')[0];
-            
+
             // Vamos a construir un start of day y end of day en UTC que correspondan al start y end of day in UTC-4
             startOfDayUTC = new Date(`${todayStr}T00:00:00.000Z`);
             startOfDayUTC.setUTCHours(startOfDayUTC.getUTCHours() + 4); // Offset inverso para que en BD funcione (04:00Z)
-            
+
             endOfDayUTC = new Date(`${todayStr}T23:59:59.999Z`);
             endOfDayUTC.setUTCHours(endOfDayUTC.getUTCHours() + 4);
         }
@@ -216,7 +211,7 @@ export class ReporteService {
             .andWhere('cuenta.updated_at >= :startOfDay AND cuenta.updated_at <= :endOfDay', { startOfDay: startOfDayUTC, endOfDay: endOfDayUTC })
             .groupBy('cuenta.tipo_pago')
             .getRawMany();
-        
+
         let ventas_efectivo = 0;
         let ventas_qr = 0;
 
