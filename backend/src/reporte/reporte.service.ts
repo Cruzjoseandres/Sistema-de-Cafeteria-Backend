@@ -23,15 +23,20 @@ export class ReporteService {
             .addSelect('SUM(cuenta.total)', 'total_ventas')
             .addSelect(
                 `SUM(CASE 
-                    WHEN cuenta.tipo_pago = 'Efectivo' THEN cuenta.total 
-                    WHEN cuenta.tipo_pago = 'Mixto' THEN COALESCE(cuenta.monto_efectivo, 0) 
+                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'EFECTIVO' OR cuenta.tipo_pago IS NULL OR TRIM(cuenta.tipo_pago) = '' THEN cuenta.total 
+                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'MIXTO' THEN (
+                        CASE WHEN (COALESCE(cuenta.monto_efectivo, 0) + COALESCE(cuenta.monto_qr, 0)) < cuenta.total 
+                             THEN cuenta.total - COALESCE(cuenta.monto_qr, 0)
+                             ELSE COALESCE(cuenta.monto_efectivo, 0)
+                        END
+                    )
                     ELSE 0 END)`,
                 'total_efectivo'
             )
             .addSelect(
                 `SUM(CASE 
-                    WHEN cuenta.tipo_pago = 'QR' THEN cuenta.total 
-                    WHEN cuenta.tipo_pago = 'Mixto' THEN COALESCE(cuenta.monto_qr, 0) 
+                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'QR' THEN cuenta.total 
+                    WHEN UPPER(TRIM(cuenta.tipo_pago)) = 'MIXTO' THEN COALESCE(cuenta.monto_qr, 0) 
                     ELSE 0 END)`,
                 'total_qr'
             )

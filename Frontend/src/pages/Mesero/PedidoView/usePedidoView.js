@@ -679,12 +679,37 @@ export const usePedidoView = () => {
                 next.monto_cambio = 0;
                 next.monto_pagado = '';
             } else if (next.tipo_pago === 'Mixto') {
-                // Recalculate for Mixto on any subfield change
-                const efectivoRecibido = Number(field === 'monto_efectivo_recibido' ? value : next.monto_efectivo_recibido) || 0;
-                const qrTransferido = Number(field === 'monto_qr_transferido' ? value : next.monto_qr_transferido) || 0;
-                const totalRecibido = efectivoRecibido + qrTransferido;
+                const totalReq = prev.totalCuenta || 0;
+                if (field === 'monto_efectivo_recibido') {
+                    if (value === '') {
+                        next.monto_efectivo_recibido = '';
+                        next.monto_qr_transferido = '';
+                    } else {
+                        const ef = Number(value);
+                        if (!isNaN(ef)) {
+                            next.monto_efectivo_recibido = value;
+                            const remaining = totalReq - ef;
+                            next.monto_qr_transferido = remaining > 0 ? Number(remaining.toFixed(2)) : 0;
+                        }
+                    }
+                } else if (field === 'monto_qr_transferido') {
+                    if (value === '') {
+                        next.monto_qr_transferido = '';
+                        next.monto_efectivo_recibido = '';
+                    } else {
+                        const qr = Number(value);
+                        if (!isNaN(qr)) {
+                            next.monto_qr_transferido = value;
+                            const remaining = totalReq - qr;
+                            next.monto_efectivo_recibido = remaining > 0 ? Number(remaining.toFixed(2)) : 0;
+                        }
+                    }
+                }
+                const efVal = Number(next.monto_efectivo_recibido) || 0;
+                const qrVal = Number(next.monto_qr_transferido) || 0;
+                const totalRecibido = efVal + qrVal;
                 next.monto_pagado = totalRecibido;
-                next.monto_cambio = totalRecibido > prev.totalCuenta ? totalRecibido - prev.totalCuenta : 0;
+                next.monto_cambio = totalRecibido > totalReq ? Number((totalRecibido - totalReq).toFixed(2)) : 0;
             }
             
             return next;
@@ -692,6 +717,27 @@ export const usePedidoView = () => {
     };
 
     const handleProcessPayment = async () => {
+        if (paymentData.tipo_pago === 'Mixto') {
+            const efVal = Number(paymentData.monto_efectivo_recibido) || 0;
+            const qrVal = Number(paymentData.monto_qr_transferido) || 0;
+            const totalReq = paymentData.totalCuenta || 0;
+            if (efVal < 0 || qrVal < 0) {
+                showError('Los montos ingresados no pueden ser negativos.');
+                return;
+            }
+            if ((efVal + qrVal + 0.001) < totalReq) {
+                showError(`La suma de Efectivo (Bs. ${efVal.toFixed(2)}) y QR (Bs. ${qrVal.toFixed(2)}) es menor al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`);
+                return;
+            }
+        } else if (paymentData.tipo_pago === 'Efectivo') {
+            const efVal = Number(paymentData.monto_pagado) || 0;
+            const totalReq = paymentData.totalCuenta || 0;
+            if ((efVal + 0.001) < totalReq) {
+                showError(`El monto pagado en efectivo (Bs. ${efVal.toFixed(2)}) es menor al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`);
+                return;
+            }
+        }
+
         try {
             setSaving(true);
             let targetCuentaId = paymentData.cuentaId;
@@ -710,22 +756,42 @@ export const usePedidoView = () => {
             if (targetCuentaId === 'ALL') {
                 const unpaid = cuentas.filter(c => !c.estado || c.estado.id !== 3);
                 
-                // Compute breakdown for Mixto
                 const isMixto = paymentData.tipo_pago === 'Mixto';
-                const qrAmt = isMixto ? Number(paymentData.monto_qr_transferido) || 0 : 0;
+                let remQr = isMixto ? Number(paymentData.monto_qr_transferido) || 0 : 0;
+                let remEf = isMixto ? (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0) : 0;
 
                 for (let i = 0; i < unpaid.length; i++) {
                     const c = unpaid[i];
                     const isLast = (i === unpaid.length - 1);
-                    const montoEfectivoReal = isLast ? (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0) : 0;
+                    const cTotal = Number(c.total) || 0;
+                    let cQr = 0;
+                    let cEf = 0;
+
+                    if (isMixto) {
+                        if (remQr >= cTotal) {
+                            cQr = cTotal;
+                            remQr -= cQr;
+                            cEf = 0;
+                        } else {
+                            cQr = remQr;
+                            remQr = 0;
+                            cEf = Number((cTotal - cQr).toFixed(2));
+                            remEf -= cEf;
+                        }
+                        if (isLast && remQr > 0) cQr = Number((cQr + remQr).toFixed(2));
+                        if (isLast && remEf > 0) cEf = Number((cEf + remEf).toFixed(2));
+                    } else {
+                        const montoEfectivoReal = isLast ? (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0) : 0;
+                        cEf = isLast ? montoEfectivoReal : cTotal;
+                    }
                     
                     const payload = {
                         id_estado: 3,
                         tipo_pago: paymentData.tipo_pago,
-                        monto_pagado: isLast ? (Number(c.total) + Number(paymentData.monto_cambio)) : Number(c.total),
-                        monto_cambio: isLast ? Number(paymentData.monto_cambio) : 0,
+                        monto_pagado: isLast ? (cTotal + Number(paymentData.monto_cambio || 0)) : cTotal,
+                        monto_cambio: isLast ? Number(paymentData.monto_cambio || 0) : 0,
                         comprobantes: paymentData.comprobantes,
-                        ...(isMixto && { monto_qr: isLast ? qrAmt : 0, monto_efectivo: isLast ? montoEfectivoReal : Number(c.total) })
+                        ...(isMixto && { monto_qr: cQr, monto_efectivo: cEf })
                     };
                     await updateCuenta(c.id, payload);
                 }
