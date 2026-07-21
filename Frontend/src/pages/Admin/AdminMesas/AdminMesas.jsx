@@ -35,15 +35,17 @@ const AdminMesas = () => {
             <NotificationToast show={toast.show} message={toast.message} variant={toast.variant} onClose={hideToast} />
             <ConfirmModal show={confirm.show} message={confirm.message} onConfirm={confirm.onConfirm} />
 
-            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+            <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
-                    <h1 className="admin-title-lg">Gestión de Mesas</h1>
-                    <p className="admin-subtitle m-0">Administra la distribución y capacidad del salón.</p>
+                    <h1 className="admin-title-lg mb-1">Gestión de Mesas</h1>
+                    <p className="admin-subtitle m-0">Configura el número, capacidad, descripción y uniones de las mesas físicas del local.</p>
                 </div>
-                <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm" onClick={() => handleOpenModal('crear')}>
-                    <span className="material-symbols-outlined fs-5">add_circle</span>
-                    <span>Nueva Mesa</span>
-                </button>
+                <div>
+                    <button className="btn-admin-primary d-flex align-items-center gap-2 shadow-sm px-4 py-2" onClick={() => handleOpenModal('crear')}>
+                        <span className="material-symbols-outlined fs-5">add_circle</span>
+                        <span>Nueva Mesa</span>
+                    </button>
+                </div>
             </div>
 
             <div className="admin-card border-0 shadow-sm p-0 overflow-hidden">
@@ -136,7 +138,7 @@ const AdminMesas = () => {
                             <Form.Control as="textarea" rows={2} name="descripcion" value={formData.descripcion} onChange={handleChange} className="admin-form-control" placeholder="Ej. Terraza interior junto a la ventana" />
                         </Form.Group>
                         <Form.Group className="admin-form-group mb-0 p-3 rounded bg-light border">
-                            <Form.Check 
+                            <Form.Check
                                 type="switch"
                                 id="es_juntada-switch"
                                 name="es_juntada"

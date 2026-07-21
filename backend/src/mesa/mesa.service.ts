@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateMesaDto } from './dto/create-mesa.dto';
@@ -6,11 +6,31 @@ import { UpdateMesaDto } from './dto/update-mesa.dto';
 import { Mesa } from './entities/mesa.entity';
 
 @Injectable()
-export class MesaService {
+export class MesaService implements OnModuleInit {
   constructor(
     @InjectRepository(Mesa)
     private mesaRepository: Repository<Mesa>,
   ) { }
+
+  async onModuleInit() {
+    await this.ensureMesaParaLlevar();
+  }
+
+  async ensureMesaParaLlevar() {
+    const existing = await this.mesaRepository.findOne({
+      where: { numero: 0, D_E_L_E_T_E_D: false },
+    });
+    if (!existing) {
+      const mesaParaLlevar = this.mesaRepository.create({
+        numero: 0,
+        capacidad: 99,
+        descripcion: 'PARA LLEVAR',
+        es_juntada: true,
+        estado: { id: 1 } as any,
+      });
+      await this.mesaRepository.save(mesaParaLlevar);
+    }
+  }
 
   async create(createMesaDto: CreateMesaDto) {
     const mesa = this.mesaRepository.create({
@@ -25,6 +45,7 @@ export class MesaService {
   }
 
   async findAll() {
+    await this.ensureMesaParaLlevar();
     return this.mesaRepository.find({
       where: { D_E_L_E_T_E_D: false },
       relations: ['estado'],

@@ -47,21 +47,21 @@ export const useMeseroMesas = () => {
     }, [loadData]);
 
     const handleCrearPedido = async () => {
-        if (!mesaSeleccionada || isSubmitting) return;
+        if (isSubmitting) return;
         setIsSubmitting(true);
         try {
             const userInfo = getUserInfo();
             const pedido = await createPedido({
-                id_mesa: parseInt(mesaSeleccionada),
+                id_mesa: null,
                 id_usuario: userInfo.id,
             });
             setShowCrearPedidoModal(false);
-            setMesaSeleccionada('');
-            showSuccess(`Pedido #${pedido.id} abierto en Mesa ${pedido.mesa?.numero}`);
-            navigate(`/mesero/pedido/${pedido.id}`);
+            showSuccess(`Pedido #${pedido.id} abierto (Sin mesa asignada)`);
+            const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
+            navigate(`${basePath}/pedido/${pedido.id}`, { state: { from: window.location.pathname } });
         } catch (err) {
             console.error(err);
-            showError(err.response?.data?.message || 'Error al crear el pedido');
+            showError(err, 'Error al crear el pedido');
         } finally {
             setIsSubmitting(false);
         }
@@ -76,7 +76,8 @@ export const useMeseroMesas = () => {
     };
 
     const handleAbrirPedido = (pedido, mode = 'edit') => {
-        navigate(`/mesero/pedido/${pedido.id}?mode=${mode}`);
+        const basePath = window.location.pathname.startsWith('/admin') ? '/admin' : '/mesero';
+        navigate(`${basePath}/pedido/${pedido.id}?mode=${mode}`, { state: { from: window.location.pathname } });
     };
 
     const mesasDisponibles = mesas.filter(m => {
@@ -89,7 +90,9 @@ export const useMeseroMesas = () => {
         
         if (filtroBusqueda.trim() !== '') {
             const query = filtroBusqueda.toLowerCase();
-            const esMesa = p.mesa?.numero?.toString().includes(query) || (p.mesa?.es_juntada && 'juntada'.includes(query));
+            const esMesa = (!p.mesa || p.mesa?.numero === null || p.mesa?.numero === undefined)
+                ? ('sin mesa'.includes(query) || 'sin'.includes(query))
+                : p.mesa?.numero?.toString().includes(query) || (p.mesa?.es_juntada && 'juntada'.includes(query));
             const esPedido = p.id?.toString().includes(query);
             // Search multiple accounts if they exist
             const coincidenciaCuenta = p.cuentas?.some(c => c.nombre_cliente?.toLowerCase().includes(query));

@@ -108,3 +108,73 @@
     animation: heartbeat 2.5s infinite;
     transition: background-color 0.3s ease;
 }
+
+/* Custom Table Dropdown (reemplaza lista nativa del dispositivo) */
+.custom-table-dropdown-toggle {
+    transition: all 0.2s ease-in-out !important;
+    border: 1.5px solid var(--primary-color, #b4420a) !important;
+    background-color: #fff !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06) !important;
+}
+
+.custom-table-dropdown-toggle:hover {
+    background-color: var(--primary-color, #b4420a) !important;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(180, 66, 10, 0.2) !important;
+}
+
+.custom-table-dropdown-toggle:hover .material-symbols-outlined {
+    color: #fff !important;
+}
+
+.custom-table-dropdown-toggle::after {
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+.custom-table-dropdown-menu {
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    background: #fff;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.custom-table-dropdown-item {
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.custom-table-dropdown-item:hover {
+    background-color: rgba(180, 66, 10, 0.08) !important;
+    transform: translateX(3px);
+}
+
+/* Soporte de scroll y dimensiones responsivas para el modal dual de selección de productos */
+.modal-split-body {
+    height: 78vh !important;
+    max-height: 850px !important;
+    overflow: hidden !important;
+}
+
+.panel-catalogo-modal,
+.panel-seleccionados-modal {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+}
+
+@media (min-width: 992px) {
+    .panel-seleccionados-modal {
+        max-width: 460px !important;
+        min-width: 380px !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .panel-seleccionados-modal {
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+}
+

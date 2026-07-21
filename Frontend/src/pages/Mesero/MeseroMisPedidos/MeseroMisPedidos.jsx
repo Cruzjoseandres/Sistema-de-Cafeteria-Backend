@@ -87,9 +87,15 @@ const MeseroMisPedidos = () => {
                                 <Card className="history-card h-100 border-0" onClick={() => handleViewPedido(pedido.id)}>
                                     <Card.Body className="d-flex flex-column">
                                         <div className="d-flex justify-content-between align-items-center mb-3">
-                                            <Badge bg="info" className="fs-6 py-2 px-3 fw-bold shadow-sm d-flex align-items-center gap-1">
-                                                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>table_restaurant</span>
-                                                Mesa {pedido.mesa?.numero}
+                                            <Badge bg={!pedido.mesa || pedido.mesa?.numero === null || pedido.mesa?.numero === undefined ? "secondary" : pedido.mesa?.es_juntada ? "info" : "primary"} className="fs-6 py-2 px-3 fw-bold shadow-sm d-flex align-items-center gap-1 text-uppercase">
+                                                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>
+                                                    {!pedido.mesa || pedido.mesa?.numero === null || pedido.mesa?.numero === undefined ? 'shopping_bag' : 'table_restaurant'}
+                                                </span>
+                                                {!pedido.mesa || pedido.mesa?.numero === null || pedido.mesa?.numero === undefined
+                                                    ? 'Sin Mesa'
+                                                    : pedido.mesa?.es_juntada
+                                                        ? 'Mesa Juntada'
+                                                        : `Mesa ${pedido.mesa?.numero}`}
                                             </Badge>
                                             {(() => {
                                                 const isCompletado = pedido.estado?.id === 3 || pedido.estado?.nombre === 'INACTIVO' || pedido.estado?.nombre === 'COMPLETADO' || pedido.estado?.nombre === 'PAGADO';
@@ -119,7 +125,13 @@ const MeseroMisPedidos = () => {
                                             </p>
                                         </div>
 
-                                        <div className="d-flex justify-content-end border-top pt-3 mt-auto">
+                                        <div className="d-flex justify-content-between align-items-center border-top pt-3 mt-auto">
+                                            <div>
+                                                <span className="text-muted d-block" style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.5px', fontWeight: '600' }}>Total Pedido</span>
+                                                <strong className="text-primary fs-5 fw-bold">
+                                                    Bs. {(pedido.cuentas ? pedido.cuentas.reduce((acc, c) => acc + Number(c.total || 0), 0) : 0).toFixed(2)}
+                                                </strong>
+                                            </div>
                                             <span className="text-primary fw-medium d-flex align-items-center gap-1">
                                                 Ver Detalles <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>chevron_right</span>
                                             </span>

@@ -48,7 +48,7 @@ const AdminDashboard = () => {
             showSuccess('QR actualizado con éxito');
         } catch (error) {
             console.error('Error al subir QR:', error);
-            showError('Error al actualizar QR');
+            showError(error, 'Error al actualizar QR');
             // Revertir a la URL anterior en caso de error
             setQrUrl(getQRUrl());
         } finally {
@@ -92,26 +92,26 @@ const AdminDashboard = () => {
                         <p className="dashboard-subtitle m-0 mt-2">Aquí está lo que sucede en tu cafetería hoy.</p>
                     </Col>
                     <Col xs={12} md={5} className="d-flex justify-content-md-end gap-2 align-items-center">
-                        <Form.Control 
-                            type="date" 
-                            name="startDate" 
-                            value={startDate} 
-                            onChange={(e) => setStartDate(e.target.value)} 
+                        <Form.Control
+                            type="date"
+                            name="startDate"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
                             className="bg-light border-0 shadow-sm"
                             style={{ maxWidth: '160px' }}
                         />
                         <span className="text-muted fw-bold">-</span>
-                        <Form.Control 
-                            type="date" 
-                            name="endDate" 
-                            value={endDate} 
-                            onChange={(e) => setEndDate(e.target.value)} 
+                        <Form.Control
+                            type="date"
+                            name="endDate"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
                             className="bg-light border-0 shadow-sm"
                             style={{ maxWidth: '160px' }}
                         />
                         {(startDate || endDate) && (
-                            <button 
-                                className="btn btn-light shadow-sm text-danger d-flex align-items-center p-2" 
+                            <button
+                                className="btn btn-light shadow-sm text-danger d-flex align-items-center p-2"
                                 onClick={() => { setStartDate(''); setEndDate(''); }}
                                 title="Limpiar fechas"
                             >
@@ -143,7 +143,7 @@ const AdminDashboard = () => {
                         </div>
                     </Col>
                     <Col md={3}>
-                         <div className="stat-card h-100 p-3 bg-light shadow-sm rounded border-start border-4 border-info">
+                        <div className="stat-card h-100 p-3 bg-light shadow-sm rounded border-start border-4 border-info">
                             <div className="position-relative z-1 d-flex flex-column justify-content-center h-100">
                                 <p className="stat-label mb-1 text-muted fw-bold d-flex align-items-center gap-1"><span className="material-symbols-outlined fs-6 text-info">qr_code_scanner</span> QR</p>
                                 <h4 className="m-0 text-info fw-bold">Bs. {kpis?.ventas_qr?.toFixed(2) || '0.00'}</h4>
@@ -168,7 +168,7 @@ const AdminDashboard = () => {
                     <h3 className="section-title mb-3 fs-5">Acciones Rápidas</h3>
                     <Row className="g-3">
                         <Col xs={12} sm={6} md={3}>
-                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => {/* TODO: Enlace a POS si aplica */ }}>
+                            <button className="d-flex align-items-center gap-3 p-3 w-100 bg-white border rounded shadow-sm text-start transition-all" style={{ cursor: 'pointer' }} onClick={() => navigate('/admin/ventas')}>
                                 <div className="p-2 rounded bg-light text-primary d-flex align-items-center justify-content-center">
                                     <span className="material-symbols-outlined fs-5">point_of_sale</span>
                                 </div>
@@ -210,14 +210,14 @@ const AdminDashboard = () => {
                                 <h3 className="section-title m-0">Pago con QR</h3>
                             </div>
                             <div className="d-flex flex-column align-items-center gap-3">
-                                <div 
+                                <div
                                     className="qr-container bg-light rounded d-flex justify-content-center align-items-center overflow-hidden border"
                                     style={{ width: '150px', height: '150px' }}
                                 >
-                                    <img 
+                                    <img
                                         key={qrUrl}
-                                        src={qrUrl} 
-                                        alt="QR Cobros" 
+                                        src={qrUrl}
+                                        alt="QR Cobros"
                                         style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                                         onError={(e) => { e.target.style.display = 'none'; }}
                                     />
@@ -226,17 +226,17 @@ const AdminDashboard = () => {
                                     </span>
                                 </div>
                                 <div className="text-center w-100">
-                                    <input 
-                                        type="file" 
-                                        id="qr-upload" 
-                                        style={{ display: 'none' }} 
+                                    <input
+                                        type="file"
+                                        id="qr-upload"
+                                        style={{ display: 'none' }}
                                         accept="image/png, image/jpeg, image/jpg"
                                         onChange={handleQrUpload}
                                     />
                                     <label htmlFor="qr-upload" className="btn btn-outline-primary w-100 d-flex justify-content-center align-items-center gap-2" style={{ cursor: 'pointer' }}>
                                         {uploadingQr ? (
                                             <>
-                                                <Spinner animation="border" size="sm" /> 
+                                                <Spinner animation="border" size="sm" />
                                                 <span>Subiendo...</span>
                                             </>
                                         ) : (
@@ -251,7 +251,7 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     </Col>
-                    
+
                     {/* Recent Activity */}
                     <Col lg={8}>
                         <div className="content-card h-100">

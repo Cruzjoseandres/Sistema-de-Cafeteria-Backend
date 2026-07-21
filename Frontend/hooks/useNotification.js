@@ -15,8 +15,23 @@ export const useNotification = () => {
         setToast({ show: true, message, variant: 'success' });
     };
 
-    const showError = (message) => {
-        setToast({ show: true, message, variant: 'danger' });
+    const showError = (errOrMessage, fallbackMessage = 'Ocurrió un error inesperado al procesar la operación') => {
+        let message = fallbackMessage;
+        if (typeof errOrMessage === 'string') {
+            message = errOrMessage;
+        } else if (errOrMessage && typeof errOrMessage === 'object') {
+            if (errOrMessage.userMessage) {
+                message = errOrMessage.userMessage;
+            } else if (errOrMessage.response?.data?.message) {
+                const dataMsg = errOrMessage.response.data.message;
+                message = Array.isArray(dataMsg) ? `Por favor corrige lo siguiente:\n• ${dataMsg.join('\n• ')}` : dataMsg;
+            } else if (errOrMessage.message) {
+                message = (errOrMessage.message === 'Network Error' || errOrMessage.code === 'ERR_NETWORK')
+                    ? 'No se pudo conectar con el servidor. Verifica tu conexión a internet.'
+                    : errOrMessage.message;
+            }
+        }
+        setToast({ show: true, message: String(message), variant: 'danger' });
     };
 
     const hideToast = () => {
