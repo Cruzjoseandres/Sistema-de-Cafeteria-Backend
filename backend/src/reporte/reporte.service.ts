@@ -178,11 +178,11 @@ export class ReporteService {
             // Obtenemos la fecha local (UTC-4 para Bolivia)
             const localNow = new Date(new Date().getTime() - (4 * 60 * 60 * 1000));
             const todayStr = localNow.toISOString().split('T')[0];
-            
+
             // Vamos a construir un start of day y end of day en UTC que correspondan al start y end of day in UTC-4
             startOfDayUTC = new Date(`${todayStr}T00:00:00.000Z`);
             startOfDayUTC.setUTCHours(startOfDayUTC.getUTCHours() + 4); // Offset inverso para que en BD funcione (04:00Z)
-            
+
             endOfDayUTC = new Date(`${todayStr}T23:59:59.999Z`);
             endOfDayUTC.setUTCHours(endOfDayUTC.getUTCHours() + 4);
         }
@@ -211,7 +211,7 @@ export class ReporteService {
             .andWhere('cuenta.updated_at >= :startOfDay AND cuenta.updated_at <= :endOfDay', { startOfDay: startOfDayUTC, endOfDay: endOfDayUTC })
             .groupBy('cuenta.tipo_pago')
             .getRawMany();
-        
+
         let ventas_efectivo = 0;
         let ventas_qr = 0;
 

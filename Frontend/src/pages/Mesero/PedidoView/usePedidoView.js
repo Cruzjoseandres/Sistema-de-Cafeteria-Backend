@@ -14,15 +14,15 @@ export const usePedidoView = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     const queryParams = new URLSearchParams(location.search);
-    const viewMode = queryParams.get('mode') || 'edit'; 
-    
+    const viewMode = queryParams.get('mode') || 'edit';
+
     // DB State
     const [pedido, setPedido] = useState(null);
     const [cuentas, setCuentas] = useState([]);
     const [detallesPorCuenta, setDetallesPorCuenta] = useState({});
-    
+
     // UI State for Modals
     const [showJustificativoModal, setShowJustificativoModal] = useState(false);
     const [justificativoText, setJustificativoText] = useState('');
@@ -38,21 +38,21 @@ export const usePedidoView = () => {
     const [productos, setProductos] = useState([]);
     const [categorias, setCategorias] = useState([]);
     const [mesas, setMesas] = useState([]);
-    
+
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
-    
+
     const [showAddCuentaModal, setShowAddCuentaModal] = useState(false);
     const [showAddItemModal, setShowAddItemModal] = useState(false);
     const [selectedCuentaId, setSelectedCuentaId] = useState(null);
     const [asignarNombre, setAsignarNombre] = useState(false);
-    
+
     const [nombreCliente, setNombreCliente] = useState('');
-    
+
     const [busquedaProducto, setBusquedaProducto] = useState('');
     const [filtroCategoria, setFiltroCategoria] = useState('');
-    const [productosSeleccionados, setProductosSeleccionados] = useState({}); 
+    const [productosSeleccionados, setProductosSeleccionados] = useState({});
 
     // Payment State
     const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -85,7 +85,7 @@ export const usePedidoView = () => {
             setProductos(productosData);
             setCategorias(categoriasData);
             setMesas(mesasData);
-            
+
             await loadCuentasYDetalles(pedidoData.id);
             setError(null);
         } catch (err) {
@@ -104,14 +104,14 @@ export const usePedidoView = () => {
         const cuentasData = await getCuentasByPedido(pedidoId);
         setCuentas(cuentasData);
         setDraftCuentas(JSON.parse(JSON.stringify(cuentasData))); // Deep clone for draft
-        
+
         const detallesMap = {};
         for (const cuenta of cuentasData) {
             detallesMap[cuenta.id] = await getDetallesByCuenta(cuenta.id);
         }
         setDetallesPorCuenta(detallesMap);
         setDraftDetallesPorCuenta(JSON.parse(JSON.stringify(detallesMap))); // Deep clone
-        
+
         setHasUnsavedChanges(false);
     };
 
@@ -178,7 +178,7 @@ export const usePedidoView = () => {
             confirmText: 'Sí, eliminar',
             confirmVariant: 'danger'
         });
-        
+
         if (confirmed) {
             setJustificativoText('');
             setShowJustificativoModal(true);
@@ -213,7 +213,7 @@ export const usePedidoView = () => {
             // 1. Diffs de Cuentas
             const dbCuentasIds = cuentas.map(c => c.id);
             const draftCuentasIds = draftCuentas.map(c => c.id);
-            
+
             // Cuentas eliminadas en el borrador (estaban en db pero no en draft)
             const cuentasAEliminar = cuentas.filter(c => !draftCuentasIds.includes(c.id));
             for (const c of cuentasAEliminar) {
@@ -223,7 +223,7 @@ export const usePedidoView = () => {
             // Cuentas nuevas en el borrador (tienen isNew=true o id negativo)
             const cuentasACrear = draftCuentas.filter(c => c.isNew || c.id < 0);
             const cuentaIdMap = {}; // tempId -> real DB id
-            
+
             for (const c of cuentasACrear) {
                 const res = await createCuenta({ id_pedido: pedido.id, nombre_cliente: c.nombre_cliente });
                 cuentaIdMap[c.id] = res.id;
@@ -233,7 +233,7 @@ export const usePedidoView = () => {
             for (const cuentaDraft of draftCuentas) {
                 // Determine real cuenta ID (en caso de ser nueva cuenta)
                 const realCuentaId = cuentaIdMap[cuentaDraft.id] || cuentaDraft.id;
-                
+
                 const dDetalles = draftDetallesPorCuenta[cuentaDraft.id] || [];
                 const oDetalles = detallesPorCuenta[cuentaDraft.id] || []; // If new cuenta, oDetalles is empty. Great!
 
@@ -293,7 +293,7 @@ export const usePedidoView = () => {
         const autoNombre = asignarNombre && nombreCliente.trim()
             ? nombreCliente.trim()
             : `Cuenta ${draftCuentas.length + 1}`;
-        
+
         const nuevaCuenta = {
             id: newTempId,
             id_pedido: pedido.id,
@@ -301,10 +301,10 @@ export const usePedidoView = () => {
             total: 0,
             isNew: true
         };
-        
+
         setDraftCuentas(prev => [...prev, nuevaCuenta]);
         setDraftDetallesPorCuenta(prev => ({ ...prev, [newTempId]: [] }));
-        
+
         setHasUnsavedChanges(true);
         setNombreCliente('');
         setAsignarNombre(false);
@@ -354,10 +354,10 @@ export const usePedidoView = () => {
         setProductosSeleccionados(prev => {
             const current = { ...prev };
             if (!current[id_producto]) return current;
-            
+
             current[id_producto] = { ...current[id_producto] };
             const newCount = current[id_producto].cantidad + delta;
-            
+
             if (newCount <= 0) {
                 delete current[id_producto];
             } else {
@@ -371,7 +371,7 @@ export const usePedidoView = () => {
         setProductosSeleccionados(prev => {
             const current = { ...prev };
             if (!current[id_producto]) return current;
-            
+
             current[id_producto] = { ...current[id_producto] };
 
             if (countStr === '') {
@@ -400,7 +400,7 @@ export const usePedidoView = () => {
     const handleAddMultipleItems = () => {
         const items = Object.entries(productosSeleccionados).filter(([, data]) => data.cantidad !== '' && parseInt(data.cantidad) > 0);
         if (items.length === 0) return;
-        
+
         const nuevosDetalles = items.map(([id_producto, data]) => {
             const prod = productos.find(p => p.id === parseInt(id_producto));
             return {
@@ -433,7 +433,7 @@ export const usePedidoView = () => {
     const handleCambiarCantidadDetalle = async (detalleId, nuevaCantidad) => {
         const todosLosDetallesDraft = draftCuentas.flatMap(c => draftDetallesPorCuenta[c.id] || []);
         const detalle = todosLosDetallesDraft.find(d => d.id === detalleId);
-        
+
         if (!detalle) return;
 
         if (nuevaCantidad <= 0) {
@@ -449,15 +449,15 @@ export const usePedidoView = () => {
             const cuentaId = detalle.cuenta.id;
             const detalles = [...(next[cuentaId] || [])];
             const dIndex = detalles.findIndex(d => d.id === detalleId);
-            
+
             if (dIndex === -1) return next;
 
             // Extra splitting logic for late additions to initial orders
             if (!detalle.isNew && nuevaCantidad > detalle.cantidad && getClasificacionDetalle(detalle) === 'Pedido Inicial') {
-                const extrasInSameCuenta = detalles.filter(d => 
+                const extrasInSameCuenta = detalles.filter(d =>
                     d.producto?.id === detalle.producto?.id && getClasificacionDetalle(d) === 'Extras'
                 );
-                
+
                 const increment = nuevaCantidad - detalle.cantidad;
 
                 if (extrasInSameCuenta.length > 0) {
@@ -581,9 +581,9 @@ export const usePedidoView = () => {
         }
 
         if (hasUnsavedChanges) {
-            const confirmed = await showConfirm('Tienes cambios sin guardar. ¿Deseas salir de todas formas y perderlos?', { 
-                confirmVariant: 'danger', 
-                confirmText: 'Salir y Perder Cambios' 
+            const confirmed = await showConfirm('Tienes cambios sin guardar. ¿Deseas salir de todas formas y perderlos?', {
+                confirmVariant: 'danger',
+                confirmText: 'Salir y Perder Cambios'
             });
             if (!confirmed) return;
         }
@@ -626,7 +626,7 @@ export const usePedidoView = () => {
 
         const oldestTime = Math.min(...todosLosDetalles.map(d => new Date(d.created_at || Date.now()).getTime()));
         const detalleCreation = new Date(detalle.created_at).getTime();
-        
+
         // 2000 ms (2 segundos) de tolerancia máxima para absorber el tiempo de ejecución en la Base de Datos del insert del lote original.
         return (detalleCreation - oldestTime) > 2000 ? 'Extras' : 'Pedido Inicial';
     };
@@ -664,7 +664,7 @@ export const usePedidoView = () => {
     const handlePaymentDataChange = (field, value) => {
         setPaymentData(prev => {
             const next = { ...prev, [field]: value };
-            
+
             if (next.tipo_pago === 'Efectivo') {
                 if (field === 'monto_pagado') {
                     const paid = Number(value);
@@ -679,19 +679,69 @@ export const usePedidoView = () => {
                 next.monto_cambio = 0;
                 next.monto_pagado = '';
             } else if (next.tipo_pago === 'Mixto') {
-                // Recalculate for Mixto on any subfield change
-                const efectivoRecibido = Number(field === 'monto_efectivo_recibido' ? value : next.monto_efectivo_recibido) || 0;
-                const qrTransferido = Number(field === 'monto_qr_transferido' ? value : next.monto_qr_transferido) || 0;
-                const totalRecibido = efectivoRecibido + qrTransferido;
+                const totalReq = prev.totalCuenta || 0;
+                if (field === 'monto_efectivo_recibido') {
+                    if (value === '') {
+                        next.monto_efectivo_recibido = '';
+                        next.monto_qr_transferido = '';
+                    } else {
+                        const ef = Number(value);
+                        if (!isNaN(ef)) {
+                            next.monto_efectivo_recibido = value;
+                            const remaining = totalReq - ef;
+                            next.monto_qr_transferido = remaining > 0 ? Number(remaining.toFixed(2)) : 0;
+                        }
+                    }
+                } else if (field === 'monto_qr_transferido') {
+                    if (value === '') {
+                        next.monto_qr_transferido = '';
+                        next.monto_efectivo_recibido = '';
+                    } else {
+                        const qr = Number(value);
+                        if (!isNaN(qr)) {
+                            const qrLim = qr > totalReq ? totalReq : qr;
+                            next.monto_qr_transferido = qrLim;
+                            const remaining = totalReq - qrLim;
+                            next.monto_efectivo_recibido = remaining > 0 ? Number(remaining.toFixed(2)) : 0;
+                        }
+                    }
+                }
+                const efVal = Number(next.monto_efectivo_recibido) || 0;
+                const qrVal = Number(next.monto_qr_transferido) || 0;
+                const totalRecibido = efVal + qrVal;
                 next.monto_pagado = totalRecibido;
-                next.monto_cambio = totalRecibido > prev.totalCuenta ? totalRecibido - prev.totalCuenta : 0;
+                next.monto_cambio = totalRecibido > totalReq ? Number((totalRecibido - totalReq).toFixed(2)) : 0;
             }
-            
+
             return next;
         });
     };
 
     const handleProcessPayment = async () => {
+        if (paymentData.tipo_pago === 'Mixto') {
+            const qrAmt = Number(paymentData.monto_qr_transferido) || 0;
+            const totalReq = Number(paymentData.totalCuenta) || 0;
+            const efRecibido = Number(paymentData.monto_efectivo_recibido) || 0;
+            const cambio = Number(paymentData.monto_cambio) || 0;
+            const efNeto = Math.max(0, Number((efRecibido - cambio).toFixed(2)));
+
+            if (qrAmt > (totalReq + 0.001)) {
+                showError('El monto transferido por QR no puede ser mayor al total de la cuenta.');
+                return;
+            }
+            if (Math.abs((qrAmt + efNeto) - totalReq) > 0.01) {
+                showError(`En Pago Mixto, la suma de QR (Bs. ${qrAmt.toFixed(2)}) y Efectivo neto (Bs. ${efNeto.toFixed(2)}) debe ser exactamente igual al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`);
+                return;
+            }
+        } else if (paymentData.tipo_pago === 'Efectivo') {
+            const efVal = Number(paymentData.monto_pagado) || 0;
+            const totalReq = paymentData.totalCuenta || 0;
+            if ((efVal + 0.001) < totalReq) {
+                showError(`El monto pagado en efectivo (Bs. ${efVal.toFixed(2)}) es menor al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`);
+                return;
+            }
+        }
+
         try {
             setSaving(true);
             let targetCuentaId = paymentData.cuentaId;
@@ -706,26 +756,46 @@ export const usePedidoView = () => {
                     targetCuentaId = saveRes.cuentaIdMap[targetCuentaId];
                 }
             }
-            
+
             if (targetCuentaId === 'ALL') {
                 const unpaid = cuentas.filter(c => !c.estado || c.estado.id !== 3);
-                
-                // Compute breakdown for Mixto
+
                 const isMixto = paymentData.tipo_pago === 'Mixto';
-                const qrAmt = isMixto ? Number(paymentData.monto_qr_transferido) || 0 : 0;
+                let remQr = isMixto ? Number(paymentData.monto_qr_transferido) || 0 : 0;
+                let remEf = isMixto ? Math.max(0, (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0)) : 0;
 
                 for (let i = 0; i < unpaid.length; i++) {
                     const c = unpaid[i];
                     const isLast = (i === unpaid.length - 1);
-                    const montoEfectivoReal = isLast ? (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0) : 0;
-                    
+                    const cTotal = Number(c.total) || 0;
+                    let cQr = 0;
+                    let cEf = 0;
+
+                    if (isMixto) {
+                        if (remQr >= cTotal) {
+                            cQr = cTotal;
+                            remQr -= cQr;
+                            cEf = 0;
+                        } else {
+                            cQr = remQr;
+                            remQr = 0;
+                            cEf = Number((cTotal - cQr).toFixed(2));
+                            remEf -= cEf;
+                        }
+                        if (isLast && remQr > 0) cQr = Number((cQr + remQr).toFixed(2));
+                        if (isLast && remEf > 0) cEf = Number((cEf + remEf).toFixed(2));
+                    } else {
+                        const montoEfectivoReal = isLast ? (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0) : 0;
+                        cEf = isLast ? montoEfectivoReal : cTotal;
+                    }
+
                     const payload = {
                         id_estado: 3,
                         tipo_pago: paymentData.tipo_pago,
-                        monto_pagado: isLast ? (Number(c.total) + Number(paymentData.monto_cambio)) : Number(c.total),
-                        monto_cambio: isLast ? Number(paymentData.monto_cambio) : 0,
+                        monto_pagado: isLast ? (Number(c.total) + Number(paymentData.monto_cambio || 0)) : Number(c.total),
+                        monto_cambio: isLast ? Number(paymentData.monto_cambio || 0) : 0,
                         comprobantes: paymentData.comprobantes,
-                        ...(isMixto && { monto_qr: isLast ? qrAmt : 0, monto_efectivo: isLast ? montoEfectivoReal : Number(c.total) })
+                        ...(isMixto && { monto_qr: cQr, monto_efectivo: cEf })
                     };
                     await updateCuenta(c.id, payload);
                 }
@@ -734,7 +804,7 @@ export const usePedidoView = () => {
                 const isMixto = paymentData.tipo_pago === 'Mixto';
                 const qrAmt = isMixto ? Number(paymentData.monto_qr_transferido) || 0 : 0;
                 const efectivoReal = isMixto
-                    ? (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0)
+                    ? Math.max(0, Number(( (Number(paymentData.monto_efectivo_recibido) || 0) - Number(paymentData.monto_cambio || 0) ).toFixed(2)))
                     : 0;
 
                 const payload = {
@@ -760,7 +830,7 @@ export const usePedidoView = () => {
     };
 
     // ----- WHATSAPP SHARING -----
-    
+
     const handleOpenWhatsappModal = () => {
         setWhatsappPhone('+591 ');
         setShowWhatsappModal(true);
@@ -779,13 +849,13 @@ export const usePedidoView = () => {
         try {
             setSaving(true);
             const pdfUrl = await generateWhatsAppPdf(id);
-            
+
             // Format phone number, stripping spaces/dashes (assuming bolivian code +591 if missing, or just passing as is)
             const cleanPhone = whatsappPhone.replace(/\D/g, '');
-            
+
             const message = encodeURIComponent(`¡Hola! 👋 Aquí tienes el detalle de tu cuenta de la cafetería. Puedes revisarlo en el siguiente enlace:\n\n${pdfUrl}\n\n¡Gracias por tu visita!`);
             const waUrl = `https://wa.me/${cleanPhone}?text=${message}`;
-            
+
             window.open(waUrl, '_blank');
             setShowWhatsappModal(false);
             showSuccess('Redirigiendo a WhatsApp...');
@@ -798,9 +868,9 @@ export const usePedidoView = () => {
     };
 
     return {
-        pedido, 
-        cuentas: draftCuentas, 
-        detallesPorCuenta: draftDetallesPorCuenta, 
+        pedido,
+        cuentas: draftCuentas,
+        detallesPorCuenta: draftDetallesPorCuenta,
         productos, productosFiltrados, categorias, totalPedido,
         mesas, handleChangeMesa,
         viewMode, getClasificacionDetalle,

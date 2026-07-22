@@ -84,6 +84,32 @@ export class CuentaService {
     if (updateCuentaDto.comprobantes !== undefined) {
       cuenta.comprobantes = updateCuentaDto.comprobantes;
     }
+
+    if (cuenta.estado?.id === 3) {
+      if (cuenta.tipo_pago === 'Mixto') {
+        const ef = Number(cuenta.monto_efectivo) || 0;
+        const qr = Number(cuenta.monto_qr) || 0;
+        const totalReq = Number(cuenta.total) || 0;
+        if (ef < 0 || qr < 0) {
+          throw new HttpException('En pago Mixto, los montos no pueden ser negativos.', HttpStatus.BAD_REQUEST);
+        }
+        if (qr > (totalReq + 0.001)) {
+          throw new HttpException('En pago Mixto, el monto transferido por QR no puede ser mayor al total de la cuenta.', HttpStatus.BAD_REQUEST);
+        }
+        if (Math.abs((ef + qr) - totalReq) > 0.01) {
+          throw new HttpException(`En pago Mixto, la suma de efectivo neto (Bs. ${ef.toFixed(2)}) y QR (Bs. ${qr.toFixed(2)}) debe ser exactamente igual al total de la cuenta (Bs. ${totalReq.toFixed(2)}).`, HttpStatus.BAD_REQUEST);
+        }
+        cuenta.monto_efectivo = ef;
+        cuenta.monto_qr = qr;
+      } else if (cuenta.tipo_pago === 'Efectivo') {
+        cuenta.monto_efectivo = Number(cuenta.total) || 0;
+        cuenta.monto_qr = 0;
+      } else if (cuenta.tipo_pago === 'QR') {
+        cuenta.monto_qr = Number(cuenta.total) || 0;
+        cuenta.monto_efectivo = 0;
+      }
+    }
+
     await this.cuentaRepository.save(cuenta);
     return this.findOne(id);
   }
